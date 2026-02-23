@@ -63,3 +63,12 @@ services:
     volumes:
       - ./client-2-config.toml:/app/client-config.toml
       - ./logs/:/app/logs/
+  shim:
+    image: omnipaxos-shim
+    build:
+      context: ./..         # Point to the root directory where src/ and Cargo.toml live
+      dockerfile: shim.dockerfile
+    container_name: shim-1
+    environment:
+      RUST_LOG: "debug"
+    # Add network/volumes if the shim needs to talk to servers
