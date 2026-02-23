@@ -10,7 +10,7 @@ mod network;
 #[tokio::main]
 pub async fn main(){
     env_logger::init();
-    print!("Hello from shim");
+    println!("Hello from shim");
     let shim_config = match ShimConfig::new() {
         Ok(parsed_config) => parsed_config,
         Err(e) => panic!("{e}"),
