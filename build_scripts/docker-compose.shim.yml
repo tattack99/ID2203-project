@@ -71,4 +71,9 @@ services:
     container_name: shim-1
     environment:
       RUST_LOG: "debug"
+      CONFIG_FILE: "/app/client-config.toml"
+      OMNIPAXOS_SERVER_ADDRESS: "s1:8000" # Overwrite server_address in client config TOML
+    volumes:
+      - ./shim-1-config.toml:/app/client-config.toml
+      - ./logs/:/app/logs/
     # Add network/volumes if the shim needs to talk to servers

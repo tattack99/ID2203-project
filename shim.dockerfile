@@ -1,6 +1,9 @@
 FROM rust:1.85 AS chef
+
 RUN set -eux
+
 ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
+
 RUN cargo install cargo-chef
 WORKDIR /app
 
