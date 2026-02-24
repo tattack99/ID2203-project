@@ -1,6 +1,6 @@
 # PROJECT-SPECIFIC IGNORES
 logs/
-maelstrom/
+maelstrom/lib/maelstrom.jar
 
 # GENERATED IGNORES
 # Created by https://www.toptal.com/developers/gitignore/api/rust

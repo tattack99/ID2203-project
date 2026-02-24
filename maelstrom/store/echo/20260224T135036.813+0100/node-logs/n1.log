@@ -1,0 +1,6 @@
+[2026-02-24T12:50:38.577898Z INFO  maelstrom::runtime] Received {"id":4,"src":"c4","dest":"n1","body":{"type":"init","node_id":"n1","node_ids":["n1","n2","n3","n4","n5"],"msg_id":1}}
+[2026-02-24T12:50:38.578382Z INFO  maelstrom::runtime] Sent {"src":"n1","dest":"c4","body":{"in_reply_to":1,"type":"init_ok"}}
+[2026-02-24T12:50:41.063020Z INFO  maelstrom::runtime] Received {"id":32,"src":"c14","dest":"n1","body":{"echo":"Please echo 12","type":"echo","msg_id":1}}
+[2026-02-24T12:50:41.063226Z INFO  maelstrom::runtime] Sent {"src":"n1","dest":"c14","body":{"in_reply_to":1,"echo":"Please echo 12","msg_id":1,"type":"echo_ok"}}
+[2026-02-24T12:50:41.353930Z INFO  maelstrom::runtime] Received {"id":34,"src":"c14","dest":"n1","body":{"echo":"Please echo 52","type":"echo","msg_id":2}}
+[2026-02-24T12:50:41.354685Z INFO  maelstrom::runtime] Sent {"src":"n1","dest":"c14","body":{"in_reply_to":2,"echo":"Please echo 52","msg_id":2,"type":"echo_ok"}}

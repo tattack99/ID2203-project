@@ -1,0 +1,4 @@
+[2026-02-24T10:36:08.849551Z INFO  maelstrom::runtime] Received {"id":1,"src":"c0","dest":"n2","body":{"type":"init","node_id":"n2","node_ids":["n1","n2","n3","n4","n5"],"msg_id":1}}
+[2026-02-24T10:36:08.850175Z INFO  maelstrom::runtime] Sent {"src":"n2","dest":"c0","body":{"in_reply_to":1,"type":"init_ok"}}
+[2026-02-24T10:36:11.287714Z INFO  maelstrom::runtime] Received {"id":28,"src":"c14","dest":"n2","body":{"echo":"Please echo 5","type":"echo","msg_id":1}}
+[2026-02-24T10:36:11.288349Z INFO  maelstrom::runtime] Sent {"src":"n2","dest":"c14","body":{"in_reply_to":1,"echo":"Please echo 5","msg_id":1,"type":"echo_ok"}}

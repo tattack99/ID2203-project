@@ -1,0 +1,12 @@
+[2026-02-24T12:50:38.577808Z INFO  maelstrom::runtime] Received {"id":0,"src":"c0","dest":"n5","body":{"type":"init","node_id":"n5","node_ids":["n1","n2","n3","n4","n5"],"msg_id":1}}
+[2026-02-24T12:50:38.578209Z INFO  maelstrom::runtime] Sent {"src":"n5","dest":"c0","body":{"in_reply_to":1,"type":"init_ok"}}
+[2026-02-24T12:50:38.619422Z INFO  maelstrom::runtime] Received {"id":10,"src":"c10","dest":"n5","body":{"echo":"Please echo 49","type":"echo","msg_id":1}}
+[2026-02-24T12:50:38.619663Z INFO  maelstrom::runtime] Sent {"src":"n5","dest":"c10","body":{"in_reply_to":1,"echo":"Please echo 49","msg_id":1,"type":"echo_ok"}}
+[2026-02-24T12:50:40.038690Z INFO  maelstrom::runtime] Received {"id":22,"src":"c10","dest":"n5","body":{"echo":"Please echo 99","type":"echo","msg_id":2}}
+[2026-02-24T12:50:40.038971Z INFO  maelstrom::runtime] Sent {"src":"n5","dest":"c10","body":{"in_reply_to":2,"echo":"Please echo 99","msg_id":2,"type":"echo_ok"}}
+[2026-02-24T12:50:40.507776Z INFO  maelstrom::runtime] Received {"id":28,"src":"c10","dest":"n5","body":{"echo":"Please echo 24","type":"echo","msg_id":3}}
+[2026-02-24T12:50:40.507987Z INFO  maelstrom::runtime] Sent {"src":"n5","dest":"c10","body":{"in_reply_to":3,"echo":"Please echo 24","msg_id":3,"type":"echo_ok"}}
+[2026-02-24T12:50:41.477317Z INFO  maelstrom::runtime] Received {"id":36,"src":"c10","dest":"n5","body":{"echo":"Please echo 2","type":"echo","msg_id":4}}
+[2026-02-24T12:50:41.478467Z INFO  maelstrom::runtime] Sent {"src":"n5","dest":"c10","body":{"in_reply_to":4,"echo":"Please echo 2","msg_id":4,"type":"echo_ok"}}
+[2026-02-24T12:50:42.483940Z INFO  maelstrom::runtime] Received {"id":46,"src":"c10","dest":"n5","body":{"echo":"Please echo 65","type":"echo","msg_id":5}}
+[2026-02-24T12:50:42.484739Z INFO  maelstrom::runtime] Sent {"src":"n5","dest":"c10","body":{"in_reply_to":5,"echo":"Please echo 65","msg_id":5,"type":"echo_ok"}}
