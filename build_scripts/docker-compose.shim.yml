@@ -65,6 +65,7 @@ services:
   #     - ./logs/:/app/logs/
   shim:
     image: omnipaxos-shim
+    # user: "${CURRENT_UID}:${CURRENT_GID}"
     build:
       context: ./..         # Point to the root directory where src/ and Cargo.toml live
       dockerfile: shim.dockerfile
