@@ -2,9 +2,7 @@ use async_trait::async_trait;
 use maelstrom::protocol::Message;
 use maelstrom::{done, Node, Result, Runtime};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use std::sync::Arc;
-use tokio::sync::Mutex;
 
 pub(crate) fn main() -> Result<()> {
     Runtime::init(try_main())
@@ -18,10 +16,7 @@ async fn try_main() -> Result<()> {
 
 #[derive(Clone)]
 struct Handler {
-    node_id: String,
-    #[allow(dead_code)]
-    peers: Vec<String>,
-    kv_store: Arc<Mutex<HashMap<u64, i64>>>,
+    node_id: String
 }
 
 #[async_trait]
@@ -49,10 +44,6 @@ impl Node for Handler {
 fn create_handler(runtime: Runtime) -> Handler {
     Handler {
         node_id: runtime.node_id().to_string(),
-        // If node_ids() isn't working, initialize as empty 
-        // and populate it during the first message process
-        peers: Vec::new(), 
-        kv_store: Arc::new(Mutex::new(HashMap::new())),
     }
 }
 
