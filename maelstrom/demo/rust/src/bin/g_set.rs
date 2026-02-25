@@ -1,4 +1,4 @@
-// / ```bash
+/// ```bash
 /// $ cargo build
 /// $ RUST_LOG=debug ~/Projects/maelstrom/maelstrom test -w g-set --bin ./target/debug/g_set --node-count 2 --concurrency 2n --time-limit 20 --rate 10 --log-stderr
 /// ```
