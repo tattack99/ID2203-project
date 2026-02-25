@@ -1,0 +1,830 @@
+[2026-02-25T16:58:23.975341Z INFO  maelstrom::runtime] Received {"id":3,"src":"c3","dest":"n0","body":{"type":"init","node_id":"n0","node_ids":["n0","n1","n2","n3"],"msg_id":1}}
+[2026-02-25T16:58:23.976193Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c3","body":{"in_reply_to":1,"type":"init_ok"}}
+[2026-02-25T16:58:24.042111Z INFO  maelstrom::runtime] Received {"id":8,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":1}}
+Node  received READ for key 0
+[2026-02-25T16:58:24.042285Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":1,"type":"read_ok","value":0}}
+[2026-02-25T16:58:24.046691Z INFO  maelstrom::runtime] Received {"id":11,"src":"c9","dest":"n0","body":{"key":0,"from":0,"to":3,"type":"cas","msg_id":1}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:24.047493Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":1,"type":"cas_ok"}}
+[2026-02-25T16:58:24.055650Z INFO  maelstrom::runtime] Received {"id":16,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":2}}
+Node  received READ for key 0
+[2026-02-25T16:58:24.055932Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":2,"type":"read_ok","value":0}}
+[2026-02-25T16:58:24.080271Z INFO  maelstrom::runtime] Received {"id":18,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":3}}
+Node  received READ for key 0
+[2026-02-25T16:58:24.080546Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":3,"type":"read_ok","value":0}}
+[2026-02-25T16:58:24.108373Z INFO  maelstrom::runtime] Received {"id":24,"src":"c9","dest":"n0","body":{"key":0,"from":4,"to":2,"type":"cas","msg_id":2}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:24.108684Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":2,"type":"cas_ok"}}
+[2026-02-25T16:58:24.122288Z INFO  maelstrom::runtime] Received {"id":26,"src":"c9","dest":"n0","body":{"key":0,"from":4,"to":1,"type":"cas","msg_id":3}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:24.122487Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":3,"type":"cas_ok"}}
+[2026-02-25T16:58:24.143971Z INFO  maelstrom::runtime] Received {"id":28,"src":"c9","dest":"n0","body":{"key":0,"from":4,"to":0,"type":"cas","msg_id":4}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:24.144045Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":4,"type":"cas_ok"}}
+[2026-02-25T16:58:24.183356Z INFO  maelstrom::runtime] Received {"id":34,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":1,"type":"cas","msg_id":5}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:24.183545Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":5,"type":"cas_ok"}}
+[2026-02-25T16:58:24.188993Z INFO  maelstrom::runtime] Received {"id":36,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":4}}
+Node  received READ for key 0
+[2026-02-25T16:58:24.189490Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":4,"type":"read_ok","value":0}}
+[2026-02-25T16:58:24.207238Z INFO  maelstrom::runtime] Received {"id":38,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":5}}
+Node  received READ for key 0
+[2026-02-25T16:58:24.208421Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":5,"type":"read_ok","value":0}}
+[2026-02-25T16:58:24.225538Z INFO  maelstrom::runtime] Received {"id":42,"src":"c9","dest":"n0","body":{"key":0,"from":1,"to":1,"type":"cas","msg_id":6}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:24.225814Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":6,"type":"cas_ok"}}
+[2026-02-25T16:58:24.237801Z INFO  maelstrom::runtime] Received {"id":44,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":4,"type":"cas","msg_id":7}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:24.238032Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":7,"type":"cas_ok"}}
+[2026-02-25T16:58:24.252411Z INFO  maelstrom::runtime] Received {"id":47,"src":"c9","dest":"n0","body":{"key":0,"value":3,"type":"write","msg_id":8}}
+Node  received WRITE: 0=3
+[2026-02-25T16:58:24.252933Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":8,"type":"write_ok"}}
+[2026-02-25T16:58:24.264621Z INFO  maelstrom::runtime] Received {"id":50,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":6}}
+Node  received READ for key 0
+[2026-02-25T16:58:24.265354Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":6,"type":"read_ok","value":0}}
+[2026-02-25T16:58:24.298471Z INFO  maelstrom::runtime] Received {"id":58,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":7}}
+Node  received READ for key 0
+[2026-02-25T16:58:24.298641Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":7,"type":"read_ok","value":0}}
+[2026-02-25T16:58:24.301882Z INFO  maelstrom::runtime] Received {"id":60,"src":"c9","dest":"n0","body":{"key":0,"value":2,"type":"write","msg_id":9}}
+Node  received WRITE: 0=2
+[2026-02-25T16:58:24.302049Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":9,"type":"write_ok"}}
+[2026-02-25T16:58:24.308494Z INFO  maelstrom::runtime] Received {"id":62,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":8}}
+Node  received READ for key 0
+[2026-02-25T16:58:24.308673Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":8,"type":"read_ok","value":0}}
+[2026-02-25T16:58:24.326106Z INFO  maelstrom::runtime] Received {"id":68,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":3,"type":"cas","msg_id":10}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:24.326316Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":10,"type":"cas_ok"}}
+[2026-02-25T16:58:24.349870Z INFO  maelstrom::runtime] Received {"id":74,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":9}}
+Node  received READ for key 0
+[2026-02-25T16:58:24.350048Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":9,"type":"read_ok","value":0}}
+[2026-02-25T16:58:24.358008Z INFO  maelstrom::runtime] Received {"id":76,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":10}}
+Node  received READ for key 0
+[2026-02-25T16:58:24.358189Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":10,"type":"read_ok","value":0}}
+[2026-02-25T16:58:24.379372Z INFO  maelstrom::runtime] Received {"id":78,"src":"c9","dest":"n0","body":{"key":0,"from":0,"to":1,"type":"cas","msg_id":11}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:24.379590Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":11,"type":"cas_ok"}}
+[2026-02-25T16:58:24.392753Z INFO  maelstrom::runtime] Received {"id":80,"src":"c9","dest":"n0","body":{"key":0,"value":4,"type":"write","msg_id":12}}
+Node  received WRITE: 0=4
+[2026-02-25T16:58:24.393675Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":12,"type":"write_ok"}}
+[2026-02-25T16:58:24.407017Z INFO  maelstrom::runtime] Received {"id":86,"src":"c9","dest":"n0","body":{"key":0,"from":4,"to":2,"type":"cas","msg_id":13}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:24.407354Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":13,"type":"cas_ok"}}
+[2026-02-25T16:58:24.436046Z INFO  maelstrom::runtime] Received {"id":94,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":11}}
+Node  received READ for key 0
+[2026-02-25T16:58:24.436271Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":11,"type":"read_ok","value":0}}
+[2026-02-25T16:58:24.443160Z INFO  maelstrom::runtime] Received {"id":96,"src":"c9","dest":"n0","body":{"key":0,"value":1,"type":"write","msg_id":14}}
+Node  received WRITE: 0=1
+[2026-02-25T16:58:24.443470Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":14,"type":"write_ok"}}
+[2026-02-25T16:58:24.461391Z INFO  maelstrom::runtime] Received {"id":100,"src":"c9","dest":"n0","body":{"key":0,"value":0,"type":"write","msg_id":15}}
+Node  received WRITE: 0=0
+[2026-02-25T16:58:24.461845Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":15,"type":"write_ok"}}
+[2026-02-25T16:58:24.486827Z INFO  maelstrom::runtime] Received {"id":104,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":1,"type":"cas","msg_id":16}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:24.487565Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":16,"type":"cas_ok"}}
+[2026-02-25T16:58:24.493631Z INFO  maelstrom::runtime] Received {"id":106,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":12}}
+Node  received READ for key 0
+[2026-02-25T16:58:24.494060Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":12,"type":"read_ok","value":0}}
+[2026-02-25T16:58:24.505481Z INFO  maelstrom::runtime] Received {"id":108,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":13}}
+Node  received READ for key 0
+[2026-02-25T16:58:24.506044Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":13,"type":"read_ok","value":0}}
+[2026-02-25T16:58:24.535335Z INFO  maelstrom::runtime] Received {"id":114,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":14}}
+Node  received READ for key 0
+[2026-02-25T16:58:24.535720Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":14,"type":"read_ok","value":0}}
+[2026-02-25T16:58:24.551088Z INFO  maelstrom::runtime] Received {"id":116,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":15}}
+Node  received READ for key 0
+[2026-02-25T16:58:24.551358Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":15,"type":"read_ok","value":0}}
+[2026-02-25T16:58:24.598881Z INFO  maelstrom::runtime] Received {"id":122,"src":"c9","dest":"n0","body":{"key":0,"from":3,"to":4,"type":"cas","msg_id":17}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:24.599330Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":17,"type":"cas_ok"}}
+[2026-02-25T16:58:24.615880Z INFO  maelstrom::runtime] Received {"id":130,"src":"c9","dest":"n0","body":{"key":0,"from":1,"to":2,"type":"cas","msg_id":18}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:24.616204Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":18,"type":"cas_ok"}}
+[2026-02-25T16:58:24.622395Z INFO  maelstrom::runtime] Received {"id":132,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":1,"type":"cas","msg_id":19}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:24.623169Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":19,"type":"cas_ok"}}
+[2026-02-25T16:58:24.642892Z INFO  maelstrom::runtime] Received {"id":134,"src":"c9","dest":"n0","body":{"key":0,"value":3,"type":"write","msg_id":20}}
+Node  received WRITE: 0=3
+[2026-02-25T16:58:24.643237Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":20,"type":"write_ok"}}
+[2026-02-25T16:58:24.656830Z INFO  maelstrom::runtime] Received {"id":138,"src":"c9","dest":"n0","body":{"key":0,"from":0,"to":3,"type":"cas","msg_id":21}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:24.657171Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":21,"type":"cas_ok"}}
+[2026-02-25T16:58:24.672372Z INFO  maelstrom::runtime] Received {"id":142,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":16}}
+Node  received READ for key 0
+[2026-02-25T16:58:24.672639Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":16,"type":"read_ok","value":0}}
+[2026-02-25T16:58:24.682950Z INFO  maelstrom::runtime] Received {"id":144,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":17}}
+Node  received READ for key 0
+[2026-02-25T16:58:24.683262Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":17,"type":"read_ok","value":0}}
+[2026-02-25T16:58:24.697742Z INFO  maelstrom::runtime] Received {"id":146,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":18}}
+Node  received READ for key 0
+[2026-02-25T16:58:24.698016Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":18,"type":"read_ok","value":0}}
+[2026-02-25T16:58:24.711629Z INFO  maelstrom::runtime] Received {"id":150,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":1,"type":"cas","msg_id":22}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:24.712535Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":22,"type":"cas_ok"}}
+[2026-02-25T16:58:24.722799Z INFO  maelstrom::runtime] Received {"id":152,"src":"c9","dest":"n0","body":{"key":0,"value":0,"type":"write","msg_id":23}}
+Node  received WRITE: 0=0
+[2026-02-25T16:58:24.723078Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":23,"type":"write_ok"}}
+[2026-02-25T16:58:24.777075Z INFO  maelstrom::runtime] Received {"id":158,"src":"c9","dest":"n0","body":{"key":0,"value":2,"type":"write","msg_id":24}}
+Node  received WRITE: 0=2
+[2026-02-25T16:58:24.777390Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":24,"type":"write_ok"}}
+[2026-02-25T16:58:24.794796Z INFO  maelstrom::runtime] Received {"id":160,"src":"c9","dest":"n0","body":{"key":0,"from":1,"to":4,"type":"cas","msg_id":25}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:24.795291Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":25,"type":"cas_ok"}}
+[2026-02-25T16:58:24.826117Z INFO  maelstrom::runtime] Received {"id":164,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":19}}
+Node  received READ for key 0
+[2026-02-25T16:58:24.830415Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":19,"type":"read_ok","value":0}}
+[2026-02-25T16:58:24.842917Z INFO  maelstrom::runtime] Received {"id":168,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":3,"type":"cas","msg_id":26}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:24.843633Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":26,"type":"cas_ok"}}
+[2026-02-25T16:58:24.864411Z INFO  maelstrom::runtime] Received {"id":170,"src":"c9","dest":"n0","body":{"key":0,"from":1,"to":3,"type":"cas","msg_id":27}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:24.864711Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":27,"type":"cas_ok"}}
+[2026-02-25T16:58:24.884628Z INFO  maelstrom::runtime] Received {"id":172,"src":"c9","dest":"n0","body":{"key":0,"from":3,"to":2,"type":"cas","msg_id":28}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:24.885075Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":28,"type":"cas_ok"}}
+[2026-02-25T16:58:24.904785Z INFO  maelstrom::runtime] Received {"id":175,"src":"c9","dest":"n0","body":{"key":0,"value":3,"type":"write","msg_id":29}}
+Node  received WRITE: 0=3
+[2026-02-25T16:58:24.908815Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":29,"type":"write_ok"}}
+[2026-02-25T16:58:24.922361Z INFO  maelstrom::runtime] Received {"id":178,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":20}}
+Node  received READ for key 0
+[2026-02-25T16:58:24.922850Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":20,"type":"read_ok","value":0}}
+[2026-02-25T16:58:24.929663Z INFO  maelstrom::runtime] Received {"id":180,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":21}}
+Node  received READ for key 0
+[2026-02-25T16:58:24.929977Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":21,"type":"read_ok","value":0}}
+[2026-02-25T16:58:24.961246Z INFO  maelstrom::runtime] Received {"id":186,"src":"c9","dest":"n0","body":{"key":0,"from":1,"to":3,"type":"cas","msg_id":30}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:24.961671Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":30,"type":"cas_ok"}}
+[2026-02-25T16:58:24.966222Z INFO  maelstrom::runtime] Received {"id":188,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":22}}
+Node  received READ for key 0
+[2026-02-25T16:58:24.966467Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":22,"type":"read_ok","value":0}}
+[2026-02-25T16:58:24.980213Z INFO  maelstrom::runtime] Received {"id":190,"src":"c9","dest":"n0","body":{"key":0,"from":1,"to":3,"type":"cas","msg_id":31}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:24.980494Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":31,"type":"cas_ok"}}
+[2026-02-25T16:58:25.025166Z INFO  maelstrom::runtime] Received {"id":196,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":23}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.029001Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":23,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.057292Z INFO  maelstrom::runtime] Received {"id":202,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":24}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.057686Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":24,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.068668Z INFO  maelstrom::runtime] Received {"id":204,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":25}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.068913Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":25,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.084593Z INFO  maelstrom::runtime] Received {"id":206,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":26}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.084744Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":26,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.122032Z INFO  maelstrom::runtime] Received {"id":212,"src":"c9","dest":"n0","body":{"key":0,"value":1,"type":"write","msg_id":32}}
+Node  received WRITE: 0=1
+[2026-02-25T16:58:25.122234Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":32,"type":"write_ok"}}
+[2026-02-25T16:58:25.123976Z INFO  maelstrom::runtime] Received {"id":214,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":27}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.124673Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":27,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.133480Z INFO  maelstrom::runtime] Received {"id":220,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":28}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.133967Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":28,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.146716Z INFO  maelstrom::runtime] Received {"id":222,"src":"c9","dest":"n0","body":{"key":0,"from":1,"to":2,"type":"cas","msg_id":33}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:25.146896Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":33,"type":"cas_ok"}}
+[2026-02-25T16:58:25.158171Z INFO  maelstrom::runtime] Received {"id":224,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":2,"type":"cas","msg_id":34}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:25.158316Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":34,"type":"cas_ok"}}
+[2026-02-25T16:58:25.188297Z INFO  maelstrom::runtime] Received {"id":228,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":4,"type":"cas","msg_id":35}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:25.188577Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":35,"type":"cas_ok"}}
+[2026-02-25T16:58:25.202961Z INFO  maelstrom::runtime] Received {"id":232,"src":"c9","dest":"n0","body":{"key":0,"value":2,"type":"write","msg_id":36}}
+Node  received WRITE: 0=2
+[2026-02-25T16:58:25.203431Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":36,"type":"write_ok"}}
+[2026-02-25T16:58:25.218966Z INFO  maelstrom::runtime] Received {"id":234,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":29}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.219639Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":29,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.230079Z INFO  maelstrom::runtime] Received {"id":236,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":30}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.230368Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":30,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.246038Z INFO  maelstrom::runtime] Received {"id":238,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":31}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.246340Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":31,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.257598Z INFO  maelstrom::runtime] Received {"id":240,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":32}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.257979Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":32,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.272580Z INFO  maelstrom::runtime] Received {"id":242,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":33}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.272966Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":33,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.322402Z INFO  maelstrom::runtime] Received {"id":248,"src":"c9","dest":"n0","body":{"key":0,"from":1,"to":0,"type":"cas","msg_id":37}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:25.323050Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":37,"type":"cas_ok"}}
+[2026-02-25T16:58:25.329183Z INFO  maelstrom::runtime] Received {"id":250,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":34}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.330422Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":34,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.347967Z INFO  maelstrom::runtime] Received {"id":252,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":35}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.348414Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":35,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.372221Z INFO  maelstrom::runtime] Received {"id":256,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":36}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.372543Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":36,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.387338Z INFO  maelstrom::runtime] Received {"id":258,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":37}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.387653Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":37,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.396399Z INFO  maelstrom::runtime] Received {"id":260,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":38}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.397177Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":38,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.430222Z INFO  maelstrom::runtime] Received {"id":266,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":2,"type":"cas","msg_id":38}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:25.430527Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":38,"type":"cas_ok"}}
+[2026-02-25T16:58:25.438197Z INFO  maelstrom::runtime] Received {"id":268,"src":"c9","dest":"n0","body":{"key":0,"from":0,"to":0,"type":"cas","msg_id":39}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:25.438527Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":39,"type":"cas_ok"}}
+[2026-02-25T16:58:25.445364Z INFO  maelstrom::runtime] Received {"id":270,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":39}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.446794Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":39,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.459811Z INFO  maelstrom::runtime] Received {"id":272,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":40}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.461254Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":40,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.479916Z INFO  maelstrom::runtime] Received {"id":276,"src":"c9","dest":"n0","body":{"key":0,"from":4,"to":1,"type":"cas","msg_id":40}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:25.480197Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":40,"type":"cas_ok"}}
+[2026-02-25T16:58:25.492232Z INFO  maelstrom::runtime] Received {"id":278,"src":"c9","dest":"n0","body":{"key":0,"value":4,"type":"write","msg_id":41}}
+Node  received WRITE: 0=4
+[2026-02-25T16:58:25.492502Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":41,"type":"write_ok"}}
+[2026-02-25T16:58:25.509393Z INFO  maelstrom::runtime] Received {"id":281,"src":"c9","dest":"n0","body":{"key":0,"from":4,"to":2,"type":"cas","msg_id":42}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:25.509728Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":42,"type":"cas_ok"}}
+[2026-02-25T16:58:25.529421Z INFO  maelstrom::runtime] Received {"id":284,"src":"c9","dest":"n0","body":{"key":0,"from":3,"to":1,"type":"cas","msg_id":43}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:25.529812Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":43,"type":"cas_ok"}}
+[2026-02-25T16:58:25.545335Z INFO  maelstrom::runtime] Received {"id":286,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":41}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.545797Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":41,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.557464Z INFO  maelstrom::runtime] Received {"id":288,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":42}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.557936Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":42,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.577271Z INFO  maelstrom::runtime] Received {"id":290,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":43}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.577605Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":43,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.593874Z INFO  maelstrom::runtime] Received {"id":292,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":44}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.594418Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":44,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.607288Z INFO  maelstrom::runtime] Received {"id":294,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":45}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.607658Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":45,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.625415Z INFO  maelstrom::runtime] Received {"id":296,"src":"c9","dest":"n0","body":{"key":0,"value":3,"type":"write","msg_id":44}}
+Node  received WRITE: 0=3
+[2026-02-25T16:58:25.626041Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":44,"type":"write_ok"}}
+[2026-02-25T16:58:25.664607Z INFO  maelstrom::runtime] Received {"id":304,"src":"c9","dest":"n0","body":{"key":0,"value":2,"type":"write","msg_id":45}}
+Node  received WRITE: 0=2
+[2026-02-25T16:58:25.664903Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":45,"type":"write_ok"}}
+[2026-02-25T16:58:25.719911Z INFO  maelstrom::runtime] Received {"id":312,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":46}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.720547Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":46,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.733763Z INFO  maelstrom::runtime] Received {"id":314,"src":"c9","dest":"n0","body":{"key":0,"from":3,"to":1,"type":"cas","msg_id":46}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:25.734395Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":46,"type":"cas_ok"}}
+[2026-02-25T16:58:25.748227Z INFO  maelstrom::runtime] Received {"id":318,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":4,"type":"cas","msg_id":47}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:25.748719Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":47,"type":"cas_ok"}}
+[2026-02-25T16:58:25.766238Z INFO  maelstrom::runtime] Received {"id":320,"src":"c9","dest":"n0","body":{"key":0,"from":4,"to":3,"type":"cas","msg_id":48}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:25.766555Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":48,"type":"cas_ok"}}
+[2026-02-25T16:58:25.777685Z INFO  maelstrom::runtime] Received {"id":322,"src":"c9","dest":"n0","body":{"key":0,"from":1,"to":0,"type":"cas","msg_id":49}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:25.778018Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":49,"type":"cas_ok"}}
+[2026-02-25T16:58:25.792276Z INFO  maelstrom::runtime] Received {"id":324,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":47}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.792596Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":47,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.809939Z INFO  maelstrom::runtime] Received {"id":326,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":48}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.810308Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":48,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.817534Z INFO  maelstrom::runtime] Received {"id":330,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":49}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.817812Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":49,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.835729Z INFO  maelstrom::runtime] Received {"id":332,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":50}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.836093Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":50,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.861511Z INFO  maelstrom::runtime] Received {"id":336,"src":"c9","dest":"n0","body":{"key":0,"from":1,"to":3,"type":"cas","msg_id":50}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:25.861980Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":50,"type":"cas_ok"}}
+[2026-02-25T16:58:25.890146Z INFO  maelstrom::runtime] Received {"id":340,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":51}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.890513Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":51,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.905275Z INFO  maelstrom::runtime] Received {"id":342,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":52}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.905858Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":52,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.921265Z INFO  maelstrom::runtime] Received {"id":344,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":53}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.921783Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":53,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.942043Z INFO  maelstrom::runtime] Received {"id":346,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":54}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.942632Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":54,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.961478Z INFO  maelstrom::runtime] Received {"id":348,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":55}}
+Node  received READ for key 0
+[2026-02-25T16:58:25.961723Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":55,"type":"read_ok","value":0}}
+[2026-02-25T16:58:25.970372Z INFO  maelstrom::runtime] Received {"id":350,"src":"c9","dest":"n0","body":{"key":0,"value":0,"type":"write","msg_id":51}}
+Node  received WRITE: 0=0
+[2026-02-25T16:58:25.970751Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":51,"type":"write_ok"}}
+[2026-02-25T16:58:26.025657Z INFO  maelstrom::runtime] Received {"id":358,"src":"c9","dest":"n0","body":{"key":0,"from":4,"to":2,"type":"cas","msg_id":52}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:26.026240Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":52,"type":"cas_ok"}}
+[2026-02-25T16:58:26.077640Z INFO  maelstrom::runtime] Received {"id":364,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":56}}
+Node  received READ for key 0
+[2026-02-25T16:58:26.077890Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":56,"type":"read_ok","value":0}}
+[2026-02-25T16:58:26.083954Z INFO  maelstrom::runtime] Received {"id":366,"src":"c9","dest":"n0","body":{"key":0,"value":3,"type":"write","msg_id":53}}
+Node  received WRITE: 0=3
+[2026-02-25T16:58:26.084359Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":53,"type":"write_ok"}}
+[2026-02-25T16:58:26.088861Z INFO  maelstrom::runtime] Received {"id":368,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":57}}
+Node  received READ for key 0
+[2026-02-25T16:58:26.089125Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":57,"type":"read_ok","value":0}}
+[2026-02-25T16:58:26.141113Z INFO  maelstrom::runtime] Received {"id":376,"src":"c9","dest":"n0","body":{"key":0,"from":0,"to":3,"type":"cas","msg_id":54}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:26.141432Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":54,"type":"cas_ok"}}
+[2026-02-25T16:58:26.174748Z INFO  maelstrom::runtime] Received {"id":380,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":58}}
+Node  received READ for key 0
+[2026-02-25T16:58:26.175065Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":58,"type":"read_ok","value":0}}
+[2026-02-25T16:58:26.184334Z INFO  maelstrom::runtime] Received {"id":382,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":59}}
+Node  received READ for key 0
+[2026-02-25T16:58:26.184635Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":59,"type":"read_ok","value":0}}
+[2026-02-25T16:58:26.188121Z INFO  maelstrom::runtime] Received {"id":384,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":60}}
+Node  received READ for key 0
+[2026-02-25T16:58:26.188339Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":60,"type":"read_ok","value":0}}
+[2026-02-25T16:58:26.213076Z INFO  maelstrom::runtime] Received {"id":386,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":0,"type":"cas","msg_id":55}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:26.213473Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":55,"type":"cas_ok"}}
+[2026-02-25T16:58:26.232836Z INFO  maelstrom::runtime] Received {"id":388,"src":"c9","dest":"n0","body":{"key":0,"value":1,"type":"write","msg_id":56}}
+Node  received WRITE: 0=1
+[2026-02-25T16:58:26.233467Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":56,"type":"write_ok"}}
+[2026-02-25T16:58:26.248428Z INFO  maelstrom::runtime] Received {"id":392,"src":"c9","dest":"n0","body":{"key":0,"value":3,"type":"write","msg_id":57}}
+Node  received WRITE: 0=3
+[2026-02-25T16:58:26.249275Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":57,"type":"write_ok"}}
+[2026-02-25T16:58:26.258540Z INFO  maelstrom::runtime] Received {"id":394,"src":"c9","dest":"n0","body":{"key":0,"value":4,"type":"write","msg_id":58}}
+Node  received WRITE: 0=4
+[2026-02-25T16:58:26.258827Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":58,"type":"write_ok"}}
+[2026-02-25T16:58:26.268502Z INFO  maelstrom::runtime] Received {"id":396,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":61}}
+Node  received READ for key 0
+[2026-02-25T16:58:26.268910Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":61,"type":"read_ok","value":0}}
+[2026-02-25T16:58:26.292431Z INFO  maelstrom::runtime] Received {"id":400,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":62}}
+Node  received READ for key 0
+[2026-02-25T16:58:26.292723Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":62,"type":"read_ok","value":0}}
+[2026-02-25T16:58:26.309127Z INFO  maelstrom::runtime] Received {"id":402,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":63}}
+Node  received READ for key 0
+[2026-02-25T16:58:26.309538Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":63,"type":"read_ok","value":0}}
+[2026-02-25T16:58:26.318225Z INFO  maelstrom::runtime] Received {"id":404,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":64}}
+Node  received READ for key 0
+[2026-02-25T16:58:26.318625Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":64,"type":"read_ok","value":0}}
+[2026-02-25T16:58:26.328672Z INFO  maelstrom::runtime] Received {"id":407,"src":"c9","dest":"n0","body":{"key":0,"from":4,"to":4,"type":"cas","msg_id":59}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:26.328946Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":59,"type":"cas_ok"}}
+[2026-02-25T16:58:26.339500Z INFO  maelstrom::runtime] Received {"id":410,"src":"c9","dest":"n0","body":{"key":0,"from":0,"to":3,"type":"cas","msg_id":60}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:26.339767Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":60,"type":"cas_ok"}}
+[2026-02-25T16:58:26.345871Z INFO  maelstrom::runtime] Received {"id":412,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":65}}
+Node  received READ for key 0
+[2026-02-25T16:58:26.346126Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":65,"type":"read_ok","value":0}}
+[2026-02-25T16:58:26.373669Z INFO  maelstrom::runtime] Received {"id":420,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":66}}
+Node  received READ for key 0
+[2026-02-25T16:58:26.374054Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":66,"type":"read_ok","value":0}}
+[2026-02-25T16:58:26.374488Z INFO  maelstrom::runtime] Received {"id":421,"src":"c9","dest":"n0","body":{"key":0,"from":0,"to":1,"type":"cas","msg_id":61}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:26.374774Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":61,"type":"cas_ok"}}
+[2026-02-25T16:58:26.388728Z INFO  maelstrom::runtime] Received {"id":424,"src":"c9","dest":"n0","body":{"key":0,"value":4,"type":"write","msg_id":62}}
+Node  received WRITE: 0=4
+[2026-02-25T16:58:26.389304Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":62,"type":"write_ok"}}
+[2026-02-25T16:58:26.408775Z INFO  maelstrom::runtime] Received {"id":426,"src":"c9","dest":"n0","body":{"key":0,"from":3,"to":3,"type":"cas","msg_id":63}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:26.409081Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":63,"type":"cas_ok"}}
+[2026-02-25T16:58:26.437052Z INFO  maelstrom::runtime] Received {"id":430,"src":"c9","dest":"n0","body":{"key":0,"value":4,"type":"write","msg_id":64}}
+Node  received WRITE: 0=4
+[2026-02-25T16:58:26.437359Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":64,"type":"write_ok"}}
+[2026-02-25T16:58:26.457099Z INFO  maelstrom::runtime] Received {"id":434,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":67}}
+Node  received READ for key 0
+[2026-02-25T16:58:26.457308Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":67,"type":"read_ok","value":0}}
+[2026-02-25T16:58:26.474845Z INFO  maelstrom::runtime] Received {"id":436,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":68}}
+Node  received READ for key 0
+[2026-02-25T16:58:26.475262Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":68,"type":"read_ok","value":0}}
+[2026-02-25T16:58:26.484885Z INFO  maelstrom::runtime] Received {"id":438,"src":"c9","dest":"n0","body":{"key":0,"from":3,"to":1,"type":"cas","msg_id":65}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:26.485168Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":65,"type":"cas_ok"}}
+[2026-02-25T16:58:26.503348Z INFO  maelstrom::runtime] Received {"id":440,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":69}}
+Node  received READ for key 0
+[2026-02-25T16:58:26.503663Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":69,"type":"read_ok","value":0}}
+[2026-02-25T16:58:26.524732Z INFO  maelstrom::runtime] Received {"id":442,"src":"c9","dest":"n0","body":{"key":0,"from":3,"to":4,"type":"cas","msg_id":66}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:26.525142Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":66,"type":"cas_ok"}}
+[2026-02-25T16:58:26.561818Z INFO  maelstrom::runtime] Received {"id":448,"src":"c9","dest":"n0","body":{"key":0,"value":2,"type":"write","msg_id":67}}
+Node  received WRITE: 0=2
+[2026-02-25T16:58:26.562046Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":67,"type":"write_ok"}}
+[2026-02-25T16:58:26.572048Z INFO  maelstrom::runtime] Received {"id":450,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":70}}
+Node  received READ for key 0
+[2026-02-25T16:58:26.572314Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":70,"type":"read_ok","value":0}}
+[2026-02-25T16:58:26.588991Z INFO  maelstrom::runtime] Received {"id":454,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":71}}
+Node  received READ for key 0
+[2026-02-25T16:58:26.589301Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":71,"type":"read_ok","value":0}}
+[2026-02-25T16:58:26.606629Z INFO  maelstrom::runtime] Received {"id":456,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":72}}
+Node  received READ for key 0
+[2026-02-25T16:58:26.607093Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":72,"type":"read_ok","value":0}}
+[2026-02-25T16:58:26.623685Z INFO  maelstrom::runtime] Received {"id":458,"src":"c9","dest":"n0","body":{"key":0,"from":0,"to":1,"type":"cas","msg_id":68}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:26.624014Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":68,"type":"cas_ok"}}
+[2026-02-25T16:58:26.644067Z INFO  maelstrom::runtime] Received {"id":460,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":4,"type":"cas","msg_id":69}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:26.644304Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":69,"type":"cas_ok"}}
+[2026-02-25T16:58:26.683072Z INFO  maelstrom::runtime] Received {"id":464,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":0,"type":"cas","msg_id":70}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:26.683301Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":70,"type":"cas_ok"}}
+[2026-02-25T16:58:26.700754Z INFO  maelstrom::runtime] Received {"id":466,"src":"c9","dest":"n0","body":{"key":0,"from":0,"to":0,"type":"cas","msg_id":71}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:26.700947Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":71,"type":"cas_ok"}}
+[2026-02-25T16:58:26.736777Z INFO  maelstrom::runtime] Received {"id":472,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":73}}
+Node  received READ for key 0
+[2026-02-25T16:58:26.737001Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":73,"type":"read_ok","value":0}}
+[2026-02-25T16:58:26.757770Z INFO  maelstrom::runtime] Received {"id":476,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":74}}
+Node  received READ for key 0
+[2026-02-25T16:58:26.758052Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":74,"type":"read_ok","value":0}}
+[2026-02-25T16:58:26.790727Z INFO  maelstrom::runtime] Received {"id":482,"src":"c9","dest":"n0","body":{"key":0,"from":3,"to":4,"type":"cas","msg_id":72}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:26.791058Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":72,"type":"cas_ok"}}
+[2026-02-25T16:58:26.805005Z INFO  maelstrom::runtime] Received {"id":484,"src":"c9","dest":"n0","body":{"key":0,"from":4,"to":1,"type":"cas","msg_id":73}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:26.806058Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":73,"type":"cas_ok"}}
+[2026-02-25T16:58:26.806773Z INFO  maelstrom::runtime] Received {"id":485,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":75}}
+Node  received READ for key 0
+[2026-02-25T16:58:26.807085Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":75,"type":"read_ok","value":0}}
+[2026-02-25T16:58:26.821394Z INFO  maelstrom::runtime] Received {"id":488,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":76}}
+Node  received READ for key 0
+[2026-02-25T16:58:26.822642Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":76,"type":"read_ok","value":0}}
+[2026-02-25T16:58:26.837726Z INFO  maelstrom::runtime] Received {"id":492,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":77}}
+Node  received READ for key 0
+[2026-02-25T16:58:26.838483Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":77,"type":"read_ok","value":0}}
+[2026-02-25T16:58:26.852495Z INFO  maelstrom::runtime] Received {"id":494,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":78}}
+Node  received READ for key 0
+[2026-02-25T16:58:26.852833Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":78,"type":"read_ok","value":0}}
+[2026-02-25T16:58:26.864174Z INFO  maelstrom::runtime] Received {"id":496,"src":"c9","dest":"n0","body":{"key":0,"from":3,"to":1,"type":"cas","msg_id":74}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:26.864797Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":74,"type":"cas_ok"}}
+[2026-02-25T16:58:26.900624Z INFO  maelstrom::runtime] Received {"id":502,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":3,"type":"cas","msg_id":75}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:26.901998Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":75,"type":"cas_ok"}}
+[2026-02-25T16:58:26.929088Z INFO  maelstrom::runtime] Received {"id":506,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":79}}
+Node  received READ for key 0
+[2026-02-25T16:58:26.929607Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":79,"type":"read_ok","value":0}}
+[2026-02-25T16:58:26.961297Z INFO  maelstrom::runtime] Received {"id":510,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":80}}
+Node  received READ for key 0
+[2026-02-25T16:58:26.961663Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":80,"type":"read_ok","value":0}}
+[2026-02-25T16:58:26.971212Z INFO  maelstrom::runtime] Received {"id":512,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":81}}
+Node  received READ for key 0
+[2026-02-25T16:58:26.971650Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":81,"type":"read_ok","value":0}}
+[2026-02-25T16:58:26.995263Z INFO  maelstrom::runtime] Received {"id":518,"src":"c9","dest":"n0","body":{"key":0,"from":4,"to":0,"type":"cas","msg_id":76}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:26.995520Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":76,"type":"cas_ok"}}
+[2026-02-25T16:58:27.008888Z INFO  maelstrom::runtime] Received {"id":520,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":3,"type":"cas","msg_id":77}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:27.009515Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":77,"type":"cas_ok"}}
+[2026-02-25T16:58:27.018050Z INFO  maelstrom::runtime] Received {"id":522,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":82}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.018418Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":82,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.044230Z INFO  maelstrom::runtime] Received {"id":528,"src":"c9","dest":"n0","body":{"key":0,"value":3,"type":"write","msg_id":78}}
+Node  received WRITE: 0=3
+[2026-02-25T16:58:27.044722Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":78,"type":"write_ok"}}
+[2026-02-25T16:58:27.058273Z INFO  maelstrom::runtime] Received {"id":532,"src":"c9","dest":"n0","body":{"key":0,"from":3,"to":1,"type":"cas","msg_id":79}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:27.058691Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":79,"type":"cas_ok"}}
+[2026-02-25T16:58:27.069419Z INFO  maelstrom::runtime] Received {"id":534,"src":"c9","dest":"n0","body":{"key":0,"from":3,"to":2,"type":"cas","msg_id":80}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:27.069954Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":80,"type":"cas_ok"}}
+[2026-02-25T16:58:27.077784Z INFO  maelstrom::runtime] Received {"id":536,"src":"c9","dest":"n0","body":{"key":0,"value":2,"type":"write","msg_id":81}}
+Node  received WRITE: 0=2
+[2026-02-25T16:58:27.079736Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":81,"type":"write_ok"}}
+[2026-02-25T16:58:27.082991Z INFO  maelstrom::runtime] Received {"id":538,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":83}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.083579Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":83,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.091822Z INFO  maelstrom::runtime] Received {"id":542,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":84}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.092899Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":84,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.107617Z INFO  maelstrom::runtime] Received {"id":544,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":85}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.107899Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":85,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.116730Z INFO  maelstrom::runtime] Received {"id":546,"src":"c9","dest":"n0","body":{"key":0,"value":3,"type":"write","msg_id":82}}
+Node  received WRITE: 0=3
+[2026-02-25T16:58:27.116954Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":82,"type":"write_ok"}}
+[2026-02-25T16:58:27.140134Z INFO  maelstrom::runtime] Received {"id":548,"src":"c9","dest":"n0","body":{"key":0,"value":0,"type":"write","msg_id":83}}
+Node  received WRITE: 0=0
+[2026-02-25T16:58:27.140400Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":83,"type":"write_ok"}}
+[2026-02-25T16:58:27.145789Z INFO  maelstrom::runtime] Received {"id":552,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":0,"type":"cas","msg_id":84}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:27.146095Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":84,"type":"cas_ok"}}
+[2026-02-25T16:58:27.160526Z INFO  maelstrom::runtime] Received {"id":554,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":3,"type":"cas","msg_id":85}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:27.160800Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":85,"type":"cas_ok"}}
+[2026-02-25T16:58:27.183499Z INFO  maelstrom::runtime] Received {"id":556,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":86}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.184043Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":86,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.198501Z INFO  maelstrom::runtime] Received {"id":558,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":87}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.199062Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":87,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.213699Z INFO  maelstrom::runtime] Received {"id":560,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":88}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.214026Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":88,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.219920Z INFO  maelstrom::runtime] Received {"id":562,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":89}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.220814Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":89,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.242302Z INFO  maelstrom::runtime] Received {"id":564,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":90}}
+[2026-02-25T16:58:27.242430Z INFO  maelstrom::runtime] Received {"id":565,"src":"c9","dest":"n0","body":{"key":0,"from":4,"to":4,"type":"cas","msg_id":86}}
+Node  received READ for key 0
+Node  received CAS (not implemented)
+[2026-02-25T16:58:27.242727Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":90,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.243078Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":86,"type":"cas_ok"}}
+[2026-02-25T16:58:27.261123Z INFO  maelstrom::runtime] Received {"id":568,"src":"c9","dest":"n0","body":{"key":0,"value":3,"type":"write","msg_id":87}}
+Node  received WRITE: 0=3
+[2026-02-25T16:58:27.261471Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":87,"type":"write_ok"}}
+[2026-02-25T16:58:27.288009Z INFO  maelstrom::runtime] Received {"id":574,"src":"c9","dest":"n0","body":{"key":0,"from":1,"to":1,"type":"cas","msg_id":88}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:27.288405Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":88,"type":"cas_ok"}}
+[2026-02-25T16:58:27.305866Z INFO  maelstrom::runtime] Received {"id":578,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":91}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.306208Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":91,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.328290Z INFO  maelstrom::runtime] Received {"id":582,"src":"c9","dest":"n0","body":{"key":0,"value":4,"type":"write","msg_id":89}}
+Node  received WRITE: 0=4
+[2026-02-25T16:58:27.330500Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":89,"type":"write_ok"}}
+[2026-02-25T16:58:27.336301Z INFO  maelstrom::runtime] Received {"id":584,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":2,"type":"cas","msg_id":90}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:27.336733Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":90,"type":"cas_ok"}}
+[2026-02-25T16:58:27.349099Z INFO  maelstrom::runtime] Received {"id":586,"src":"c9","dest":"n0","body":{"key":0,"from":4,"to":3,"type":"cas","msg_id":91}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:27.349500Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":91,"type":"cas_ok"}}
+[2026-02-25T16:58:27.355574Z INFO  maelstrom::runtime] Received {"id":589,"src":"c9","dest":"n0","body":{"key":0,"value":3,"type":"write","msg_id":92}}
+Node  received WRITE: 0=3
+[2026-02-25T16:58:27.356146Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":92,"type":"write_ok"}}
+[2026-02-25T16:58:27.358584Z INFO  maelstrom::runtime] Received {"id":592,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":92}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.358848Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":92,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.369811Z INFO  maelstrom::runtime] Received {"id":594,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":93}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.370123Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":93,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.378606Z INFO  maelstrom::runtime] Received {"id":597,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":94}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.378902Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":94,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.411857Z INFO  maelstrom::runtime] Received {"id":609,"src":"c9","dest":"n0","body":{"key":0,"from":1,"to":4,"type":"cas","msg_id":93}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:27.412284Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":93,"type":"cas_ok"}}
+[2026-02-25T16:58:27.422848Z INFO  maelstrom::runtime] Received {"id":612,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":95}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.423095Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":95,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.440505Z INFO  maelstrom::runtime] Received {"id":615,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":96}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.442126Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":96,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.445243Z INFO  maelstrom::runtime] Received {"id":618,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":97}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.446524Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":97,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.462609Z INFO  maelstrom::runtime] Received {"id":620,"src":"c9","dest":"n0","body":{"key":0,"from":3,"to":4,"type":"cas","msg_id":94}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:27.462862Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":94,"type":"cas_ok"}}
+[2026-02-25T16:58:27.474649Z INFO  maelstrom::runtime] Received {"id":622,"src":"c9","dest":"n0","body":{"key":0,"from":0,"to":0,"type":"cas","msg_id":95}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:27.475243Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":95,"type":"cas_ok"}}
+[2026-02-25T16:58:27.503302Z INFO  maelstrom::runtime] Received {"id":626,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":3,"type":"cas","msg_id":96}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:27.503774Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":96,"type":"cas_ok"}}
+[2026-02-25T16:58:27.515184Z INFO  maelstrom::runtime] Received {"id":628,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":98}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.515788Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":98,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.566284Z INFO  maelstrom::runtime] Received {"id":636,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":0,"type":"cas","msg_id":97}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:27.566661Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":97,"type":"cas_ok"}}
+[2026-02-25T16:58:27.576787Z INFO  maelstrom::runtime] Received {"id":638,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":99}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.577051Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":99,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.595057Z INFO  maelstrom::runtime] Received {"id":642,"src":"c9","dest":"n0","body":{"key":0,"value":1,"type":"write","msg_id":98}}
+Node  received WRITE: 0=1
+[2026-02-25T16:58:27.595638Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":98,"type":"write_ok"}}
+[2026-02-25T16:58:27.603415Z INFO  maelstrom::runtime] Received {"id":646,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":100}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.603966Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":100,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.635174Z INFO  maelstrom::runtime] Received {"id":652,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":101}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.635732Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":101,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.640791Z INFO  maelstrom::runtime] Received {"id":654,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":1,"type":"cas","msg_id":99}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:27.641196Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":99,"type":"cas_ok"}}
+[2026-02-25T16:58:27.647549Z INFO  maelstrom::runtime] Received {"id":656,"src":"c9","dest":"n0","body":{"key":0,"value":3,"type":"write","msg_id":100}}
+Node  received WRITE: 0=3
+[2026-02-25T16:58:27.648011Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":100,"type":"write_ok"}}
+[2026-02-25T16:58:27.661955Z INFO  maelstrom::runtime] Received {"id":660,"src":"c9","dest":"n0","body":{"key":0,"value":0,"type":"write","msg_id":101}}
+Node  received WRITE: 0=0
+[2026-02-25T16:58:27.662327Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":101,"type":"write_ok"}}
+[2026-02-25T16:58:27.681351Z INFO  maelstrom::runtime] Received {"id":662,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":1,"type":"cas","msg_id":102}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:27.681932Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":102,"type":"cas_ok"}}
+[2026-02-25T16:58:27.690945Z INFO  maelstrom::runtime] Received {"id":664,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":102}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.691320Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":102,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.724500Z INFO  maelstrom::runtime] Received {"id":672,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":103}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.724919Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":103,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.733383Z INFO  maelstrom::runtime] Received {"id":674,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":104}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.733930Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":104,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.765383Z INFO  maelstrom::runtime] Received {"id":680,"src":"c9","dest":"n0","body":{"key":0,"from":0,"to":1,"type":"cas","msg_id":103}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:27.765696Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":103,"type":"cas_ok"}}
+[2026-02-25T16:58:27.772454Z INFO  maelstrom::runtime] Received {"id":682,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":105}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.772762Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":105,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.803637Z INFO  maelstrom::runtime] Received {"id":688,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":106}}
+[2026-02-25T16:58:27.804011Z INFO  maelstrom::runtime] Received {"id":689,"src":"c9","dest":"n0","body":{"key":0,"value":1,"type":"write","msg_id":104}}
+Node  received READ for key 0
+Node  received WRITE: 0=1
+[2026-02-25T16:58:27.804389Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":106,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.805541Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":104,"type":"write_ok"}}
+[2026-02-25T16:58:27.819946Z INFO  maelstrom::runtime] Received {"id":694,"src":"c9","dest":"n0","body":{"key":0,"from":1,"to":0,"type":"cas","msg_id":105}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:27.820189Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":105,"type":"cas_ok"}}
+[2026-02-25T16:58:27.833964Z INFO  maelstrom::runtime] Received {"id":696,"src":"c9","dest":"n0","body":{"key":0,"value":4,"type":"write","msg_id":106}}
+Node  received WRITE: 0=4
+[2026-02-25T16:58:27.834115Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":106,"type":"write_ok"}}
+[2026-02-25T16:58:27.853947Z INFO  maelstrom::runtime] Received {"id":700,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":1,"type":"cas","msg_id":107}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:27.854158Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":107,"type":"cas_ok"}}
+[2026-02-25T16:58:27.882307Z INFO  maelstrom::runtime] Received {"id":706,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":107}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.882506Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":107,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.900176Z INFO  maelstrom::runtime] Received {"id":710,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":108}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.900711Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":108,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.920435Z INFO  maelstrom::runtime] Received {"id":714,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":4,"type":"cas","msg_id":108}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:27.920737Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":108,"type":"cas_ok"}}
+[2026-02-25T16:58:27.941508Z INFO  maelstrom::runtime] Received {"id":716,"src":"c9","dest":"n0","body":{"key":0,"from":0,"to":3,"type":"cas","msg_id":109}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:27.942017Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":109,"type":"cas_ok"}}
+[2026-02-25T16:58:27.954668Z INFO  maelstrom::runtime] Received {"id":718,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":109}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.954834Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":109,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.966304Z INFO  maelstrom::runtime] Received {"id":724,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":110}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.966460Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":110,"type":"read_ok","value":0}}
+[2026-02-25T16:58:27.986676Z INFO  maelstrom::runtime] Received {"id":726,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":111}}
+Node  received READ for key 0
+[2026-02-25T16:58:27.987129Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":111,"type":"read_ok","value":0}}
+[2026-02-25T16:58:28.003888Z INFO  maelstrom::runtime] Received {"id":728,"src":"c9","dest":"n0","body":{"key":0,"from":0,"to":2,"type":"cas","msg_id":110}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:28.004269Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":110,"type":"cas_ok"}}
+[2026-02-25T16:58:28.057996Z INFO  maelstrom::runtime] Received {"id":734,"src":"c9","dest":"n0","body":{"key":0,"from":1,"to":1,"type":"cas","msg_id":111}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:28.058342Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":111,"type":"cas_ok"}}
+[2026-02-25T16:58:28.072149Z INFO  maelstrom::runtime] Received {"id":736,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":3,"type":"cas","msg_id":112}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:28.072489Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":112,"type":"cas_ok"}}
+[2026-02-25T16:58:28.110505Z INFO  maelstrom::runtime] Received {"id":740,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":112}}
+Node  received READ for key 0
+[2026-02-25T16:58:28.110851Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":112,"type":"read_ok","value":0}}
+[2026-02-25T16:58:28.139541Z INFO  maelstrom::runtime] Received {"id":744,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":113}}
+Node  received READ for key 0
+[2026-02-25T16:58:28.140729Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":113,"type":"read_ok","value":0}}
+[2026-02-25T16:58:28.151814Z INFO  maelstrom::runtime] Received {"id":748,"src":"c9","dest":"n0","body":{"key":0,"from":1,"to":4,"type":"cas","msg_id":113}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:28.152314Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":113,"type":"cas_ok"}}
+[2026-02-25T16:58:28.172989Z INFO  maelstrom::runtime] Received {"id":750,"src":"c9","dest":"n0","body":{"key":0,"value":2,"type":"write","msg_id":114}}
+Node  received WRITE: 0=2
+[2026-02-25T16:58:28.173355Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":114,"type":"write_ok"}}
+[2026-02-25T16:58:28.177922Z INFO  maelstrom::runtime] Received {"id":754,"src":"c9","dest":"n0","body":{"key":0,"from":4,"to":0,"type":"cas","msg_id":115}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:28.178357Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":115,"type":"cas_ok"}}
+[2026-02-25T16:58:28.197180Z INFO  maelstrom::runtime] Received {"id":756,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":114}}
+Node  received READ for key 0
+[2026-02-25T16:58:28.197475Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":114,"type":"read_ok","value":0}}
+[2026-02-25T16:58:28.202377Z INFO  maelstrom::runtime] Received {"id":758,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":115}}
+Node  received READ for key 0
+[2026-02-25T16:58:28.202706Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":115,"type":"read_ok","value":0}}
+[2026-02-25T16:58:28.218422Z INFO  maelstrom::runtime] Received {"id":762,"src":"c9","dest":"n0","body":{"key":0,"value":1,"type":"write","msg_id":116}}
+Node  received WRITE: 0=1
+[2026-02-25T16:58:28.219051Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":116,"type":"write_ok"}}
+[2026-02-25T16:58:28.228756Z INFO  maelstrom::runtime] Received {"id":764,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":116}}
+Node  received READ for key 0
+[2026-02-25T16:58:28.229623Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":116,"type":"read_ok","value":0}}
+[2026-02-25T16:58:28.256592Z INFO  maelstrom::runtime] Received {"id":768,"src":"c9","dest":"n0","body":{"key":0,"value":2,"type":"write","msg_id":117}}
+Node  received WRITE: 0=2
+[2026-02-25T16:58:28.257013Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":117,"type":"write_ok"}}
+[2026-02-25T16:58:28.270843Z INFO  maelstrom::runtime] Received {"id":772,"src":"c9","dest":"n0","body":{"key":0,"from":1,"to":4,"type":"cas","msg_id":118}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:28.271123Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":118,"type":"cas_ok"}}
+[2026-02-25T16:58:28.287415Z INFO  maelstrom::runtime] Received {"id":774,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":117}}
+Node  received READ for key 0
+[2026-02-25T16:58:28.287739Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":117,"type":"read_ok","value":0}}
+[2026-02-25T16:58:28.335425Z INFO  maelstrom::runtime] Received {"id":780,"src":"c9","dest":"n0","body":{"key":0,"from":4,"to":3,"type":"cas","msg_id":119}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:28.335866Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":119,"type":"cas_ok"}}
+[2026-02-25T16:58:28.350126Z INFO  maelstrom::runtime] Received {"id":782,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":118}}
+Node  received READ for key 0
+[2026-02-25T16:58:28.350391Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":118,"type":"read_ok","value":0}}
+[2026-02-25T16:58:28.351834Z INFO  maelstrom::runtime] Received {"id":784,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":2,"type":"cas","msg_id":120}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:28.352018Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":120,"type":"cas_ok"}}
+[2026-02-25T16:58:28.384694Z INFO  maelstrom::runtime] Received {"id":790,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":119}}
+Node  received READ for key 0
+[2026-02-25T16:58:28.385021Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":119,"type":"read_ok","value":0}}
+[2026-02-25T16:58:28.403519Z INFO  maelstrom::runtime] Received {"id":796,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":120}}
+Node  received READ for key 0
+[2026-02-25T16:58:28.403839Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":120,"type":"read_ok","value":0}}
+[2026-02-25T16:58:28.421233Z INFO  maelstrom::runtime] Received {"id":798,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":121}}
+Node  received READ for key 0
+[2026-02-25T16:58:28.422623Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":121,"type":"read_ok","value":0}}
+[2026-02-25T16:58:28.426373Z INFO  maelstrom::runtime] Received {"id":800,"src":"c9","dest":"n0","body":{"key":0,"value":1,"type":"write","msg_id":121}}
+Node  received WRITE: 0=1
+[2026-02-25T16:58:28.426829Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":121,"type":"write_ok"}}
+[2026-02-25T16:58:28.438776Z INFO  maelstrom::runtime] Received {"id":802,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":4,"type":"cas","msg_id":122}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:28.439094Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":122,"type":"cas_ok"}}
+[2026-02-25T16:58:28.448091Z INFO  maelstrom::runtime] Received {"id":804,"src":"c9","dest":"n0","body":{"key":0,"from":3,"to":0,"type":"cas","msg_id":123}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:28.448411Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":123,"type":"cas_ok"}}
+[2026-02-25T16:58:28.479065Z INFO  maelstrom::runtime] Received {"id":808,"src":"c9","dest":"n0","body":{"key":0,"value":3,"type":"write","msg_id":124}}
+Node  received WRITE: 0=3
+[2026-02-25T16:58:28.479788Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":124,"type":"write_ok"}}
+[2026-02-25T16:58:28.484789Z INFO  maelstrom::runtime] Received {"id":810,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":122}}
+Node  received READ for key 0
+[2026-02-25T16:58:28.485322Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":122,"type":"read_ok","value":0}}
+[2026-02-25T16:58:28.506975Z INFO  maelstrom::runtime] Received {"id":814,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":123}}
+Node  received READ for key 0
+[2026-02-25T16:58:28.507395Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":123,"type":"read_ok","value":0}}
+[2026-02-25T16:58:28.519666Z INFO  maelstrom::runtime] Received {"id":816,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":124}}
+Node  received READ for key 0
+[2026-02-25T16:58:28.520104Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":124,"type":"read_ok","value":0}}
+[2026-02-25T16:58:28.549648Z INFO  maelstrom::runtime] Received {"id":822,"src":"c9","dest":"n0","body":{"key":0,"value":4,"type":"write","msg_id":125}}
+Node  received WRITE: 0=4
+[2026-02-25T16:58:28.549983Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":125,"type":"write_ok"}}
+[2026-02-25T16:58:28.564937Z INFO  maelstrom::runtime] Received {"id":824,"src":"c9","dest":"n0","body":{"key":0,"from":4,"to":0,"type":"cas","msg_id":126}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:28.565283Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":126,"type":"cas_ok"}}
+[2026-02-25T16:58:28.581879Z INFO  maelstrom::runtime] Received {"id":826,"src":"c9","dest":"n0","body":{"key":0,"from":4,"to":1,"type":"cas","msg_id":127}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:28.582174Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":127,"type":"cas_ok"}}
+[2026-02-25T16:58:28.586573Z INFO  maelstrom::runtime] Received {"id":828,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":125}}
+Node  received READ for key 0
+[2026-02-25T16:58:28.586882Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":125,"type":"read_ok","value":0}}
+[2026-02-25T16:58:28.609401Z INFO  maelstrom::runtime] Received {"id":832,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":126}}
+Node  received READ for key 0
+[2026-02-25T16:58:28.609873Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":126,"type":"read_ok","value":0}}
+[2026-02-25T16:58:28.617940Z INFO  maelstrom::runtime] Received {"id":834,"src":"c9","dest":"n0","body":{"key":0,"from":1,"to":0,"type":"cas","msg_id":128}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:28.618321Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":128,"type":"cas_ok"}}
+[2026-02-25T16:58:28.626889Z INFO  maelstrom::runtime] Received {"id":836,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":127}}
+Node  received READ for key 0
+[2026-02-25T16:58:28.627210Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":127,"type":"read_ok","value":0}}
+[2026-02-25T16:58:28.671931Z INFO  maelstrom::runtime] Received {"id":844,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":128}}
+Node  received READ for key 0
+[2026-02-25T16:58:28.672354Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":128,"type":"read_ok","value":0}}
+[2026-02-25T16:58:28.715102Z INFO  maelstrom::runtime] Received {"id":852,"src":"c9","dest":"n0","body":{"key":0,"value":4,"type":"write","msg_id":129}}
+Node  received WRITE: 0=4
+[2026-02-25T16:58:28.715354Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":129,"type":"write_ok"}}
+[2026-02-25T16:58:28.722279Z INFO  maelstrom::runtime] Received {"id":854,"src":"c9","dest":"n0","body":{"key":0,"from":3,"to":0,"type":"cas","msg_id":130}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:28.722835Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":130,"type":"cas_ok"}}
+[2026-02-25T16:58:28.747721Z INFO  maelstrom::runtime] Received {"id":862,"src":"c9","dest":"n0","body":{"key":0,"from":0,"to":2,"type":"cas","msg_id":131}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:28.748134Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":131,"type":"cas_ok"}}
+[2026-02-25T16:58:28.749268Z INFO  maelstrom::runtime] Received {"id":863,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":129}}
+Node  received READ for key 0
+[2026-02-25T16:58:28.749545Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":129,"type":"read_ok","value":0}}
+[2026-02-25T16:58:28.778939Z INFO  maelstrom::runtime] Received {"id":870,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":130}}
+Node  received READ for key 0
+[2026-02-25T16:58:28.779902Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":130,"type":"read_ok","value":0}}
+[2026-02-25T16:58:28.800500Z INFO  maelstrom::runtime] Received {"id":872,"src":"c9","dest":"n0","body":{"key":0,"value":0,"type":"write","msg_id":132}}
+Node  received WRITE: 0=0
+[2026-02-25T16:58:28.800844Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":132,"type":"write_ok"}}
+[2026-02-25T16:58:28.819474Z INFO  maelstrom::runtime] Received {"id":874,"src":"c9","dest":"n0","body":{"key":0,"from":0,"to":2,"type":"cas","msg_id":133}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:28.819844Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":133,"type":"cas_ok"}}
+[2026-02-25T16:58:28.827772Z INFO  maelstrom::runtime] Received {"id":876,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":3,"type":"cas","msg_id":134}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:28.828648Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":134,"type":"cas_ok"}}
+[2026-02-25T16:58:28.846356Z INFO  maelstrom::runtime] Received {"id":879,"src":"c9","dest":"n0","body":{"key":0,"from":4,"to":0,"type":"cas","msg_id":135}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:28.848004Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":135,"type":"cas_ok"}}
+[2026-02-25T16:58:28.888998Z INFO  maelstrom::runtime] Received {"id":886,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":131}}
+Node  received READ for key 0
+[2026-02-25T16:58:28.889382Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":131,"type":"read_ok","value":0}}
+[2026-02-25T16:58:28.889891Z INFO  maelstrom::runtime] Received {"id":887,"src":"c9","dest":"n0","body":{"key":0,"from":0,"to":1,"type":"cas","msg_id":136}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:28.890212Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":136,"type":"cas_ok"}}
+[2026-02-25T16:58:28.906867Z INFO  maelstrom::runtime] Received {"id":890,"src":"c9","dest":"n0","body":{"key":0,"from":2,"to":3,"type":"cas","msg_id":137}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:28.907264Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":137,"type":"cas_ok"}}
+[2026-02-25T16:58:28.922175Z INFO  maelstrom::runtime] Received {"id":892,"src":"c9","dest":"n0","body":{"key":0,"from":3,"to":3,"type":"cas","msg_id":138}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:28.922587Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":138,"type":"cas_ok"}}
+[2026-02-25T16:58:28.947479Z INFO  maelstrom::runtime] Received {"id":898,"src":"c9","dest":"n0","body":{"key":0,"value":1,"type":"write","msg_id":139}}
+Node  received WRITE: 0=1
+[2026-02-25T16:58:28.947915Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":139,"type":"write_ok"}}
+[2026-02-25T16:58:28.968045Z INFO  maelstrom::runtime] Received {"id":900,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":132}}
+Node  received READ for key 0
+[2026-02-25T16:58:28.968721Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":132,"type":"read_ok","value":0}}
+[2026-02-25T16:58:28.975399Z INFO  maelstrom::runtime] Received {"id":902,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":133}}
+Node  received READ for key 0
+[2026-02-25T16:58:28.975719Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":133,"type":"read_ok","value":0}}
+[2026-02-25T16:58:28.987678Z INFO  maelstrom::runtime] Received {"id":906,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":134}}
+Node  received READ for key 0
+[2026-02-25T16:58:28.987965Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":134,"type":"read_ok","value":0}}
+[2026-02-25T16:58:29.003088Z INFO  maelstrom::runtime] Received {"id":908,"src":"c8","dest":"n0","body":{"key":0,"type":"read","msg_id":135}}
+Node  received READ for key 0
+[2026-02-25T16:58:29.003973Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c8","body":{"in_reply_to":135,"type":"read_ok","value":0}}
+[2026-02-25T16:58:29.005347Z INFO  maelstrom::runtime] Received {"id":909,"src":"c9","dest":"n0","body":{"key":0,"from":0,"to":0,"type":"cas","msg_id":140}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:29.005821Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":140,"type":"cas_ok"}}
+[2026-02-25T16:58:29.023188Z INFO  maelstrom::runtime] Received {"id":916,"src":"c9","dest":"n0","body":{"key":0,"from":3,"to":0,"type":"cas","msg_id":141}}
+Node  received CAS (not implemented)
+[2026-02-25T16:58:29.024792Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c9","body":{"in_reply_to":141,"type":"cas_ok"}}

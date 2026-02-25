@@ -1,24 +1,75 @@
-use shim::Shim;
-use configs::ShimConfig;
-use core::panic;
-use env_logger;
-// use std::{thread, time::Duration};
-mod configs;
-mod shim;
-mod network;
+use async_trait::async_trait;
+use maelstrom::protocol::Message;
+use maelstrom::{done, Node, Result, Runtime};
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use std::sync::Arc;
+use tokio::sync::Mutex;
 
-#[tokio::main]
-pub async fn main(){
-    env_logger::init();
-    println!("Hello from shim");
-    let shim_config = match ShimConfig::new() {
-        Ok(parsed_config) => parsed_config,
-        Err(e) => panic!("{e}"),
-    };
-    // let t = true;
-    // while t{
-    //     Duration::from_secs(2);
-    // }
-    let mut shim = Shim::new(shim_config).await;
-    shim.run().await;
+pub(crate) fn main() -> Result<()> {
+    Runtime::init(try_main())
+}
+
+async fn try_main() -> Result<()> {
+    let runtime = Runtime::new();
+    let handler = Arc::new(create_handler(runtime.clone()));
+    runtime.with_handler(handler).run().await
+}
+
+#[derive(Clone)]
+struct Handler {
+    node_id: String,
+    #[allow(dead_code)]
+    peers: Vec<String>,
+    kv_store: Arc<Mutex<HashMap<u64, i64>>>,
+}
+
+#[async_trait]
+impl Node for Handler {
+    async fn process(&self, runtime: Runtime, req: Message) -> Result<()> {
+        let msg: Result<Request> = req.body.as_obj();
+        match msg {
+            Ok(Request::Read { key }) => {
+                eprintln!("Node {} received READ for key {}", self.node_id, key);
+                runtime.reply(req, Request::ReadOk { value: 0 }).await
+            }
+            Ok(Request::Write { key, value }) => {
+                eprintln!("Node {} received WRITE: {}={}", self.node_id, key, value);
+                runtime.reply(req, Request::WriteOk {}).await
+            }
+            Ok(Request::Cas { .. }) => {
+                eprintln!("Node {} received CAS (not implemented)", self.node_id);
+                runtime.reply(req, Request::CasOk {}).await
+            }
+            _ => done(runtime, req),
+        }
+    }
+}
+
+fn create_handler(runtime: Runtime) -> Handler {
+    Handler {
+        node_id: runtime.node_id().to_string(),
+        // If node_ids() isn't working, initialize as empty 
+        // and populate it during the first message process
+        peers: Vec::new(), 
+        kv_store: Arc::new(Mutex::new(HashMap::new())),
+    }
+}
+
+
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "snake_case", tag = "type")]
+enum Request {
+    Read { key: u64 },
+    ReadOk { value: i64 },
+    Write { key: u64, value: i64 },
+    WriteOk {},
+    Cas { 
+        key: u64, 
+        from: i64, 
+        to: i64, 
+        #[serde(default, rename = "create_if_not_exists")]
+        put: bool 
+    },
+    CasOk {},
 }
