@@ -2,10 +2,12 @@ use async_trait::async_trait;
 use maelstrom::protocol::Message;
 use maelstrom::{done, Node, Result, Runtime};
 use serde::{Deserialize, Serialize};
+use std::sync::Mutex;
 
-#[derive(Clone)]
+#[derive(Debug)]
 pub struct Handler {
     pub node_id: String,
+    pub node_ids: Mutex<Vec<String>>, 
 }
 
 #[async_trait]
@@ -43,13 +45,14 @@ impl Node for Handler {
 pub fn create_handler(runtime: &Runtime) -> Handler {
     Handler {
         node_id: runtime.node_id().to_string(),
+        node_ids: Mutex::new(Vec::new()), 
     }
 }
 
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "snake_case", tag = "type")]
 pub enum Request {
-    Init { node_id: String, node_ids: Vec<String> },
+    Init { node_id: String, node_ids: Mutex<Vec<String>> },
     InitOk {},
     Read { key: u64 },
     ReadOk { value: i64 },
