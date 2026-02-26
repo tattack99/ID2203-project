@@ -1,97 +1,66 @@
-use crate::{
-    configs::ShimConfig,
-    //data_collection::ClientData,
-    network::Network,
-};
+use async_trait::async_trait;
+use maelstrom::protocol::Message;
+use maelstrom::{done, Node, Result, Runtime};
+use serde::{Deserialize, Serialize};
 
-use omnipaxos_kv::common::{kv::*, messages::*};
-use tokio::time::{interval, Duration};
-use log::debug;
-
-const NETWORK_BATCH_SIZE: usize = 100;
-
-pub struct Shim {
-    id: ClientId,
-    network: Network,
-    //client_data: ClientData,
-    config: ShimConfig,
-    active_server: NodeId,
-    final_request_count: Option<usize>,
-    next_request_id: usize,
+#[derive(Clone)]
+pub struct Handler {
+    pub node_id: String,
 }
 
-impl Shim {
-    pub async fn new(config: ShimConfig) -> Self {
-        let network = Network::new(
-            vec![(config.server_id, config.server_address.clone())],
-            NETWORK_BATCH_SIZE,
-        )
-        .await;
-        Shim {
-            id: config.server_id,
-            network,
-            //client_data: ClientData::new(),
-            active_server: config.server_id,
-            config,
-            final_request_count: None,
-            next_request_id: 0,
-        }
-    }
-
-    pub async fn run(&mut self) {
-        println!("Running shim {}...", self.id);
-
-        // 1. Setup Request Timing (e.g., one request every 500ms)
-        let mut request_interval = interval(Duration::from_millis(500));
-        
-        // 2. Define the limit
-        let max_requests = 20; 
-
-        loop {
-            // Check for completion at the start of every iteration
-            if self.next_request_id >= max_requests {
-                println!("Reached max requests ({}), exiting loop.", max_requests);
-                break;
-            }
-
-            tokio::select! {
-                biased;
-
-                // Branch 1: Handle server responses
-                Some(msg) = self.network.server_messages.recv() => {
-                    self.handle_server_message(msg);
-                }
-
-                // Branch 2: Send new requests
-                _ = request_interval.tick() => {
-                    let is_write = self.next_request_id % 2 == 0;
-                    self.send_request(is_write).await;
-                }
-            }
-        }
-    }
-
-    fn handle_server_message(&mut self, msg: ServerMessage) {
-        debug!("Recieved {msg:?}");
+#[async_trait]
+impl Node for Handler {
+    async fn process(&self, runtime: Runtime, req: Message) -> Result<()> {
+        let msg: Result<Request> = req.body.as_obj();
         match msg {
-            ServerMessage::StartSignal(_) => (),
-            server_response => {
-                //let cmd_id = server_response.command_id();
-                //self.client_data.new_response(cmd_id);
+            Ok(Request::Init { .. }) => {
+                let all_nodes = runtime.nodes();
+                eprintln!(
+                    "Node {} initializing. Total nodes: {}. All nodes: {:?}",
+                    runtime.node_id(),
+                    all_nodes.len(),
+                    all_nodes
+                );
+                runtime.reply(req, Request::InitOk {}).await
             }
+            Ok(Request::Read { key }) => {
+                eprintln!("Node {} received READ for key {}", self.node_id, key);
+                runtime.reply(req, Request::ReadOk { value: 0 }).await
+            }
+            Ok(Request::Write { key, value }) => {
+                eprintln!("Node {} received WRITE: {}={}", self.node_id, key, value);
+                runtime.reply(req, Request::WriteOk {}).await
+            }
+            Ok(Request::Cas { .. }) => {
+                eprintln!("Node {} received CAS (not implemented)", self.node_id);
+                runtime.reply(req, Request::CasOk {}).await
+            }
+            _ => done(runtime, req),
         }
     }
+}
 
-    async fn send_request(&mut self, is_write: bool) {
-        let key = self.next_request_id.to_string();
-        let cmd = match is_write {
-            true => KVCommand::Put(key.clone(), key),
-            false => KVCommand::Get(key),
-        };
-        let request = ClientMessage::Append(self.next_request_id, cmd);
-        debug!("Sending {request:?}");
-        self.network.send(self.active_server, request).await;
-        self.next_request_id += 1;
+pub fn create_handler(runtime: &Runtime) -> Handler {
+    Handler {
+        node_id: runtime.node_id().to_string(),
     }
+}
 
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "snake_case", tag = "type")]
+pub enum Request {
+    Init { node_id: String, node_ids: Vec<String> },
+    InitOk {},
+    Read { key: u64 },
+    ReadOk { value: i64 },
+    Write { key: u64, value: i64 },
+    WriteOk {},
+    Cas { 
+        key: u64, 
+        from: i64, 
+        to: i64, 
+        #[serde(default, rename = "create_if_not_exists")]
+        put: bool 
+    },
+    CasOk {},
 }
