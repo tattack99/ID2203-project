@@ -36,7 +36,23 @@ impl Node for Handler {
                 eprintln!("Node {} received CAS (not implemented)", self.node_id);
                 runtime.reply(req, Request::CasOk {}).await
             }
-            _ => done(runtime, req),
+            _ => { 
+                // 1. Get the slice of all node IDs
+                let all_nodes = runtime.nodes(); 
+                
+                // 2. Get the length of the slice (this will be 5)
+                let node_count = all_nodes.len();
+                
+                // 3. Get this specific node's ID
+                let current_id = runtime.node_id();
+
+                eprintln!("Node {} initializing. Total nodes in cluster: {}. All nodes: {:?}", 
+                    current_id, 
+                    node_count, 
+                    all_nodes
+                );
+                done(runtime, req)
+            }
         }
     }
 }

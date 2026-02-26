@@ -1,0 +1,12 @@
+Node  initializing. Total nodes in cluster: 0. All nodes: []
+[2026-02-26T13:19:07.977253Z INFO  maelstrom::runtime] Received {"id":0,"src":"c0","dest":"n1","body":{"type":"init","node_id":"n1","node_ids":["n0","n1","n2","n3","n4"],"msg_id":1}}
+[2026-02-26T13:19:07.977618Z INFO  maelstrom::runtime] Sent {"src":"n1","dest":"c0","body":{"in_reply_to":1,"type":"init_ok"}}
+[2026-02-26T13:19:08.069820Z INFO  maelstrom::runtime] Received {"id":22,"src":"c14","dest":"n1","body":{"key":0,"value":0,"type":"write","msg_id":1}}
+Node  received WRITE: 0=0
+[2026-02-26T13:19:08.069902Z INFO  maelstrom::runtime] Sent {"src":"n1","dest":"c14","body":{"in_reply_to":1,"type":"write_ok"}}
+[2026-02-26T13:19:08.227335Z INFO  maelstrom::runtime] Received {"id":44,"src":"c14","dest":"n1","body":{"key":0,"from":3,"to":2,"type":"cas","msg_id":2}}
+Node  received CAS (not implemented)
+[2026-02-26T13:19:08.227653Z INFO  maelstrom::runtime] Sent {"src":"n1","dest":"c14","body":{"in_reply_to":2,"type":"cas_ok"}}
+[2026-02-26T13:19:08.354974Z INFO  maelstrom::runtime] Received {"id":66,"src":"c14","dest":"n1","body":{"key":0,"from":3,"to":3,"type":"cas","msg_id":3}}
+Node  received CAS (not implemented)
+[2026-02-26T13:19:08.355240Z INFO  maelstrom::runtime] Sent {"src":"n1","dest":"c14","body":{"in_reply_to":3,"type":"cas_ok"}}

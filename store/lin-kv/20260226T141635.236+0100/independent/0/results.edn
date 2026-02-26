@@ -1,0 +1,48 @@
+{:linearizable
+ {:valid? false,
+  :configs
+  ({:model {:value nil},
+    :last-op nil,
+    :pending
+    [{:process 0,
+      :type :invoke,
+      :f :read,
+      :value 0,
+      :index 0,
+      :time 13622955}
+     {:process 5,
+      :type :invoke,
+      :f :cas,
+      :value [4 1],
+      :index 1,
+      :time 24598544}]}),
+  :final-paths
+  ([{:op nil, :model {:value nil}}
+    {:op
+     {:process 5,
+      :type :ok,
+      :f :cas,
+      :value [4 1],
+      :index 2,
+      :time 31755891},
+     :model {:msg "can't CAS  from 4 to 1"}}]
+   [{:op nil, :model {:value nil}}
+    {:op
+     {:process 0,
+      :type :invoke,
+      :f :read,
+      :value 0,
+      :index 0,
+      :time 13622955},
+     :model {:msg "can't read 0 from register "}}]),
+  :previous-ok nil,
+  :last-op nil,
+  :op
+  {:process 5,
+   :type :ok,
+   :f :cas,
+   :value [4 1],
+   :index 2,
+   :time 31755891}},
+ :timeline {:valid? true},
+ :valid? false}

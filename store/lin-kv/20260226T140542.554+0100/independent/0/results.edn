@@ -1,0 +1,33 @@
+{:linearizable
+ {:valid? false,
+  :configs
+  ({:model {:value nil},
+    :last-op nil,
+    :pending
+    [{:process 1,
+      :type :invoke,
+      :f :cas,
+      :value [0 4],
+      :index 0,
+      :time 14177583}]}),
+  :final-paths
+  ([{:op nil, :model {:value nil}}
+    {:op
+     {:process 1,
+      :type :ok,
+      :f :cas,
+      :value [0 4],
+      :index 1,
+      :time 32184194},
+     :model {:msg "can't CAS  from 0 to 4"}}]),
+  :previous-ok nil,
+  :last-op nil,
+  :op
+  {:process 1,
+   :type :ok,
+   :f :cas,
+   :value [0 4],
+   :index 1,
+   :time 32184194}},
+ :timeline {:valid? true},
+ :valid? false}

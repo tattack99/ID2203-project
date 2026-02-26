@@ -1,0 +1,740 @@
+2026-02-26 14:18:36,395{GMT}	INFO	[jepsen test runner] jepsen.core: Test version cae4e7ea62e897578bc7cb05acf3c5d06f2c031e (plus uncommitted changes)
+2026-02-26 14:18:36,396{GMT}	INFO	[jepsen test runner] jepsen.core: Command line:
+lein run test -w lin-kv --bin target/release/shim --node-count 5 --concurrency 2n --time-limit 1 --rate 100 --log-stderr
+2026-02-26 14:18:36,435{GMT}	INFO	[jepsen test runner] jepsen.core: Running test:
+{:args []
+ :remote
+ #jepsen.control.retry.Remote{:remote #jepsen.control.scp.Remote{:cmd-remote #jepsen.control.sshj.SSHJRemote{:concurrency-limit 6,
+                                                                                                             :conn-spec nil,
+                                                                                                             :client nil,
+                                                                                                             :semaphore nil},
+                                                                 :conn-spec nil},
+                              :conn nil}
+ :log-net-send false
+ :node-count 5
+ :availability nil
+ :max-txn-length 4
+ :concurrency 10
+ :db
+ #object[maelstrom.db$db$reify__16612
+         "0x4ebf82d9"
+         "maelstrom.db$db$reify__16612@4ebf82d9"]
+ :max-writes-per-key 16
+ :leave-db-running? false
+ :name "lin-kv"
+ :logging-json? false
+ :start-time
+ #object[org.joda.time.DateTime "0x7d26b390" "2026-02-26T14:18:36.380+01:00"]
+ :nemesis-interval 10
+ :net
+ #object[maelstrom.net$jepsen_net$reify__15721
+         "0x6ff5eeed"
+         "maelstrom.net$jepsen_net$reify__15721@6ff5eeed"]
+ :client
+ #object[maelstrom.workload.lin_kv$client$reify__20973
+         "0x76b49d0"
+         "maelstrom.workload.lin_kv$client$reify__20973@76b49d0"]
+ :barrier
+ #object[java.util.concurrent.CyclicBarrier
+         "0x223c42b0"
+         "java.util.concurrent.CyclicBarrier@223c42b0"]
+ :log-stderr true
+ :pure-generators true
+ :ssh {:dummy? true}
+ :rate 100.0
+ :checker
+ #object[jepsen.checker$compose$reify__11089
+         "0x6acedf54"
+         "jepsen.checker$compose$reify__11089@6acedf54"]
+ :argv
+ ("test"
+  "-w"
+  "lin-kv"
+  "--bin"
+  "target/release/shim"
+  "--node-count"
+  "5"
+  "--concurrency"
+  "2n"
+  "--time-limit"
+  "1"
+  "--rate"
+  "100"
+  "--log-stderr")
+ :nemesis
+ (jepsen.nemesis.ReflCompose
+  {:fm {:start-partition 0,
+        :stop-partition 0,
+        :kill 1,
+        :start 1,
+        :pause 1,
+        :resume 1},
+   :nemeses [#unprintable "jepsen.nemesis.combined$partition_nemesis$reify__16905@2a0cc666"
+             #unprintable "jepsen.nemesis.combined$db_nemesis$reify__16886@77f43f3e"]})
+ :nodes ["n0" "n1" "n2" "n3" "n4"]
+ :test-count 1
+ :latency {:mean 0, :dist :constant}
+ :bin "target/release/shim"
+ :generator
+ #object[jepsen.util.Forgettable
+         "0x67a6f2c4"
+         (jepsen.generator.TimeLimit
+          {:limit 1000000000,
+           :cutoff nil,
+           :gen (jepsen.generator.Any
+                 {:gens [(jepsen.generator.OnThreads
+                          {:f #{:nemesis},
+                           :context-filter #object[jepsen.generator.context$make_thread_filter$lazy_filter__12077
+                                                   "0x36e23af"
+                                                   "jepsen.generator.context$make_thread_filter$lazy_filter__12077@36e23af"],
+                           :gen nil})
+                         (jepsen.generator.OnThreads
+                          {:f #jepsen.generator.context.AllBut{:element :nemesis},
+                           :context-filter #object[jepsen.generator.context$make_thread_filter$lazy_filter__12077
+                                                   "0x5e4a9c16"
+                                                   "jepsen.generator.context$make_thread_filter$lazy_filter__12077@5e4a9c16"],
+                           :gen (jepsen.generator.Stagger
+                                 {:dt 20000000,
+                                  :next-time nil,
+                                  :gen (jepsen.generator.OnThreads
+                                        {:f #jepsen.generator.context.AllBut{:element :nemesis},
+                                         :context-filter #object[jepsen.generator.context$make_thread_filter$lazy_filter__12077
+                                                                 "0x544ee437"
+                                                                 "jepsen.generator.context$make_thread_filter$lazy_filter__12077@544ee437"],
+                                         :gen (jepsen.independent.ConcurrentGenerator
+                                               {:n 10,
+                                                :fgen #object[jepsen.tests.linearizable_register$test$fn__17385
+                                                              "0xffd26d1"
+                                                              "jepsen.tests.linearizable_register$test$fn__17385@ffd26d1"],
+                                                :group->threads nil,
+                                                :thread->group nil,
+                                                :group->context-filter nil,
+                                                :keys (0 1 2 3 4 5 6 7 ...),
+                                                :gens nil})})})})]})})]
+ :log-net-recv false
+ :os
+ #object[maelstrom.net$jepsen_os$reify__15724
+         "0x775c865f"
+         "maelstrom.net$jepsen_os$reify__15724@775c865f"]
+ :time-limit 1
+ :workload :lin-kv
+ :consistency-models [:strict-serializable]
+ :topology :grid}
+
+2026-02-26 14:18:37,490{GMT}	INFO	[jepsen node n0] maelstrom.net: Starting Maelstrom network
+2026-02-26 14:18:37,491{GMT}	INFO	[jepsen test runner] jepsen.db: Tearing down DB
+2026-02-26 14:18:37,492{GMT}	INFO	[jepsen test runner] jepsen.db: Setting up DB
+2026-02-26 14:18:37,492{GMT}	INFO	[jepsen node n3] maelstrom.db: Setting up n3
+2026-02-26 14:18:37,492{GMT}	INFO	[jepsen node n1] maelstrom.db: Setting up n1
+2026-02-26 14:18:37,492{GMT}	INFO	[jepsen node n2] maelstrom.db: Setting up n2
+2026-02-26 14:18:37,492{GMT}	INFO	[jepsen node n4] maelstrom.db: Setting up n4
+2026-02-26 14:18:37,492{GMT}	INFO	[jepsen node n4] maelstrom.process: launching target/release/shim []
+2026-02-26 14:18:37,492{GMT}	INFO	[jepsen node n3] maelstrom.process: launching target/release/shim []
+2026-02-26 14:18:37,492{GMT}	INFO	[jepsen node n1] maelstrom.process: launching target/release/shim []
+2026-02-26 14:18:37,492{GMT}	INFO	[jepsen node n2] maelstrom.process: launching target/release/shim []
+2026-02-26 14:18:37,493{GMT}	INFO	[jepsen node n0] maelstrom.service: Starting services: (lin-kv lin-tso lww-kv seq-kv)
+2026-02-26 14:18:37,495{GMT}	INFO	[jepsen node n0] maelstrom.db: Setting up n0
+2026-02-26 14:18:37,496{GMT}	INFO	[jepsen node n0] maelstrom.process: launching target/release/shim []
+2026-02-26 14:18:37,497{GMT}	INFO	[n4 stderr] maelstrom.process: Node  initializing. Total nodes in cluster: 0. All nodes: []
+2026-02-26 14:18:37,497{GMT}	INFO	[n2 stderr] maelstrom.process: Node  initializing. Total nodes in cluster: 0. All nodes: []
+2026-02-26 14:18:37,497{GMT}	INFO	[n1 stderr] maelstrom.process: Node  initializing. Total nodes in cluster: 0. All nodes: []
+2026-02-26 14:18:37,497{GMT}	INFO	[n3 stderr] maelstrom.process: Node  initializing. Total nodes in cluster: 0. All nodes: []
+2026-02-26 14:18:37,499{GMT}	INFO	[n0 stderr] maelstrom.process: Node  initializing. Total nodes in cluster: 0. All nodes: []
+2026-02-26 14:18:37,507{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:37.507313Z INFO  maelstrom::runtime] Received {"id":3,"src":"c3","dest":"n1","body":{"type":"init","node_id":"n1","node_ids":["n0","n1","n2","n3","n4"],"msg_id":1}}
+2026-02-26 14:18:37,508{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:37.507855Z INFO  maelstrom::runtime] Sent {"src":"n1","dest":"c3","body":{"in_reply_to":1,"type":"init_ok"}}
+2026-02-26 14:18:37,507{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.507313Z INFO  maelstrom::runtime] Received {"id":4,"src":"c4","dest":"n0","body":{"type":"init","node_id":"n0","node_ids":["n0","n1","n2","n3","n4"],"msg_id":1}}
+2026-02-26 14:18:37,507{GMT}	INFO	[n4 stderr] maelstrom.process: [2026-02-26T13:18:37.507366Z INFO  maelstrom::runtime] Received {"id":2,"src":"c2","dest":"n4","body":{"type":"init","node_id":"n4","node_ids":["n0","n1","n2","n3","n4"],"msg_id":1}}
+2026-02-26 14:18:37,507{GMT}	INFO	[n3 stderr] maelstrom.process: [2026-02-26T13:18:37.507500Z INFO  maelstrom::runtime] Received {"id":1,"src":"c1","dest":"n3","body":{"type":"init","node_id":"n3","node_ids":["n0","n1","n2","n3","n4"],"msg_id":1}}
+2026-02-26 14:18:37,507{GMT}	INFO	[n2 stderr] maelstrom.process: [2026-02-26T13:18:37.507709Z INFO  maelstrom::runtime] Received {"id":0,"src":"c0","dest":"n2","body":{"type":"init","node_id":"n2","node_ids":["n0","n1","n2","n3","n4"],"msg_id":1}}
+2026-02-26 14:18:37,509{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.507744Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c4","body":{"in_reply_to":1,"type":"init_ok"}}
+2026-02-26 14:18:37,509{GMT}	INFO	[n2 stderr] maelstrom.process: [2026-02-26T13:18:37.508126Z INFO  maelstrom::runtime] Sent {"src":"n2","dest":"c0","body":{"in_reply_to":1,"type":"init_ok"}}
+2026-02-26 14:18:37,509{GMT}	INFO	[n4 stderr] maelstrom.process: [2026-02-26T13:18:37.507926Z INFO  maelstrom::runtime] Sent {"src":"n4","dest":"c2","body":{"in_reply_to":1,"type":"init_ok"}}
+2026-02-26 14:18:37,510{GMT}	INFO	[n3 stderr] maelstrom.process: [2026-02-26T13:18:37.510263Z INFO  maelstrom::runtime] Sent {"src":"n3","dest":"c1","body":{"in_reply_to":1,"type":"init_ok"}}
+2026-02-26 14:18:37,518{GMT}	INFO	[jepsen test runner] jepsen.core: Relative time begins now
+2026-02-26 14:18:37,537{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:invoke	:read	[0 nil]
+2026-02-26 14:18:37,538{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.538766Z INFO  maelstrom::runtime] Received {"id":10,"src":"c10","dest":"n0","body":{"key":0,"type":"read","msg_id":1}}
+2026-02-26 14:18:37,539{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:37,539{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.538887Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c10","body":{"in_reply_to":1,"type":"read_ok","value":0}}
+2026-02-26 14:18:37,539{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:ok	:read	[0 0]
+2026-02-26 14:18:37,548{GMT}	INFO	[jepsen worker 1] jepsen.util: 1	:invoke	:read	[0 nil]
+2026-02-26 14:18:37,549{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:37.549749Z INFO  maelstrom::runtime] Received {"id":12,"src":"c11","dest":"n1","body":{"key":0,"type":"read","msg_id":1}}
+2026-02-26 14:18:37,550{GMT}	INFO	[n1 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:37,550{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:37.549872Z INFO  maelstrom::runtime] Sent {"src":"n1","dest":"c11","body":{"in_reply_to":1,"type":"read_ok","value":0}}
+2026-02-26 14:18:37,550{GMT}	INFO	[jepsen worker 1] jepsen.util: 1	:ok	:read	[0 0]
+2026-02-26 14:18:37,562{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:invoke	:cas	[0 [0 0]]
+2026-02-26 14:18:37,564{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.564051Z INFO  maelstrom::runtime] Received {"id":14,"src":"c12","dest":"n0","body":{"key":0,"from":0,"to":0,"type":"cas","msg_id":1}}
+2026-02-26 14:18:37,564{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:37,564{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.564224Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c12","body":{"in_reply_to":1,"type":"cas_ok"}}
+2026-02-26 14:18:37,564{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:ok	:cas	[0 [0 0]]
+2026-02-26 14:18:37,579{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:invoke	:cas	[0 [2 2]]
+2026-02-26 14:18:37,580{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.580128Z INFO  maelstrom::runtime] Received {"id":16,"src":"c12","dest":"n0","body":{"key":0,"from":2,"to":2,"type":"cas","msg_id":2}}
+2026-02-26 14:18:37,580{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:37,580{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.580304Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c12","body":{"in_reply_to":2,"type":"cas_ok"}}
+2026-02-26 14:18:37,580{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:ok	:cas	[0 [2 2]]
+2026-02-26 14:18:37,595{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:invoke	:cas	[0 [4 1]]
+2026-02-26 14:18:37,596{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.596226Z INFO  maelstrom::runtime] Received {"id":18,"src":"c12","dest":"n0","body":{"key":0,"from":4,"to":1,"type":"cas","msg_id":3}}
+2026-02-26 14:18:37,596{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:37,596{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.596321Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c12","body":{"in_reply_to":3,"type":"cas_ok"}}
+2026-02-26 14:18:37,596{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:ok	:cas	[0 [4 1]]
+2026-02-26 14:18:37,597{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:invoke	:cas	[0 [4 2]]
+2026-02-26 14:18:37,597{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.597887Z INFO  maelstrom::runtime] Received {"id":20,"src":"c12","dest":"n0","body":{"key":0,"from":4,"to":2,"type":"cas","msg_id":4}}
+2026-02-26 14:18:37,598{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:37,598{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:ok	:cas	[0 [4 2]]
+2026-02-26 14:18:37,598{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.597993Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c12","body":{"in_reply_to":4,"type":"cas_ok"}}
+2026-02-26 14:18:37,605{GMT}	INFO	[jepsen worker 6] jepsen.util: 6	:invoke	:write	[0 1]
+2026-02-26 14:18:37,606{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:37.606096Z INFO  maelstrom::runtime] Received {"id":22,"src":"c13","dest":"n1","body":{"key":0,"value":1,"type":"write","msg_id":1}}
+2026-02-26 14:18:37,606{GMT}	INFO	[n1 stderr] maelstrom.process: Node  received WRITE: 0=1
+2026-02-26 14:18:37,606{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:37.606170Z INFO  maelstrom::runtime] Sent {"src":"n1","dest":"c13","body":{"in_reply_to":1,"type":"write_ok"}}
+2026-02-26 14:18:37,606{GMT}	INFO	[jepsen worker 6] jepsen.util: 6	:ok	:write	[0 1]
+2026-02-26 14:18:37,613{GMT}	INFO	[jepsen worker 7] jepsen.util: 7	:invoke	:cas	[0 [2 2]]
+2026-02-26 14:18:37,614{GMT}	INFO	[n2 stderr] maelstrom.process: [2026-02-26T13:18:37.614455Z INFO  maelstrom::runtime] Received {"id":24,"src":"c14","dest":"n2","body":{"key":0,"from":2,"to":2,"type":"cas","msg_id":1}}
+2026-02-26 14:18:37,614{GMT}	INFO	[n2 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:37,614{GMT}	INFO	[n2 stderr] maelstrom.process: [2026-02-26T13:18:37.614536Z INFO  maelstrom::runtime] Sent {"src":"n2","dest":"c14","body":{"in_reply_to":1,"type":"cas_ok"}}
+2026-02-26 14:18:37,615{GMT}	INFO	[jepsen worker 7] jepsen.util: 7	:ok	:cas	[0 [2 2]]
+2026-02-26 14:18:37,618{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:invoke	:read	[0 nil]
+2026-02-26 14:18:37,619{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.619090Z INFO  maelstrom::runtime] Received {"id":26,"src":"c10","dest":"n0","body":{"key":0,"type":"read","msg_id":2}}
+2026-02-26 14:18:37,619{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:37,619{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.619156Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c10","body":{"in_reply_to":2,"type":"read_ok","value":0}}
+2026-02-26 14:18:37,619{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:ok	:read	[0 0]
+2026-02-26 14:18:37,620{GMT}	INFO	[jepsen worker 9] jepsen.util: 9	:invoke	:cas	[0 [4 4]]
+2026-02-26 14:18:37,621{GMT}	INFO	[n4 stderr] maelstrom.process: [2026-02-26T13:18:37.621341Z INFO  maelstrom::runtime] Received {"id":28,"src":"c15","dest":"n4","body":{"key":0,"from":4,"to":4,"type":"cas","msg_id":1}}
+2026-02-26 14:18:37,621{GMT}	INFO	[n4 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:37,621{GMT}	INFO	[n4 stderr] maelstrom.process: [2026-02-26T13:18:37.621439Z INFO  maelstrom::runtime] Sent {"src":"n4","dest":"c15","body":{"in_reply_to":1,"type":"cas_ok"}}
+2026-02-26 14:18:37,621{GMT}	INFO	[jepsen worker 9] jepsen.util: 9	:ok	:cas	[0 [4 4]]
+2026-02-26 14:18:37,627{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:invoke	:read	[0 nil]
+2026-02-26 14:18:37,627{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.627540Z INFO  maelstrom::runtime] Received {"id":30,"src":"c10","dest":"n0","body":{"key":0,"type":"read","msg_id":3}}
+2026-02-26 14:18:37,627{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:37,627{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.627608Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c10","body":{"in_reply_to":3,"type":"read_ok","value":0}}
+2026-02-26 14:18:37,628{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:ok	:read	[0 0]
+2026-02-26 14:18:37,637{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:invoke	:read	[0 nil]
+2026-02-26 14:18:37,638{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.638331Z INFO  maelstrom::runtime] Received {"id":32,"src":"c10","dest":"n0","body":{"key":0,"type":"read","msg_id":4}}
+2026-02-26 14:18:37,638{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:37,638{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:ok	:read	[0 0]
+2026-02-26 14:18:37,638{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.638386Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c10","body":{"in_reply_to":4,"type":"read_ok","value":0}}
+2026-02-26 14:18:37,652{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:invoke	:write	[0 1]
+2026-02-26 14:18:37,654{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.654049Z INFO  maelstrom::runtime] Received {"id":34,"src":"c12","dest":"n0","body":{"key":0,"value":1,"type":"write","msg_id":5}}
+2026-02-26 14:18:37,655{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received WRITE: 0=1
+2026-02-26 14:18:37,656{GMT}	INFO	[jepsen worker 2] jepsen.util: 2	:invoke	:read	[0 nil]
+2026-02-26 14:18:37,656{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.654309Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c12","body":{"in_reply_to":5,"type":"write_ok"}}
+2026-02-26 14:18:37,656{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:ok	:write	[0 1]
+2026-02-26 14:18:37,657{GMT}	INFO	[jepsen worker 6] jepsen.util: 6	:invoke	:cas	[0 [0 0]]
+2026-02-26 14:18:37,659{GMT}	INFO	[n2 stderr] maelstrom.process: [2026-02-26T13:18:37.658909Z INFO  maelstrom::runtime] Received {"id":36,"src":"c16","dest":"n2","body":{"key":0,"type":"read","msg_id":1}}
+2026-02-26 14:18:37,659{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:37.659092Z INFO  maelstrom::runtime] Received {"id":37,"src":"c13","dest":"n1","body":{"key":0,"from":0,"to":0,"type":"cas","msg_id":2}}
+2026-02-26 14:18:37,660{GMT}	INFO	[n2 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:37,660{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:invoke	:cas	[0 [1 4]]
+2026-02-26 14:18:37,660{GMT}	INFO	[n1 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:37,660{GMT}	INFO	[n2 stderr] maelstrom.process: [2026-02-26T13:18:37.659096Z INFO  maelstrom::runtime] Sent {"src":"n2","dest":"c16","body":{"in_reply_to":1,"type":"read_ok","value":0}}
+2026-02-26 14:18:37,661{GMT}	INFO	[jepsen worker 2] jepsen.util: 2	:ok	:read	[0 0]
+2026-02-26 14:18:37,661{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:37.659365Z INFO  maelstrom::runtime] Sent {"src":"n1","dest":"c13","body":{"in_reply_to":2,"type":"cas_ok"}}
+2026-02-26 14:18:37,661{GMT}	INFO	[jepsen worker 6] jepsen.util: 6	:ok	:cas	[0 [0 0]]
+2026-02-26 14:18:37,662{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.661893Z INFO  maelstrom::runtime] Received {"id":40,"src":"c12","dest":"n0","body":{"key":0,"from":1,"to":4,"type":"cas","msg_id":6}}
+2026-02-26 14:18:37,662{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:37,663{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.662184Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c12","body":{"in_reply_to":6,"type":"cas_ok"}}
+2026-02-26 14:18:37,663{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:ok	:cas	[0 [1 4]]
+2026-02-26 14:18:37,680{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:invoke	:read	[0 nil]
+2026-02-26 14:18:37,682{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.681998Z INFO  maelstrom::runtime] Received {"id":42,"src":"c10","dest":"n0","body":{"key":0,"type":"read","msg_id":5}}
+2026-02-26 14:18:37,683{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:37,683{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:ok	:read	[0 0]
+2026-02-26 14:18:37,683{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.682305Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c10","body":{"in_reply_to":5,"type":"read_ok","value":0}}
+2026-02-26 14:18:37,684{GMT}	INFO	[jepsen worker 1] jepsen.util: 1	:invoke	:read	[0 nil]
+2026-02-26 14:18:37,686{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:37.686406Z INFO  maelstrom::runtime] Received {"id":44,"src":"c11","dest":"n1","body":{"key":0,"type":"read","msg_id":2}}
+2026-02-26 14:18:37,687{GMT}	INFO	[n1 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:37,688{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:37.686676Z INFO  maelstrom::runtime] Sent {"src":"n1","dest":"c11","body":{"in_reply_to":2,"type":"read_ok","value":0}}
+2026-02-26 14:18:37,688{GMT}	INFO	[jepsen worker 1] jepsen.util: 1	:ok	:read	[0 0]
+2026-02-26 14:18:37,696{GMT}	INFO	[jepsen worker 7] jepsen.util: 7	:invoke	:cas	[0 [4 1]]
+2026-02-26 14:18:37,698{GMT}	INFO	[n2 stderr] maelstrom.process: [2026-02-26T13:18:37.698197Z INFO  maelstrom::runtime] Received {"id":46,"src":"c14","dest":"n2","body":{"key":0,"from":4,"to":1,"type":"cas","msg_id":2}}
+2026-02-26 14:18:37,699{GMT}	INFO	[n2 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:37,700{GMT}	INFO	[jepsen worker 7] jepsen.util: 7	:ok	:cas	[0 [4 1]]
+2026-02-26 14:18:37,700{GMT}	INFO	[n2 stderr] maelstrom.process: [2026-02-26T13:18:37.698529Z INFO  maelstrom::runtime] Sent {"src":"n2","dest":"c14","body":{"in_reply_to":2,"type":"cas_ok"}}
+2026-02-26 14:18:37,716{GMT}	INFO	[jepsen worker 8] jepsen.util: 8	:invoke	:cas	[0 [3 3]]
+2026-02-26 14:18:37,719{GMT}	INFO	[n3 stderr] maelstrom.process: [2026-02-26T13:18:37.719444Z INFO  maelstrom::runtime] Received {"id":48,"src":"c17","dest":"n3","body":{"key":0,"from":3,"to":3,"type":"cas","msg_id":1}}
+2026-02-26 14:18:37,720{GMT}	INFO	[n3 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:37,721{GMT}	INFO	[n3 stderr] maelstrom.process: [2026-02-26T13:18:37.719721Z INFO  maelstrom::runtime] Sent {"src":"n3","dest":"c17","body":{"in_reply_to":1,"type":"cas_ok"}}
+2026-02-26 14:18:37,721{GMT}	INFO	[jepsen worker 8] jepsen.util: 8	:ok	:cas	[0 [3 3]]
+2026-02-26 14:18:37,737{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:invoke	:read	[0 nil]
+2026-02-26 14:18:37,739{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.738700Z INFO  maelstrom::runtime] Received {"id":50,"src":"c10","dest":"n0","body":{"key":0,"type":"read","msg_id":6}}
+2026-02-26 14:18:37,739{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:invoke	:write	[0 4]
+2026-02-26 14:18:37,739{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:37,740{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:ok	:read	[0 0]
+2026-02-26 14:18:37,740{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.738991Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c10","body":{"in_reply_to":6,"type":"read_ok","value":0}}
+2026-02-26 14:18:37,741{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.740758Z INFO  maelstrom::runtime] Received {"id":52,"src":"c12","dest":"n0","body":{"key":0,"value":4,"type":"write","msg_id":7}}
+2026-02-26 14:18:37,741{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received WRITE: 0=4
+2026-02-26 14:18:37,742{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.741058Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c12","body":{"in_reply_to":7,"type":"write_ok"}}
+2026-02-26 14:18:37,742{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:ok	:write	[0 4]
+2026-02-26 14:18:37,757{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:invoke	:read	[0 nil]
+2026-02-26 14:18:37,759{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.758647Z INFO  maelstrom::runtime] Received {"id":54,"src":"c10","dest":"n0","body":{"key":0,"type":"read","msg_id":7}}
+2026-02-26 14:18:37,759{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:37,760{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:ok	:read	[0 0]
+2026-02-26 14:18:37,760{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.758828Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c10","body":{"in_reply_to":7,"type":"read_ok","value":0}}
+2026-02-26 14:18:37,766{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:invoke	:cas	[0 [1 3]]
+2026-02-26 14:18:37,768{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.767757Z INFO  maelstrom::runtime] Received {"id":56,"src":"c12","dest":"n0","body":{"key":0,"from":1,"to":3,"type":"cas","msg_id":8}}
+2026-02-26 14:18:37,768{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:37,769{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.768062Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c12","body":{"in_reply_to":8,"type":"cas_ok"}}
+2026-02-26 14:18:37,769{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:ok	:cas	[0 [1 3]]
+2026-02-26 14:18:37,775{GMT}	INFO	[jepsen worker 2] jepsen.util: 2	:invoke	:read	[0 nil]
+2026-02-26 14:18:37,777{GMT}	INFO	[n2 stderr] maelstrom.process: [2026-02-26T13:18:37.776801Z INFO  maelstrom::runtime] Received {"id":58,"src":"c16","dest":"n2","body":{"key":0,"type":"read","msg_id":2}}
+2026-02-26 14:18:37,777{GMT}	INFO	[n2 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:37,778{GMT}	INFO	[n2 stderr] maelstrom.process: [2026-02-26T13:18:37.777067Z INFO  maelstrom::runtime] Sent {"src":"n2","dest":"c16","body":{"in_reply_to":2,"type":"read_ok","value":0}}
+2026-02-26 14:18:37,779{GMT}	INFO	[jepsen worker 2] jepsen.util: 2	:ok	:read	[0 0]
+2026-02-26 14:18:37,786{GMT}	INFO	[jepsen worker 3] jepsen.util: 3	:invoke	:read	[0 nil]
+2026-02-26 14:18:37,789{GMT}	INFO	[n3 stderr] maelstrom.process: [2026-02-26T13:18:37.789225Z INFO  maelstrom::runtime] Received {"id":60,"src":"c18","dest":"n3","body":{"key":0,"type":"read","msg_id":1}}
+2026-02-26 14:18:37,790{GMT}	INFO	[n3 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:37,790{GMT}	INFO	[n3 stderr] maelstrom.process: [2026-02-26T13:18:37.789526Z INFO  maelstrom::runtime] Sent {"src":"n3","dest":"c18","body":{"in_reply_to":1,"type":"read_ok","value":0}}
+2026-02-26 14:18:37,791{GMT}	INFO	[jepsen worker 3] jepsen.util: 3	:ok	:read	[0 0]
+2026-02-26 14:18:37,807{GMT}	INFO	[jepsen worker 4] jepsen.util: 4	:invoke	:read	[0 nil]
+2026-02-26 14:18:37,810{GMT}	INFO	[n4 stderr] maelstrom.process: [2026-02-26T13:18:37.809962Z INFO  maelstrom::runtime] Received {"id":62,"src":"c19","dest":"n4","body":{"key":0,"type":"read","msg_id":1}}
+2026-02-26 14:18:37,810{GMT}	INFO	[n4 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:37,811{GMT}	INFO	[n4 stderr] maelstrom.process: [2026-02-26T13:18:37.810163Z INFO  maelstrom::runtime] Sent {"src":"n4","dest":"c19","body":{"in_reply_to":1,"type":"read_ok","value":0}}
+2026-02-26 14:18:37,811{GMT}	INFO	[jepsen worker 4] jepsen.util: 4	:ok	:read	[0 0]
+2026-02-26 14:18:37,821{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:invoke	:cas	[0 [4 0]]
+2026-02-26 14:18:37,823{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.823411Z INFO  maelstrom::runtime] Received {"id":64,"src":"c12","dest":"n0","body":{"key":0,"from":4,"to":0,"type":"cas","msg_id":9}}
+2026-02-26 14:18:37,824{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:37,825{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:ok	:cas	[0 [4 0]]
+2026-02-26 14:18:37,825{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.823688Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c12","body":{"in_reply_to":9,"type":"cas_ok"}}
+2026-02-26 14:18:37,841{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:invoke	:read	[0 nil]
+2026-02-26 14:18:37,843{GMT}	INFO	[jepsen worker 7] jepsen.util: 7	:invoke	:cas	[0 [3 4]]
+2026-02-26 14:18:37,843{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.843077Z INFO  maelstrom::runtime] Received {"id":66,"src":"c10","dest":"n0","body":{"key":0,"type":"read","msg_id":8}}
+2026-02-26 14:18:37,843{GMT}	INFO	[jepsen worker 1] jepsen.util: 1	:invoke	:read	[0 nil]
+2026-02-26 14:18:37,843{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:37,844{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.843326Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c10","body":{"in_reply_to":8,"type":"read_ok","value":0}}
+2026-02-26 14:18:37,845{GMT}	INFO	[n2 stderr] maelstrom.process: [2026-02-26T13:18:37.844739Z INFO  maelstrom::runtime] Received {"id":67,"src":"c14","dest":"n2","body":{"key":0,"from":3,"to":4,"type":"cas","msg_id":3}}
+2026-02-26 14:18:37,845{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:37.844946Z INFO  maelstrom::runtime] Received {"id":68,"src":"c11","dest":"n1","body":{"key":0,"type":"read","msg_id":3}}
+2026-02-26 14:18:37,845{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:ok	:read	[0 0]
+2026-02-26 14:18:37,845{GMT}	INFO	[n2 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:37,845{GMT}	INFO	[n1 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:37,846{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:37.846362Z INFO  maelstrom::runtime] Sent {"src":"n1","dest":"c11","body":{"in_reply_to":3,"type":"read_ok","value":0}}
+2026-02-26 14:18:37,847{GMT}	INFO	[n2 stderr] maelstrom.process: [2026-02-26T13:18:37.846715Z INFO  maelstrom::runtime] Sent {"src":"n2","dest":"c14","body":{"in_reply_to":3,"type":"cas_ok"}}
+2026-02-26 14:18:37,848{GMT}	INFO	[jepsen worker 1] jepsen.util: 1	:ok	:read	[0 0]
+2026-02-26 14:18:37,848{GMT}	INFO	[jepsen worker 7] jepsen.util: 7	:ok	:cas	[0 [3 4]]
+2026-02-26 14:18:37,854{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:invoke	:read	[0 nil]
+2026-02-26 14:18:37,856{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.856345Z INFO  maelstrom::runtime] Received {"id":72,"src":"c10","dest":"n0","body":{"key":0,"type":"read","msg_id":9}}
+2026-02-26 14:18:37,857{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:37,858{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.856628Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c10","body":{"in_reply_to":9,"type":"read_ok","value":0}}
+2026-02-26 14:18:37,858{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:ok	:read	[0 0]
+2026-02-26 14:18:37,869{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:invoke	:read	[0 nil]
+2026-02-26 14:18:37,871{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.871587Z INFO  maelstrom::runtime] Received {"id":74,"src":"c10","dest":"n0","body":{"key":0,"type":"read","msg_id":10}}
+2026-02-26 14:18:37,872{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:37,873{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.871865Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c10","body":{"in_reply_to":10,"type":"read_ok","value":0}}
+2026-02-26 14:18:37,873{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:ok	:read	[0 0]
+2026-02-26 14:18:37,874{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:invoke	:cas	[0 [3 1]]
+2026-02-26 14:18:37,875{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.875294Z INFO  maelstrom::runtime] Received {"id":76,"src":"c12","dest":"n0","body":{"key":0,"from":3,"to":1,"type":"cas","msg_id":10}}
+2026-02-26 14:18:37,876{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:37,876{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.875584Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c12","body":{"in_reply_to":10,"type":"cas_ok"}}
+2026-02-26 14:18:37,876{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:ok	:cas	[0 [3 1]]
+2026-02-26 14:18:37,885{GMT}	INFO	[jepsen worker 1] jepsen.util: 1	:invoke	:read	[0 nil]
+2026-02-26 14:18:37,887{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:37.886818Z INFO  maelstrom::runtime] Received {"id":78,"src":"c11","dest":"n1","body":{"key":0,"type":"read","msg_id":4}}
+2026-02-26 14:18:37,887{GMT}	INFO	[n1 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:37,888{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:37.887124Z INFO  maelstrom::runtime] Sent {"src":"n1","dest":"c11","body":{"in_reply_to":4,"type":"read_ok","value":0}}
+2026-02-26 14:18:37,888{GMT}	INFO	[jepsen worker 1] jepsen.util: 1	:ok	:read	[0 0]
+2026-02-26 14:18:37,895{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:invoke	:cas	[0 [1 3]]
+2026-02-26 14:18:37,897{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.897423Z INFO  maelstrom::runtime] Received {"id":80,"src":"c12","dest":"n0","body":{"key":0,"from":1,"to":3,"type":"cas","msg_id":11}}
+2026-02-26 14:18:37,898{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:37,898{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.897678Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c12","body":{"in_reply_to":11,"type":"cas_ok"}}
+2026-02-26 14:18:37,899{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:ok	:cas	[0 [1 3]]
+2026-02-26 14:18:37,915{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:invoke	:cas	[0 [3 3]]
+2026-02-26 14:18:37,916{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.916708Z INFO  maelstrom::runtime] Received {"id":82,"src":"c12","dest":"n0","body":{"key":0,"from":3,"to":3,"type":"cas","msg_id":12}}
+2026-02-26 14:18:37,917{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:37,918{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.916919Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c12","body":{"in_reply_to":12,"type":"cas_ok"}}
+2026-02-26 14:18:37,918{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:ok	:cas	[0 [3 3]]
+2026-02-26 14:18:37,920{GMT}	INFO	[jepsen worker 4] jepsen.util: 4	:invoke	:read	[0 nil]
+2026-02-26 14:18:37,922{GMT}	INFO	[n4 stderr] maelstrom.process: [2026-02-26T13:18:37.922191Z INFO  maelstrom::runtime] Received {"id":84,"src":"c19","dest":"n4","body":{"key":0,"type":"read","msg_id":2}}
+2026-02-26 14:18:37,923{GMT}	INFO	[n4 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:37,923{GMT}	INFO	[n4 stderr] maelstrom.process: [2026-02-26T13:18:37.922468Z INFO  maelstrom::runtime] Sent {"src":"n4","dest":"c19","body":{"in_reply_to":2,"type":"read_ok","value":0}}
+2026-02-26 14:18:37,923{GMT}	INFO	[jepsen worker 4] jepsen.util: 4	:ok	:read	[0 0]
+2026-02-26 14:18:37,936{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:invoke	:read	[0 nil]
+2026-02-26 14:18:37,938{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.937653Z INFO  maelstrom::runtime] Received {"id":86,"src":"c10","dest":"n0","body":{"key":0,"type":"read","msg_id":11}}
+2026-02-26 14:18:37,938{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:37,939{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.937827Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c10","body":{"in_reply_to":11,"type":"read_ok","value":0}}
+2026-02-26 14:18:37,939{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:ok	:read	[0 0]
+2026-02-26 14:18:37,946{GMT}	INFO	[jepsen worker 6] jepsen.util: 6	:invoke	:cas	[0 [1 4]]
+2026-02-26 14:18:37,947{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:37.947714Z INFO  maelstrom::runtime] Received {"id":88,"src":"c13","dest":"n1","body":{"key":0,"from":1,"to":4,"type":"cas","msg_id":3}}
+2026-02-26 14:18:37,948{GMT}	INFO	[n1 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:37,949{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:37.948012Z INFO  maelstrom::runtime] Sent {"src":"n1","dest":"c13","body":{"in_reply_to":3,"type":"cas_ok"}}
+2026-02-26 14:18:37,949{GMT}	INFO	[jepsen worker 6] jepsen.util: 6	:ok	:cas	[0 [1 4]]
+2026-02-26 14:18:37,957{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:invoke	:read	[0 nil]
+2026-02-26 14:18:37,958{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.958406Z INFO  maelstrom::runtime] Received {"id":90,"src":"c10","dest":"n0","body":{"key":0,"type":"read","msg_id":12}}
+2026-02-26 14:18:37,959{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:37,959{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.958703Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c10","body":{"in_reply_to":12,"type":"read_ok","value":0}}
+2026-02-26 14:18:37,960{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:ok	:read	[0 0]
+2026-02-26 14:18:37,967{GMT}	INFO	[jepsen worker 8] jepsen.util: 8	:invoke	:cas	[0 [1 0]]
+2026-02-26 14:18:37,968{GMT}	INFO	[n3 stderr] maelstrom.process: [2026-02-26T13:18:37.968571Z INFO  maelstrom::runtime] Received {"id":92,"src":"c17","dest":"n3","body":{"key":0,"from":1,"to":0,"type":"cas","msg_id":2}}
+2026-02-26 14:18:37,969{GMT}	INFO	[n3 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:37,969{GMT}	INFO	[n3 stderr] maelstrom.process: [2026-02-26T13:18:37.968826Z INFO  maelstrom::runtime] Sent {"src":"n3","dest":"c17","body":{"in_reply_to":2,"type":"cas_ok"}}
+2026-02-26 14:18:37,970{GMT}	INFO	[jepsen worker 8] jepsen.util: 8	:ok	:cas	[0 [1 0]]
+2026-02-26 14:18:37,977{GMT}	INFO	[jepsen worker 9] jepsen.util: 9	:invoke	:write	[0 2]
+2026-02-26 14:18:37,979{GMT}	INFO	[n4 stderr] maelstrom.process: [2026-02-26T13:18:37.979160Z INFO  maelstrom::runtime] Received {"id":94,"src":"c15","dest":"n4","body":{"key":0,"value":2,"type":"write","msg_id":2}}
+2026-02-26 14:18:37,980{GMT}	INFO	[n4 stderr] maelstrom.process: Node  received WRITE: 0=2
+2026-02-26 14:18:37,980{GMT}	INFO	[n4 stderr] maelstrom.process: [2026-02-26T13:18:37.979493Z INFO  maelstrom::runtime] Sent {"src":"n4","dest":"c15","body":{"in_reply_to":2,"type":"write_ok"}}
+2026-02-26 14:18:37,981{GMT}	INFO	[jepsen worker 9] jepsen.util: 9	:ok	:write	[0 2]
+2026-02-26 14:18:37,987{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:invoke	:write	[0 1]
+2026-02-26 14:18:37,989{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.989235Z INFO  maelstrom::runtime] Received {"id":96,"src":"c12","dest":"n0","body":{"key":0,"value":1,"type":"write","msg_id":13}}
+2026-02-26 14:18:37,990{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received WRITE: 0=1
+2026-02-26 14:18:37,990{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:37.989491Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c12","body":{"in_reply_to":13,"type":"write_ok"}}
+2026-02-26 14:18:37,990{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:ok	:write	[0 1]
+2026-02-26 14:18:38,003{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:invoke	:cas	[0 [2 1]]
+2026-02-26 14:18:38,005{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.005427Z INFO  maelstrom::runtime] Received {"id":98,"src":"c12","dest":"n0","body":{"key":0,"from":2,"to":1,"type":"cas","msg_id":14}}
+2026-02-26 14:18:38,006{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:38,007{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.005673Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c12","body":{"in_reply_to":14,"type":"cas_ok"}}
+2026-02-26 14:18:38,007{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:ok	:cas	[0 [2 1]]
+2026-02-26 14:18:38,007{GMT}	INFO	[jepsen worker 1] jepsen.util: 1	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,009{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:38.008870Z INFO  maelstrom::runtime] Received {"id":100,"src":"c11","dest":"n1","body":{"key":0,"type":"read","msg_id":5}}
+2026-02-26 14:18:38,009{GMT}	INFO	[n1 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,010{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:38.009188Z INFO  maelstrom::runtime] Sent {"src":"n1","dest":"c11","body":{"in_reply_to":5,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,010{GMT}	INFO	[jepsen worker 1] jepsen.util: 1	:ok	:read	[0 0]
+2026-02-26 14:18:38,025{GMT}	INFO	[jepsen worker 2] jepsen.util: 2	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,026{GMT}	INFO	[n2 stderr] maelstrom.process: [2026-02-26T13:18:38.026601Z INFO  maelstrom::runtime] Received {"id":102,"src":"c16","dest":"n2","body":{"key":0,"type":"read","msg_id":3}}
+2026-02-26 14:18:38,027{GMT}	INFO	[n2 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,028{GMT}	INFO	[n2 stderr] maelstrom.process: [2026-02-26T13:18:38.026857Z INFO  maelstrom::runtime] Sent {"src":"n2","dest":"c16","body":{"in_reply_to":3,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,028{GMT}	INFO	[jepsen worker 2] jepsen.util: 2	:ok	:read	[0 0]
+2026-02-26 14:18:38,035{GMT}	INFO	[jepsen worker 3] jepsen.util: 3	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,036{GMT}	INFO	[n3 stderr] maelstrom.process: [2026-02-26T13:18:38.036193Z INFO  maelstrom::runtime] Received {"id":104,"src":"c18","dest":"n3","body":{"key":0,"type":"read","msg_id":2}}
+2026-02-26 14:18:38,036{GMT}	INFO	[n3 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,037{GMT}	INFO	[n3 stderr] maelstrom.process: [2026-02-26T13:18:38.036482Z INFO  maelstrom::runtime] Sent {"src":"n3","dest":"c18","body":{"in_reply_to":2,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,037{GMT}	INFO	[jepsen worker 3] jepsen.util: 3	:ok	:read	[0 0]
+2026-02-26 14:18:38,040{GMT}	INFO	[jepsen worker 4] jepsen.util: 4	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,042{GMT}	INFO	[n4 stderr] maelstrom.process: [2026-02-26T13:18:38.041713Z INFO  maelstrom::runtime] Received {"id":106,"src":"c19","dest":"n4","body":{"key":0,"type":"read","msg_id":3}}
+2026-02-26 14:18:38,042{GMT}	INFO	[n4 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,043{GMT}	INFO	[jepsen worker 4] jepsen.util: 4	:ok	:read	[0 0]
+2026-02-26 14:18:38,043{GMT}	INFO	[n4 stderr] maelstrom.process: [2026-02-26T13:18:38.042000Z INFO  maelstrom::runtime] Sent {"src":"n4","dest":"c19","body":{"in_reply_to":3,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,044{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,045{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.045394Z INFO  maelstrom::runtime] Received {"id":108,"src":"c10","dest":"n0","body":{"key":0,"type":"read","msg_id":13}}
+2026-02-26 14:18:38,046{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,046{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.045621Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c10","body":{"in_reply_to":13,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,046{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:ok	:read	[0 0]
+2026-02-26 14:18:38,047{GMT}	INFO	[jepsen worker 1] jepsen.util: 1	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,049{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:38.048734Z INFO  maelstrom::runtime] Received {"id":110,"src":"c11","dest":"n1","body":{"key":0,"type":"read","msg_id":6}}
+2026-02-26 14:18:38,049{GMT}	INFO	[n1 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,050{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:38.049017Z INFO  maelstrom::runtime] Sent {"src":"n1","dest":"c11","body":{"in_reply_to":6,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,050{GMT}	INFO	[jepsen worker 1] jepsen.util: 1	:ok	:read	[0 0]
+2026-02-26 14:18:38,066{GMT}	INFO	[jepsen worker 7] jepsen.util: 7	:invoke	:cas	[0 [0 0]]
+2026-02-26 14:18:38,068{GMT}	INFO	[jepsen worker 8] jepsen.util: 8	:invoke	:write	[0 2]
+2026-02-26 14:18:38,068{GMT}	INFO	[n2 stderr] maelstrom.process: [2026-02-26T13:18:38.068176Z INFO  maelstrom::runtime] Received {"id":112,"src":"c14","dest":"n2","body":{"key":0,"from":0,"to":0,"type":"cas","msg_id":4}}
+2026-02-26 14:18:38,069{GMT}	INFO	[n2 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:38,069{GMT}	INFO	[n2 stderr] maelstrom.process: [2026-02-26T13:18:38.068437Z INFO  maelstrom::runtime] Sent {"src":"n2","dest":"c14","body":{"in_reply_to":4,"type":"cas_ok"}}
+2026-02-26 14:18:38,069{GMT}	INFO	[jepsen worker 7] jepsen.util: 7	:ok	:cas	[0 [0 0]]
+2026-02-26 14:18:38,070{GMT}	INFO	[n3 stderr] maelstrom.process: [2026-02-26T13:18:38.069764Z INFO  maelstrom::runtime] Received {"id":113,"src":"c17","dest":"n3","body":{"key":0,"value":2,"type":"write","msg_id":3}}
+2026-02-26 14:18:38,070{GMT}	INFO	[n3 stderr] maelstrom.process: Node  received WRITE: 0=2
+2026-02-26 14:18:38,071{GMT}	INFO	[n3 stderr] maelstrom.process: [2026-02-26T13:18:38.070037Z INFO  maelstrom::runtime] Sent {"src":"n3","dest":"c17","body":{"in_reply_to":3,"type":"write_ok"}}
+2026-02-26 14:18:38,071{GMT}	INFO	[jepsen worker 8] jepsen.util: 8	:ok	:write	[0 2]
+2026-02-26 14:18:38,076{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,077{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.077320Z INFO  maelstrom::runtime] Received {"id":116,"src":"c10","dest":"n0","body":{"key":0,"type":"read","msg_id":14}}
+2026-02-26 14:18:38,078{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,079{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:ok	:read	[0 0]
+2026-02-26 14:18:38,079{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.077600Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c10","body":{"in_reply_to":14,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,087{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,087{GMT}	INFO	[jepsen worker 1] jepsen.util: 1	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,088{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.088444Z INFO  maelstrom::runtime] Received {"id":118,"src":"c10","dest":"n0","body":{"key":0,"type":"read","msg_id":15}}
+2026-02-26 14:18:38,088{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:38.088597Z INFO  maelstrom::runtime] Received {"id":119,"src":"c11","dest":"n1","body":{"key":0,"type":"read","msg_id":7}}
+2026-02-26 14:18:38,089{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,089{GMT}	INFO	[n1 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,089{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.088693Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c10","body":{"in_reply_to":15,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,089{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:38.088817Z INFO  maelstrom::runtime] Sent {"src":"n1","dest":"c11","body":{"in_reply_to":7,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,090{GMT}	INFO	[jepsen worker 1] jepsen.util: 1	:ok	:read	[0 0]
+2026-02-26 14:18:38,090{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:ok	:read	[0 0]
+2026-02-26 14:18:38,108{GMT}	INFO	[jepsen worker 1] jepsen.util: 1	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,109{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:38.109356Z INFO  maelstrom::runtime] Received {"id":122,"src":"c11","dest":"n1","body":{"key":0,"type":"read","msg_id":8}}
+2026-02-26 14:18:38,110{GMT}	INFO	[n1 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,110{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:38.109617Z INFO  maelstrom::runtime] Sent {"src":"n1","dest":"c11","body":{"in_reply_to":8,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,111{GMT}	INFO	[jepsen worker 2] jepsen.util: 2	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,111{GMT}	INFO	[jepsen worker 1] jepsen.util: 1	:ok	:read	[0 0]
+2026-02-26 14:18:38,112{GMT}	INFO	[n2 stderr] maelstrom.process: [2026-02-26T13:18:38.112561Z INFO  maelstrom::runtime] Received {"id":124,"src":"c16","dest":"n2","body":{"key":0,"type":"read","msg_id":4}}
+2026-02-26 14:18:38,113{GMT}	INFO	[n2 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,113{GMT}	INFO	[n2 stderr] maelstrom.process: [2026-02-26T13:18:38.112821Z INFO  maelstrom::runtime] Sent {"src":"n2","dest":"c16","body":{"in_reply_to":4,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,114{GMT}	INFO	[jepsen worker 2] jepsen.util: 2	:ok	:read	[0 0]
+2026-02-26 14:18:38,118{GMT}	INFO	[jepsen worker 3] jepsen.util: 3	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,120{GMT}	INFO	[n3 stderr] maelstrom.process: [2026-02-26T13:18:38.120286Z INFO  maelstrom::runtime] Received {"id":126,"src":"c18","dest":"n3","body":{"key":0,"type":"read","msg_id":3}}
+2026-02-26 14:18:38,121{GMT}	INFO	[n3 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,121{GMT}	INFO	[n3 stderr] maelstrom.process: [2026-02-26T13:18:38.120542Z INFO  maelstrom::runtime] Sent {"src":"n3","dest":"c18","body":{"in_reply_to":3,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,121{GMT}	INFO	[jepsen worker 3] jepsen.util: 3	:ok	:read	[0 0]
+2026-02-26 14:18:38,132{GMT}	INFO	[jepsen worker 4] jepsen.util: 4	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,134{GMT}	INFO	[n4 stderr] maelstrom.process: [2026-02-26T13:18:38.134098Z INFO  maelstrom::runtime] Received {"id":128,"src":"c19","dest":"n4","body":{"key":0,"type":"read","msg_id":4}}
+2026-02-26 14:18:38,134{GMT}	INFO	[n4 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,135{GMT}	INFO	[n4 stderr] maelstrom.process: [2026-02-26T13:18:38.134355Z INFO  maelstrom::runtime] Sent {"src":"n4","dest":"c19","body":{"in_reply_to":4,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,135{GMT}	INFO	[jepsen worker 4] jepsen.util: 4	:ok	:read	[0 0]
+2026-02-26 14:18:38,152{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,154{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.154247Z INFO  maelstrom::runtime] Received {"id":130,"src":"c10","dest":"n0","body":{"key":0,"type":"read","msg_id":16}}
+2026-02-26 14:18:38,155{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,155{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.154507Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c10","body":{"in_reply_to":16,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,155{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:ok	:read	[0 0]
+2026-02-26 14:18:38,164{GMT}	INFO	[jepsen worker 6] jepsen.util: 6	:invoke	:cas	[0 [0 2]]
+2026-02-26 14:18:38,165{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:38.165741Z INFO  maelstrom::runtime] Received {"id":132,"src":"c13","dest":"n1","body":{"key":0,"from":0,"to":2,"type":"cas","msg_id":4}}
+2026-02-26 14:18:38,166{GMT}	INFO	[n1 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:38,166{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:38.165966Z INFO  maelstrom::runtime] Sent {"src":"n1","dest":"c13","body":{"in_reply_to":4,"type":"cas_ok"}}
+2026-02-26 14:18:38,167{GMT}	INFO	[jepsen worker 6] jepsen.util: 6	:ok	:cas	[0 [0 2]]
+2026-02-26 14:18:38,180{GMT}	INFO	[jepsen worker 7] jepsen.util: 7	:invoke	:cas	[0 [3 4]]
+2026-02-26 14:18:38,182{GMT}	INFO	[n2 stderr] maelstrom.process: [2026-02-26T13:18:38.181885Z INFO  maelstrom::runtime] Received {"id":134,"src":"c14","dest":"n2","body":{"key":0,"from":3,"to":4,"type":"cas","msg_id":5}}
+2026-02-26 14:18:38,182{GMT}	INFO	[n2 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:38,183{GMT}	INFO	[n2 stderr] maelstrom.process: [2026-02-26T13:18:38.182118Z INFO  maelstrom::runtime] Sent {"src":"n2","dest":"c14","body":{"in_reply_to":5,"type":"cas_ok"}}
+2026-02-26 14:18:38,183{GMT}	INFO	[jepsen worker 7] jepsen.util: 7	:ok	:cas	[0 [3 4]]
+2026-02-26 14:18:38,190{GMT}	INFO	[jepsen worker 8] jepsen.util: 8	:invoke	:cas	[0 [3 0]]
+2026-02-26 14:18:38,191{GMT}	INFO	[n3 stderr] maelstrom.process: [2026-02-26T13:18:38.191233Z INFO  maelstrom::runtime] Received {"id":136,"src":"c17","dest":"n3","body":{"key":0,"from":3,"to":0,"type":"cas","msg_id":4}}
+2026-02-26 14:18:38,192{GMT}	INFO	[n3 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:38,192{GMT}	INFO	[n3 stderr] maelstrom.process: [2026-02-26T13:18:38.191424Z INFO  maelstrom::runtime] Sent {"src":"n3","dest":"c17","body":{"in_reply_to":4,"type":"cas_ok"}}
+2026-02-26 14:18:38,192{GMT}	INFO	[jepsen worker 8] jepsen.util: 8	:ok	:cas	[0 [3 0]]
+2026-02-26 14:18:38,195{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,196{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.196336Z INFO  maelstrom::runtime] Received {"id":138,"src":"c10","dest":"n0","body":{"key":0,"type":"read","msg_id":17}}
+2026-02-26 14:18:38,197{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,197{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.196573Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c10","body":{"in_reply_to":17,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,198{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:ok	:read	[0 0]
+2026-02-26 14:18:38,209{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,211{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.210984Z INFO  maelstrom::runtime] Received {"id":140,"src":"c10","dest":"n0","body":{"key":0,"type":"read","msg_id":18}}
+2026-02-26 14:18:38,211{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,211{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.211204Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c10","body":{"in_reply_to":18,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,212{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:ok	:read	[0 0]
+2026-02-26 14:18:38,224{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,225{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.225339Z INFO  maelstrom::runtime] Received {"id":142,"src":"c10","dest":"n0","body":{"key":0,"type":"read","msg_id":19}}
+2026-02-26 14:18:38,226{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,226{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.225581Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c10","body":{"in_reply_to":19,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,226{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:ok	:read	[0 0]
+2026-02-26 14:18:38,228{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:invoke	:cas	[0 [0 1]]
+2026-02-26 14:18:38,229{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.229503Z INFO  maelstrom::runtime] Received {"id":144,"src":"c12","dest":"n0","body":{"key":0,"from":0,"to":1,"type":"cas","msg_id":15}}
+2026-02-26 14:18:38,230{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:38,230{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.229683Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c12","body":{"in_reply_to":15,"type":"cas_ok"}}
+2026-02-26 14:18:38,230{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:ok	:cas	[0 [0 1]]
+2026-02-26 14:18:38,234{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:invoke	:cas	[0 [4 1]]
+2026-02-26 14:18:38,235{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.235609Z INFO  maelstrom::runtime] Received {"id":146,"src":"c12","dest":"n0","body":{"key":0,"from":4,"to":1,"type":"cas","msg_id":16}}
+2026-02-26 14:18:38,236{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:38,236{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.235864Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c12","body":{"in_reply_to":16,"type":"cas_ok"}}
+2026-02-26 14:18:38,237{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:ok	:cas	[0 [4 1]]
+2026-02-26 14:18:38,240{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:invoke	:write	[0 1]
+2026-02-26 14:18:38,242{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.242303Z INFO  maelstrom::runtime] Received {"id":148,"src":"c12","dest":"n0","body":{"key":0,"value":1,"type":"write","msg_id":17}}
+2026-02-26 14:18:38,243{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received WRITE: 0=1
+2026-02-26 14:18:38,243{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.242551Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c12","body":{"in_reply_to":17,"type":"write_ok"}}
+2026-02-26 14:18:38,243{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:ok	:write	[0 1]
+2026-02-26 14:18:38,251{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:invoke	:write	[0 4]
+2026-02-26 14:18:38,253{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.252955Z INFO  maelstrom::runtime] Received {"id":150,"src":"c12","dest":"n0","body":{"key":0,"value":4,"type":"write","msg_id":18}}
+2026-02-26 14:18:38,253{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received WRITE: 0=4
+2026-02-26 14:18:38,254{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.253218Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c12","body":{"in_reply_to":18,"type":"write_ok"}}
+2026-02-26 14:18:38,254{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:ok	:write	[0 4]
+2026-02-26 14:18:38,265{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,266{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.266702Z INFO  maelstrom::runtime] Received {"id":152,"src":"c10","dest":"n0","body":{"key":0,"type":"read","msg_id":20}}
+2026-02-26 14:18:38,267{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,267{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.266942Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c10","body":{"in_reply_to":20,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,268{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:ok	:read	[0 0]
+2026-02-26 14:18:38,272{GMT}	INFO	[jepsen worker 6] jepsen.util: 6	:invoke	:write	[0 1]
+2026-02-26 14:18:38,273{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:38.273517Z INFO  maelstrom::runtime] Received {"id":154,"src":"c13","dest":"n1","body":{"key":0,"value":1,"type":"write","msg_id":5}}
+2026-02-26 14:18:38,274{GMT}	INFO	[n1 stderr] maelstrom.process: Node  received WRITE: 0=1
+2026-02-26 14:18:38,274{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:38.273744Z INFO  maelstrom::runtime] Sent {"src":"n1","dest":"c13","body":{"in_reply_to":5,"type":"write_ok"}}
+2026-02-26 14:18:38,274{GMT}	INFO	[jepsen worker 6] jepsen.util: 6	:ok	:write	[0 1]
+2026-02-26 14:18:38,287{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,288{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.288504Z INFO  maelstrom::runtime] Received {"id":156,"src":"c10","dest":"n0","body":{"key":0,"type":"read","msg_id":21}}
+2026-02-26 14:18:38,289{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,289{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.288770Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c10","body":{"in_reply_to":21,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,289{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:ok	:read	[0 0]
+2026-02-26 14:18:38,305{GMT}	INFO	[jepsen worker 8] jepsen.util: 8	:invoke	:cas	[0 [3 1]]
+2026-02-26 14:18:38,306{GMT}	INFO	[n3 stderr] maelstrom.process: [2026-02-26T13:18:38.306445Z INFO  maelstrom::runtime] Received {"id":158,"src":"c17","dest":"n3","body":{"key":0,"from":3,"to":1,"type":"cas","msg_id":5}}
+2026-02-26 14:18:38,307{GMT}	INFO	[n3 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:38,307{GMT}	INFO	[n3 stderr] maelstrom.process: [2026-02-26T13:18:38.306734Z INFO  maelstrom::runtime] Sent {"src":"n3","dest":"c17","body":{"in_reply_to":5,"type":"cas_ok"}}
+2026-02-26 14:18:38,307{GMT}	INFO	[jepsen worker 8] jepsen.util: 8	:ok	:cas	[0 [3 1]]
+2026-02-26 14:18:38,325{GMT}	INFO	[jepsen worker 9] jepsen.util: 9	:invoke	:cas	[0 [1 3]]
+2026-02-26 14:18:38,326{GMT}	INFO	[n4 stderr] maelstrom.process: [2026-02-26T13:18:38.326647Z INFO  maelstrom::runtime] Received {"id":160,"src":"c15","dest":"n4","body":{"key":0,"from":1,"to":3,"type":"cas","msg_id":3}}
+2026-02-26 14:18:38,327{GMT}	INFO	[n4 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:38,327{GMT}	INFO	[n4 stderr] maelstrom.process: [2026-02-26T13:18:38.326976Z INFO  maelstrom::runtime] Sent {"src":"n4","dest":"c15","body":{"in_reply_to":3,"type":"cas_ok"}}
+2026-02-26 14:18:38,328{GMT}	INFO	[jepsen worker 9] jepsen.util: 9	:ok	:cas	[0 [1 3]]
+2026-02-26 14:18:38,334{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,336{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.335703Z INFO  maelstrom::runtime] Received {"id":162,"src":"c10","dest":"n0","body":{"key":0,"type":"read","msg_id":22}}
+2026-02-26 14:18:38,336{GMT}	INFO	[jepsen worker 1] jepsen.util: 1	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,336{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,336{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.335976Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c10","body":{"in_reply_to":22,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,337{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:ok	:read	[0 0]
+2026-02-26 14:18:38,337{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:38.337168Z INFO  maelstrom::runtime] Received {"id":163,"src":"c11","dest":"n1","body":{"key":0,"type":"read","msg_id":9}}
+2026-02-26 14:18:38,337{GMT}	INFO	[n1 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,338{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:38.337388Z INFO  maelstrom::runtime] Sent {"src":"n1","dest":"c11","body":{"in_reply_to":9,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,338{GMT}	INFO	[jepsen worker 1] jepsen.util: 1	:ok	:read	[0 0]
+2026-02-26 14:18:38,353{GMT}	INFO	[jepsen worker 1] jepsen.util: 1	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,355{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:38.354807Z INFO  maelstrom::runtime] Received {"id":166,"src":"c11","dest":"n1","body":{"key":0,"type":"read","msg_id":10}}
+2026-02-26 14:18:38,355{GMT}	INFO	[n1 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,355{GMT}	INFO	[n1 stderr] maelstrom.process: [2026-02-26T13:18:38.355025Z INFO  maelstrom::runtime] Sent {"src":"n1","dest":"c11","body":{"in_reply_to":10,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,356{GMT}	INFO	[jepsen worker 1] jepsen.util: 1	:ok	:read	[0 0]
+2026-02-26 14:18:38,362{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:invoke	:write	[0 3]
+2026-02-26 14:18:38,364{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.363823Z INFO  maelstrom::runtime] Received {"id":168,"src":"c12","dest":"n0","body":{"key":0,"value":3,"type":"write","msg_id":19}}
+2026-02-26 14:18:38,364{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received WRITE: 0=3
+2026-02-26 14:18:38,364{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.364152Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c12","body":{"in_reply_to":19,"type":"write_ok"}}
+2026-02-26 14:18:38,365{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:ok	:write	[0 3]
+2026-02-26 14:18:38,381{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:invoke	:cas	[0 [4 2]]
+2026-02-26 14:18:38,383{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.382911Z INFO  maelstrom::runtime] Received {"id":170,"src":"c12","dest":"n0","body":{"key":0,"from":4,"to":2,"type":"cas","msg_id":20}}
+2026-02-26 14:18:38,383{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:38,383{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.383192Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c12","body":{"in_reply_to":20,"type":"cas_ok"}}
+2026-02-26 14:18:38,384{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:ok	:cas	[0 [4 2]]
+2026-02-26 14:18:38,393{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:invoke	:cas	[0 [4 0]]
+2026-02-26 14:18:38,394{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.394277Z INFO  maelstrom::runtime] Received {"id":172,"src":"c12","dest":"n0","body":{"key":0,"from":4,"to":0,"type":"cas","msg_id":21}}
+2026-02-26 14:18:38,395{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:38,395{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.394561Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c12","body":{"in_reply_to":21,"type":"cas_ok"}}
+2026-02-26 14:18:38,395{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:ok	:cas	[0 [4 0]]
+2026-02-26 14:18:38,397{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:invoke	:cas	[0 [1 3]]
+2026-02-26 14:18:38,398{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.398292Z INFO  maelstrom::runtime] Received {"id":174,"src":"c12","dest":"n0","body":{"key":0,"from":1,"to":3,"type":"cas","msg_id":22}}
+2026-02-26 14:18:38,398{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:38,399{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.398570Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c12","body":{"in_reply_to":22,"type":"cas_ok"}}
+2026-02-26 14:18:38,399{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:ok	:cas	[0 [1 3]]
+2026-02-26 14:18:38,410{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,411{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.411749Z INFO  maelstrom::runtime] Received {"id":176,"src":"c10","dest":"n0","body":{"key":0,"type":"read","msg_id":23}}
+2026-02-26 14:18:38,412{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,412{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.412083Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c10","body":{"in_reply_to":23,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,413{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:ok	:read	[0 0]
+2026-02-26 14:18:38,429{GMT}	INFO	[jepsen worker 7] jepsen.util: 7	:invoke	:write	[0 0]
+2026-02-26 14:18:38,431{GMT}	INFO	[n2 stderr] maelstrom.process: [2026-02-26T13:18:38.430739Z INFO  maelstrom::runtime] Received {"id":178,"src":"c14","dest":"n2","body":{"key":0,"value":0,"type":"write","msg_id":6}}
+2026-02-26 14:18:38,431{GMT}	INFO	[n2 stderr] maelstrom.process: Node  received WRITE: 0=0
+2026-02-26 14:18:38,431{GMT}	INFO	[n2 stderr] maelstrom.process: [2026-02-26T13:18:38.430986Z INFO  maelstrom::runtime] Sent {"src":"n2","dest":"c14","body":{"in_reply_to":6,"type":"write_ok"}}
+2026-02-26 14:18:38,432{GMT}	INFO	[jepsen worker 7] jepsen.util: 7	:ok	:write	[0 0]
+2026-02-26 14:18:38,438{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,439{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.439037Z INFO  maelstrom::runtime] Received {"id":180,"src":"c10","dest":"n0","body":{"key":0,"type":"read","msg_id":24}}
+2026-02-26 14:18:38,439{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,439{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.439343Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c10","body":{"in_reply_to":24,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,440{GMT}	INFO	[jepsen worker 9] jepsen.util: 9	:invoke	:write	[0 2]
+2026-02-26 14:18:38,440{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:ok	:read	[0 0]
+2026-02-26 14:18:38,441{GMT}	INFO	[n4 stderr] maelstrom.process: [2026-02-26T13:18:38.441342Z INFO  maelstrom::runtime] Received {"id":182,"src":"c15","dest":"n4","body":{"key":0,"value":2,"type":"write","msg_id":4}}
+2026-02-26 14:18:38,442{GMT}	INFO	[n4 stderr] maelstrom.process: Node  received WRITE: 0=2
+2026-02-26 14:18:38,442{GMT}	INFO	[n4 stderr] maelstrom.process: [2026-02-26T13:18:38.441645Z INFO  maelstrom::runtime] Sent {"src":"n4","dest":"c15","body":{"in_reply_to":4,"type":"write_ok"}}
+2026-02-26 14:18:38,442{GMT}	INFO	[jepsen worker 9] jepsen.util: 9	:ok	:write	[0 2]
+2026-02-26 14:18:38,452{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,453{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.453743Z INFO  maelstrom::runtime] Received {"id":184,"src":"c10","dest":"n0","body":{"key":0,"type":"read","msg_id":25}}
+2026-02-26 14:18:38,454{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,454{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.453985Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c10","body":{"in_reply_to":25,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,455{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:ok	:read	[0 0]
+2026-02-26 14:18:38,465{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:invoke	:cas	[0 [2 1]]
+2026-02-26 14:18:38,466{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.466508Z INFO  maelstrom::runtime] Received {"id":186,"src":"c12","dest":"n0","body":{"key":0,"from":2,"to":1,"type":"cas","msg_id":23}}
+2026-02-26 14:18:38,467{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:38,467{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.466727Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c12","body":{"in_reply_to":23,"type":"cas_ok"}}
+2026-02-26 14:18:38,467{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:ok	:cas	[0 [2 1]]
+2026-02-26 14:18:38,472{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:invoke	:cas	[0 [2 2]]
+2026-02-26 14:18:38,473{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.473523Z INFO  maelstrom::runtime] Received {"id":188,"src":"c12","dest":"n0","body":{"key":0,"from":2,"to":2,"type":"cas","msg_id":24}}
+2026-02-26 14:18:38,474{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:38,474{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.473830Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c12","body":{"in_reply_to":24,"type":"cas_ok"}}
+2026-02-26 14:18:38,474{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:ok	:cas	[0 [2 2]]
+2026-02-26 14:18:38,486{GMT}	INFO	[jepsen worker 2] jepsen.util: 2	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,487{GMT}	INFO	[n2 stderr] maelstrom.process: [2026-02-26T13:18:38.487367Z INFO  maelstrom::runtime] Received {"id":190,"src":"c16","dest":"n2","body":{"key":0,"type":"read","msg_id":5}}
+2026-02-26 14:18:38,487{GMT}	INFO	[n2 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,488{GMT}	INFO	[n2 stderr] maelstrom.process: [2026-02-26T13:18:38.487588Z INFO  maelstrom::runtime] Sent {"src":"n2","dest":"c16","body":{"in_reply_to":5,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,488{GMT}	INFO	[jepsen worker 2] jepsen.util: 2	:ok	:read	[0 0]
+2026-02-26 14:18:38,493{GMT}	INFO	[jepsen worker 3] jepsen.util: 3	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,495{GMT}	INFO	[n3 stderr] maelstrom.process: [2026-02-26T13:18:38.495072Z INFO  maelstrom::runtime] Received {"id":192,"src":"c18","dest":"n3","body":{"key":0,"type":"read","msg_id":4}}
+2026-02-26 14:18:38,495{GMT}	INFO	[n3 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,496{GMT}	INFO	[n3 stderr] maelstrom.process: [2026-02-26T13:18:38.495323Z INFO  maelstrom::runtime] Sent {"src":"n3","dest":"c18","body":{"in_reply_to":4,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,496{GMT}	INFO	[jepsen worker 3] jepsen.util: 3	:ok	:read	[0 0]
+2026-02-26 14:18:38,504{GMT}	INFO	[jepsen worker 4] jepsen.util: 4	:invoke	:read	[0 nil]
+2026-02-26 14:18:38,505{GMT}	INFO	[n4 stderr] maelstrom.process: [2026-02-26T13:18:38.505483Z INFO  maelstrom::runtime] Received {"id":194,"src":"c19","dest":"n4","body":{"key":0,"type":"read","msg_id":5}}
+2026-02-26 14:18:38,506{GMT}	INFO	[n4 stderr] maelstrom.process: Node  received READ for key 0
+2026-02-26 14:18:38,506{GMT}	INFO	[n4 stderr] maelstrom.process: [2026-02-26T13:18:38.505772Z INFO  maelstrom::runtime] Sent {"src":"n4","dest":"c19","body":{"in_reply_to":5,"type":"read_ok","value":0}}
+2026-02-26 14:18:38,506{GMT}	INFO	[jepsen worker 4] jepsen.util: 4	:ok	:read	[0 0]
+2026-02-26 14:18:38,523{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:invoke	:cas	[0 [1 3]]
+2026-02-26 14:18:38,524{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.524460Z INFO  maelstrom::runtime] Received {"id":196,"src":"c12","dest":"n0","body":{"key":0,"from":1,"to":3,"type":"cas","msg_id":25}}
+2026-02-26 14:18:38,525{GMT}	INFO	[n0 stderr] maelstrom.process: Node  received CAS (not implemented)
+2026-02-26 14:18:38,525{GMT}	INFO	[n0 stderr] maelstrom.process: [2026-02-26T13:18:38.524714Z INFO  maelstrom::runtime] Sent {"src":"n0","dest":"c12","body":{"in_reply_to":25,"type":"cas_ok"}}
+2026-02-26 14:18:38,525{GMT}	INFO	[jepsen worker 5] jepsen.util: 5	:ok	:cas	[0 [1 3]]
+2026-02-26 14:18:38,554{GMT}	INFO	[jepsen test runner] jepsen.core: Run complete, writing
+2026-02-26 14:18:38,669{GMT}	INFO	[jepsen node n0] maelstrom.db: Tearing down n0
+2026-02-26 14:18:38,669{GMT}	INFO	[jepsen node n1] maelstrom.db: Tearing down n1
+2026-02-26 14:18:38,669{GMT}	INFO	[jepsen node n2] maelstrom.db: Tearing down n2
+2026-02-26 14:18:38,669{GMT}	INFO	[jepsen node n3] maelstrom.db: Tearing down n3
+2026-02-26 14:18:38,670{GMT}	INFO	[jepsen node n4] maelstrom.db: Tearing down n4
+2026-02-26 14:18:40,498{GMT}	INFO	[jepsen node n0] maelstrom.net: Shutting down Maelstrom network
+2026-02-26 14:18:40,500{GMT}	INFO	[jepsen test runner] jepsen.core: Analyzing...
+2026-02-26 14:18:40,784{GMT}	WARN	[clojure-agent-send-off-pool-7] jepsen.checker: Error rendering linearizability analysis
+java.lang.AssertionError: Assert failed: Expected index but got nil for op #knossos.op.Op{:process nil, :type nil, :f nil, :value nil, :index nil}
+i
+	at knossos.linear.report$time_coords$fn__10900.invoke(report.clj:184)
+	at clojure.core$map$fn__5954.invoke(core.clj:2770)
+	at clojure.lang.LazySeq.force(LazySeq.java:50)
+	at clojure.lang.LazySeq.realize(LazySeq.java:89)
+	at clojure.lang.LazySeq.seq(LazySeq.java:106)
+	at clojure.lang.RT.seq(RT.java:555)
+	at clojure.core$seq__5486.invokeStatic(core.clj:139)
+	at clojure.core.protocols$seq_reduce.invokeStatic(protocols.clj:24)
+	at clojure.core.protocols$fn__8262.invokeStatic(protocols.clj:74)
+	at clojure.core.protocols$fn__8262.invoke(protocols.clj:74)
+	at clojure.core.protocols$fn__8203$G__8198__8216.invoke(protocols.clj:13)
+	at clojure.core$reduce.invokeStatic(core.clj:6965)
+	at clojure.core$into.invokeStatic(core.clj:7038)
+	at clojure.core$into.invoke(core.clj:7029)
+	at knossos.linear.report$time_coords.invokeStatic(report.clj:194)
+	at knossos.linear.report$time_coords.invoke(report.clj:177)
+	at knossos.linear.report$learnings.invokeStatic(report.clj:442)
+	at knossos.linear.report$learnings.invoke(report.clj:422)
+	at knossos.linear.report$render_analysis_BANG_.invokeStatic(report.clj:654)
+	at knossos.linear.report$render_analysis_BANG_.invoke(report.clj:649)
+	at jepsen.checker$linearizable$reify__11134$fn__11136.invoke(checker.clj:226)
+	at jepsen.checker$linearizable$reify__11134.check(checker.clj:224)
+	at jepsen.checker$check_safe.invokeStatic(checker.clj:88)
+	at jepsen.checker$check_safe.invoke(checker.clj:80)
+	at jepsen.checker$compose$reify__11089$fn__11091.invoke(checker.clj:104)
+	at clojure.core$pmap$fn__8582$fn__8583.invoke(core.clj:7169)
+	at clojure.core$binding_conveyor_fn$fn__5842.invoke(core.clj:2047)
+	at clojure.lang.AFn.call(AFn.java:18)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+2026-02-26 14:18:40,831{GMT}	INFO	[clojure-agent-send-pool-0] jepsen.independent: Wrote /home/tim/Work/ID2203/omnipaxos-kv-main/store/lin-kv/20260226T141836.380+0100/independent/0/results.edn
+2026-02-26 14:18:40,836{GMT}	INFO	[clojure-agent-send-pool-0] jepsen.independent: Wrote /home/tim/Work/ID2203/omnipaxos-kv-main/store/lin-kv/20260226T141836.380+0100/independent/0/history.edn
+2026-02-26 14:18:40,949{GMT}	INFO	[jepsen test runner] jepsen.core: Analysis complete
+2026-02-26 14:18:40,964{GMT}	INFO	[jepsen results] jepsen.store: Wrote /home/tim/Work/ID2203/omnipaxos-kv-main/store/lin-kv/20260226T141836.380+0100/results.edn
+2026-02-26 14:18:40,988{GMT}	INFO	[jepsen test runner] jepsen.core: {:perf {:latency-graph {:valid? true},
+        :rate-graph {:valid? true},
+        :valid? true},
+ :timeline {:valid? true},
+ :exceptions {:valid? true},
+ :stats {:valid? true,
+         :count 94,
+         :ok-count 94,
+         :fail-count 0,
+         :info-count 0,
+         :by-f {:cas {:valid? true,
+                      :count 33,
+                      :ok-count 33,
+                      :fail-count 0,
+                      :info-count 0},
+                :read {:valid? true,
+                       :count 49,
+                       :ok-count 49,
+                       :fail-count 0,
+                       :info-count 0},
+                :write {:valid? true,
+                        :count 12,
+                        :ok-count 12,
+                        :fail-count 0,
+                        :info-count 0}}},
+ :availability {:valid? true, :ok-fraction 1.0},
+ :net {:all {:send-count 198,
+             :recv-count 198,
+             :msg-count 198,
+             :msgs-per-op 2.106383},
+       :clients {:send-count 198, :recv-count 198, :msg-count 198},
+       :servers {:send-count 0,
+                 :recv-count 0,
+                 :msg-count 0,
+                 :msgs-per-op 0.0},
+       :valid? true},
+ :workload {:valid? false,
+            :results {0 {:linearizable {:valid? false,
+                                        :configs ({:model #knossos.model.CASRegister{:value nil},
+                                                   :last-op nil,
+                                                   :pending [{:process 0,
+                                                              :type :invoke,
+                                                              :f :read,
+                                                              :value 0,
+                                                              :index 0,
+                                                              :time 12672444}]}),
+                                        :final-paths ([{:op nil,
+                                                        :model #knossos.model.CASRegister{:value nil}}
+                                                       {:op {:process 0,
+                                                             :type :ok,
+                                                             :f :read,
+                                                             :value 0,
+                                                             :index 1,
+                                                             :time 22049269},
+                                                        :model #knossos.model.Inconsistent{:msg "can't read 0 from register "}}]),
+                                        :previous-ok nil,
+                                        :last-op nil,
+                                        :op {:process 0,
+                                             :type :ok,
+                                             :f :read,
+                                             :value 0,
+                                             :index 1,
+                                             :time 22049269}},
+                         :timeline {:valid? true},
+                         :valid? false}},
+            :failures [0]},
+ :valid? false}
+
+
+Analysis invalid! (ﾉಥ益ಥ）ﾉ ┻━┻
