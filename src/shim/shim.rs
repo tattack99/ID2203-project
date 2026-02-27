@@ -2,57 +2,58 @@ use async_trait::async_trait;
 use maelstrom::protocol::Message;
 use maelstrom::{done, Node, Result, Runtime};
 use serde::{Deserialize, Serialize};
-use std::sync::Mutex;
 
-#[derive(Debug)]
-pub struct Handler {
-    pub node_id: String,
-    pub node_ids: Mutex<Vec<String>>, 
-}
+pub struct Handler {}
 
 #[async_trait]
 impl Node for Handler {
     async fn process(&self, runtime: Runtime, req: Message) -> Result<()> {
         let msg: Result<Request> = req.body.as_obj();
         match msg {
-            Ok(Request::Init { .. }) => {
-                let all_nodes = runtime.nodes();
-                eprintln!(
-                    "Node {} initializing. Total nodes: {}. All nodes: {:?}",
-                    runtime.node_id(),
-                    all_nodes.len(),
-                    all_nodes
-                );
-                runtime.reply(req, Request::InitOk {}).await
+            Ok(Request::Init { node_ids, .. }) => {
+                eprintln!("DEBUG: Entering Init handler for node {}", runtime.node_id());
+                Ok(())
             }
             Ok(Request::Read { key }) => {
-                eprintln!("Node {} received READ for key {}", self.node_id, key);
                 runtime.reply(req, Request::ReadOk { value: 0 }).await
             }
             Ok(Request::Write { key, value }) => {
-                eprintln!("Node {} received WRITE: {}={}", self.node_id, key, value);
                 runtime.reply(req, Request::WriteOk {}).await
             }
             Ok(Request::Cas { .. }) => {
-                eprintln!("Node {} received CAS (not implemented)", self.node_id);
-                runtime.reply(req, Request::CasOk {}).await
+                // 1. Intercept: Send custom message to n0
+                runtime.send("n0", serde_json::json!({
+                    "type": "cas_intercepted",
+                    "intercepted_by": runtime.node_id()
+                })).await?;
+
+                // 2. Reply to the Client: Use .await (no '?') and then Ok(())
+                runtime.reply(req, Request::CasOk {}).await; 
+                Ok(())
             }
-            _ => done(runtime, req),
+            Ok(Request::CasIntercepted { intercepted_by }) => {
+                // Just log it. Do NOT reply here, or you'll create a loop.
+                eprintln!("SUCCESS: Node {} received interception signal from {}", 
+                    runtime.node_id(), 
+                    intercepted_by
+                );
+                Ok(())
+            }
+            other => {
+                done(runtime, req)
+            }
         }
     }
 }
 
 pub fn create_handler(runtime: &Runtime) -> Handler {
-    Handler {
-        node_id: runtime.node_id().to_string(),
-        node_ids: Mutex::new(Vec::new()), 
-    }
+    Handler { }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug,Serialize, Deserialize)]
 #[serde(rename_all = "snake_case", tag = "type")]
 pub enum Request {
-    Init { node_id: String, node_ids: Mutex<Vec<String>> },
+    Init { node_id: String, node_ids: Vec<String> },
     InitOk {},
     Read { key: u64 },
     ReadOk { value: i64 },
@@ -66,4 +67,7 @@ pub enum Request {
         put: bool 
     },
     CasOk {},
+    CasIntercepted { intercepted_by: String },
+
 }
+
