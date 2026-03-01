@@ -40,40 +40,44 @@ services:
       - ./server-3-config.toml:/app/server-config.toml
       - ./cluster-config.toml:/app/cluster-config.toml
       - ./logs/:/app/logs/
-  # c1:
-  #   image: omnipaxos-client
+  c1:
+    image: omnipaxos-client
+    build:
+      context: ./..
+      dockerfile: client.dockerfile
+    container_name: c1
+    environment:
+      RUST_LOG: "debug"
+      CONFIG_FILE: "/app/client-config.toml"
+      OMNIPAXOS_SERVER_ADDRESS: "s1:8000" # Overwrite server_address in client config TOML
+    ports:
+      - "3001:3000"  # Access C1 via http://localhost:3001
+    volumes:
+      - ./client-1-config.toml:/app/client-config.toml
+      - ./logs/:/app/logs/
+  c2:
+    image: omnipaxos-client
+    container_name: c2
+    environment:
+      RUST_LOG: "debug"
+      CONFIG_FILE: "/app/client-config.toml"
+      OMNIPAXOS_SERVER_ADDRESS: "s2:8000" # Overwrite server_address in client config TOML
+    ports:
+      - "3002:3000"  # Access C2 via http://localhost:3002
+    volumes:
+      - ./client-2-config.toml:/app/client-config.toml
+      - ./logs/:/app/logs/
+  # shim:
+  #   image: omnipaxos-shim
+  #   # user: "${CURRENT_UID}:${CURRENT_GID}"
   #   build:
-  #     context: ./..
-  #     dockerfile: client.dockerfile
-  #   container_name: c1
+  #     context: ./..         # Point to the root directory where src/ and Cargo.toml live
+  #     dockerfile: shim.dockerfile
+  #   container_name: shim-1
   #   environment:
   #     RUST_LOG: "debug"
   #     CONFIG_FILE: "/app/client-config.toml"
   #     OMNIPAXOS_SERVER_ADDRESS: "s1:8000" # Overwrite server_address in client config TOML
   #   volumes:
-  #     - ./client-1-config.toml:/app/client-config.toml
+  #     - ./shim-1-config.toml:/app/client-config.toml
   #     - ./logs/:/app/logs/
-  # c2:
-  #   image: omnipaxos-client
-  #   container_name: c2
-  #   environment:
-  #     RUST_LOG: "debug"
-  #     CONFIG_FILE: "/app/client-config.toml"
-  #     OMNIPAXOS_SERVER_ADDRESS: "s2:8000" # Overwrite server_address in client config TOML
-  #   volumes:
-  #     - ./client-2-config.toml:/app/client-config.toml
-  #     - ./logs/:/app/logs/
-  shim:
-    image: omnipaxos-shim
-    # user: "${CURRENT_UID}:${CURRENT_GID}"
-    build:
-      context: ./..         # Point to the root directory where src/ and Cargo.toml live
-      dockerfile: shim.dockerfile
-    container_name: shim-1
-    environment:
-      RUST_LOG: "debug"
-      CONFIG_FILE: "/app/client-config.toml"
-      OMNIPAXOS_SERVER_ADDRESS: "s1:8000" # Overwrite server_address in client config TOML
-    volumes:
-      - ./shim-1-config.toml:/app/client-config.toml
-      - ./logs/:/app/logs/

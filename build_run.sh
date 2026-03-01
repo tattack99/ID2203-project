@@ -1,6 +1,5 @@
 #!/bin/bash
 
-cargo build --release --bin shim && \
 docker compose -f ./build_scripts/docker-compose.shim.yml down && \
 docker compose -f ./build_scripts/docker-compose.shim.yml build && \
 docker compose -f ./build_scripts/docker-compose.shim.yml up
