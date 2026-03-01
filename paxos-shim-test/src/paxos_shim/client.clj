@@ -8,9 +8,14 @@
              {:content-type :json
               :body (json/generate-string {:key (str key) :value (str val)})}))
 
+;; In paxos-shim.client
 (defn get-val [node-url key]
   (let [resp (http/get (str node-url "/get/" key))]
-    (:body resp)))
+    (let [body (:body resp)]
+      (if (or (nil? body) (= "" body) (= "Key not found" body))
+        nil
+        (Integer/parseInt body))))) ; Convert String "79" to Integer 79
+
 
 (defrecord PaxosClient [node-url]
   client/Client

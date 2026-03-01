@@ -6,14 +6,15 @@
             [jepsen.core :as jepsen]
             [jepsen.os :as os]
             [jepsen.db :as db]
-            [paxos-shim.client :as paxos-client])
+            [paxos-shim.client :as paxos-client]
+            [clj-http.client :as http])
   (:gen-class))
+
 
 (def noop-remote
   (reify jepsen.control.core/Remote
     (connect [this node] this)
-    ;; FIX: This matches the 'AbstractMethodError' from your logs
-    (disconnect_BANG_ [this] nil))) 
+    (disconnect_BANG_ [this] nil))) ; Matches the underscores Jepsen expects
 
 (defn paxos-test
   [opts]
@@ -27,8 +28,7 @@
                       {:linear (checker/linearizable {:model (model/register)
                                                       :algorithm :linearizable})})
           :generator (->> (gen/mix [{:f :read} 
-                                    ;; FIX: Write random numbers so the checker has data
-                                    (fn [] {:f :write :value (rand-int 100)})])
+                                    (fn [test process] {:f :write, :value (rand-int 100)})])
                           (gen/stagger 1/10)
                           (gen/limit 20)
                           (gen/clients))}
@@ -38,10 +38,7 @@
   (println "🛡️ Starting Jepsen Test...")
   (let [test (paxos-test {:nodes ["local-shim"]})]
     (try
-      (let [result (jepsen/run! test)]
-        (println "Test Finished!")
-        ;; Access result safely
-        (println "Linearizable?" (get-in result [:results :linear :valid?])))
+      (let [result (jepsen/run! test)])
       (catch Exception e
         (println "❌ Jepsen Run Error:" (.getMessage e))
         (.printStackTrace e)))))
