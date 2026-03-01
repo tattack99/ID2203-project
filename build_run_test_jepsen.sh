@@ -9,4 +9,4 @@ docker compose -f ./build_scripts/docker-compose.shim.yml up -d
 # jepsen linearizability test
 cd paxos-shim-test
 lein clean
-lein run
+lein run check 
