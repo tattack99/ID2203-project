@@ -1,29 +1,156 @@
-use tokio::io::{self, AsyncBufReadExt, AsyncWriteExt, BufReader};
-use crate::Message;
+use crate::{configs::ClientConfig, data_collection::ClientData, network::Network};
+use chrono::Utc;
+use log::*;
+use omnipaxos_kv::common::{kv::*, messages::*};
+use std::time::Duration;
+use tokio::sync::oneshot;
 
-pub struct TestClient;
+const NETWORK_BATCH_SIZE: usize = 100;
 
-impl TestClient {
-    pub async fn new() -> Self {
-        Self
+pub struct Client {
+    id: ClientId,
+    network: Network,
+    client_data: ClientData,
+    config: ClientConfig,
+    active_server: NodeId,
+    final_request_count: Option<usize>,
+    next_request_id: usize,
+    pending_gets: std::collections::HashMap<usize, tokio::sync::oneshot::Sender<String>>,
+
+}
+
+pub enum ManualCommand {
+    Put(String, String),
+    Get(String, oneshot::Sender<String>), // Sender to pass the value back
+}
+
+impl Client {
+    pub async fn new(config: ClientConfig) -> Self {
+        let network = Network::new(
+            vec![(config.server_id, config.server_address.clone())],
+            NETWORK_BATCH_SIZE,
+        )
+        .await;
+        Client {
+            id: config.server_id,
+            network,
+            client_data: ClientData::new(),
+            active_server: config.server_id,
+            config,
+            final_request_count: None,
+            next_request_id: 0,
+            pending_gets: std::collections::HashMap::new(), 
+        }
     }
 
-    pub async fn run(&mut self) {
-        let stdin = io::stdin();
-        let mut reader = BufReader::new(stdin).lines();
-        let mut stdout = io::stdout();
+pub async fn run(&mut self, mut http_rx: tokio::sync::mpsc::Receiver<ManualCommand>) {
+    // 1. Wait for server start signal
+    match self.network.server_messages.recv().await {
+        Some(ServerMessage::StartSignal(start_time)) => {
+            Self::wait_until_sync_time(&mut self.config, start_time).await;
+        }
+        _ => panic!("Error waiting for start signal"),
+    }
 
-        // Example: Send an initial message
-        let init = Message { sender: "client".into(), content: "Hello Server".into() };
-        let _ = stdout.write_all(format!("{}\n", serde_json::to_string(&init).unwrap()).as_bytes()).await;
-        let _ = stdout.flush().await;
+    info!("{}: READY - Waiting for curl...", self.id);
 
-        // Loop to process incoming server responses
-        while let Ok(Some(line)) = reader.next_line().await {
-            if let Ok(msg) = serde_json::from_str::<Message>(&line) {
-                // Log to stderr so we don't corrupt our own stdout JSON stream
-                eprintln!("[Client] Received from {}: {}", msg.sender, msg.content);
+    loop {
+        tokio::select! {
+            // ONLY handle manual commands from HTTP
+            Some(cmd) = http_rx.recv() => {
+                match cmd {
+                    ManualCommand::Put(k, v) => self.send_request_manual(KVCommand::Put(k, v)).await,
+                    ManualCommand::Get(k, tx) => {
+                        let req_id = self.next_request_id;
+                        self.pending_gets.insert(req_id, tx); // This saves the sender
+                        self.send_request_manual(KVCommand::Get(k)).await;
+                    }
+                }
+            }
+            Some(msg) = self.network.server_messages.recv() => {
+                // Log it so we see it in docker logs
+                info!("{}: SERVER LOG -> {:?}", self.id, msg);
+
+                // CHECK: Is this a response to a GET we are tracking?
+                if let ServerMessage::Read(id, value) = &msg {
+                    // We use .remove(id) because we only respond once per request
+                    if let Some(tx) = self.pending_gets.remove(id) {
+                        let result = value.clone().unwrap_or_else(|| "Key not found".to_string());
+                        let _ = tx.send(result); // This wakes up the 'http_get' function!
+                    }
+                }
+                
+                self.handle_server_message(msg);
             }
         }
     }
+}
+
+    fn handle_server_message(&mut self, msg: ServerMessage) {
+        debug!("Recieved {msg:?}");
+        match msg {
+            ServerMessage::StartSignal(_) => (),
+            server_response => {
+                let cmd_id = server_response.command_id();
+                self.client_data.new_response(cmd_id);
+            }
+        }
+    }
+
+    async fn send_request(&mut self, is_write: bool) {
+        let key = self.next_request_id.to_string();
+        let cmd = match is_write {
+            true => KVCommand::Put(key.clone(), key),
+            false => KVCommand::Get(key),
+        };
+        let request = ClientMessage::Append(self.next_request_id, cmd);
+        debug!("Sending {request:?}");
+        self.network.send(self.active_server, request).await;
+        self.client_data.new_request(is_write);
+        self.next_request_id += 1;
+    }
+
+    fn run_finished(&self) -> bool {
+        if let Some(count) = self.final_request_count {
+            if self.client_data.request_count() >= count {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Wait until the scheduled start time to synchronize client starts.
+    // If start time has already passed, start immediately.
+    async fn wait_until_sync_time(config: &mut ClientConfig, scheduled_start_utc_ms: i64) {
+        // // Desync the clients a bit
+        // let mut rng = rand::thread_rng();
+        // let scheduled_start_utc_ms = scheduled_start_utc_ms + rng.gen_range(1..100);
+        let now = Utc::now();
+        let milliseconds_until_sync = scheduled_start_utc_ms - now.timestamp_millis();
+        config.sync_time = Some(milliseconds_until_sync);
+        if milliseconds_until_sync > 0 {
+            tokio::time::sleep(Duration::from_millis(milliseconds_until_sync as u64)).await;
+        } else {
+            warn!("Started after synchronization point!");
+        }
+    }
+
+    fn save_results(&self) -> Result<(), std::io::Error> {
+        self.client_data.save_summary(self.config.clone())?;
+        self.client_data
+            .to_csv(self.config.output_filepath.clone())?;
+        Ok(())
+    }
+
+    async fn send_request_manual(&mut self, cmd: KVCommand) {
+        // FIX 4: Check if it's a write BEFORE moving 'cmd' into the message
+        let is_write = matches!(cmd, KVCommand::Put(_, _));
+        let request = ClientMessage::Append(self.next_request_id, cmd);
+        
+        debug!("Sending {request:?}");
+        self.network.send(self.active_server, request).await;
+        self.client_data.new_request(is_write);
+        self.next_request_id += 1;
+    }
+
 }

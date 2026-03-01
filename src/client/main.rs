@@ -1,40 +1,66 @@
-use crate::client::{Client, ManualCommand}; 
+// use client::Client;
+// use configs::ClientConfig;
+// use core::panic;
+// use env_logger;
+
+// mod client;
+// mod configs;
+// mod data_collection;
+// mod network;
+
+// #[tokio::main]
+// pub async fn main() {
+//     env_logger::init();
+//     let client_config = match ClientConfig::new() {
+//         Ok(parsed_config) => parsed_config,
+//         Err(e) => panic!("{e}"),
+//     };
+//     let mut client = Client::new(client_config).await;
+//     client.run().await;
+// }
+
+use crate::test_client::{Client, ManualCommand}; 
 use crate::configs::ClientConfig;
 use axum::{
-    routing::{get, post}, // Add 'get' here
+    routing::{get, post},
     Router, 
     Json, 
-    extract::{State, Path} // Add 'Path' for the /get/:key route
+    extract::{State, Path}
 };use std::net::SocketAddr;
 
-mod client;
+mod test_client;
 mod configs;
 mod data_collection;
 mod network;
 
 #[derive(serde::Deserialize)]
-struct PutPayload {
-    key: String,
-    value: String,
+struct PutReq { 
+    key: String, 
+    value: String 
 }
 
 async fn http_put(
-    State(tx): State<tokio::sync::mpsc::Sender<ManualCommand>>, 
-    Json(payload): Json<PutPayload>
+    State(tx): State<tokio::sync::mpsc::Sender<ManualCommand>>,
+    Json(payload): Json<PutReq>
 ) -> &'static str {
     let _ = tx.send(ManualCommand::Put(payload.key, payload.value)).await;
-    "Command queued"
+    "Put Accepted"
 }
 
 async fn http_get(
     State(tx): State<tokio::sync::mpsc::Sender<ManualCommand>>,
-    Path(key): Path<String>, // This extracts the :key from the URL
+    Path(key): Path<String>,
 ) -> String {
-    // For now, we'll just queue it and return a string
-    // until we link the oneshot channel back.
-    let (resp_tx, _resp_rx) = tokio::sync::oneshot::channel();
+    let (resp_tx, resp_rx) = tokio::sync::oneshot::channel();
+    
+    // 1. Send the command + the "return address" (resp_tx)
     let _ = tx.send(ManualCommand::Get(key, resp_tx)).await;
-    "Get command queued".to_string()
+    
+    // 2. WAIT here. The HTTP response won't be sent yet.
+    match resp_rx.await {
+        Ok(val) => val, // This is where "4121" comes back!
+        Err(_) => "Error: Background client dropped request".to_string(),
+    }
 }
 
 #[tokio::main]
