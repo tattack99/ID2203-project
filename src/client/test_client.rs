@@ -3,7 +3,7 @@ use chrono::Utc;
 use log::*;
 use omnipaxos_kv::common::{kv::*, messages::*};
 use std::time::Duration;
-use crate::shim::ManualCommand; 
+use crate::shim::ApiCommand; 
 use std::collections::HashMap;
 use tokio::sync::oneshot;
 
@@ -39,7 +39,7 @@ impl Client {
         }
     }
 
-pub async fn run(&mut self, mut http_rx: tokio::sync::mpsc::Receiver<ManualCommand>) {
+pub async fn run(&mut self, mut http_rx: tokio::sync::mpsc::Receiver<ApiCommand>) {
     match self.network.server_messages.recv().await {
         Some(ServerMessage::StartSignal(start_time)) => {
             Self::wait_until_sync_time(&mut self.config, start_time).await;
@@ -51,19 +51,18 @@ pub async fn run(&mut self, mut http_rx: tokio::sync::mpsc::Receiver<ManualComma
 
     loop {
         tokio::select! {
-            // ONLY handle manual commands from HTTP
+            // Handles request from shim api, can be curl or jepsen
             Some(cmd) = http_rx.recv() => {
                 match cmd {
-                    ManualCommand::Put(k, v) => self.send_request_manual(KVCommand::Put(k, v)).await,
-                    ManualCommand::Get(k, tx) => {
-                        let req_id = self.next_request_id;
-                        self.pending_gets.insert(req_id, tx); // This saves the sender
+                    ApiCommand::Put(k, v) => self.send_request_manual(KVCommand::Put(k, v)).await,
+                    ApiCommand::Get(k, tx) => {
+                        let key = self.next_request_id;
+                        self.pending_gets.insert(key, tx); 
                         self.send_request_manual(KVCommand::Get(k)).await;
                     }
                 }
             }
             Some(msg) = self.network.server_messages.recv() => {
-                // Log it so we see it in docker logs
                 info!("{}: SERVER LOG -> {:?}", self.id, msg);
 
                 // CHECK: Is this a response to a GET we are tracking?
@@ -74,7 +73,6 @@ pub async fn run(&mut self, mut http_rx: tokio::sync::mpsc::Receiver<ManualComma
                         let _ = tx.send(result); // This wakes up the 'http_get' function!
                     }
                 }
-                
                 self.handle_server_message(msg);
             }
         }
@@ -138,7 +136,6 @@ pub async fn run(&mut self, mut http_rx: tokio::sync::mpsc::Receiver<ManualComma
     }
 
     async fn send_request_manual(&mut self, cmd: KVCommand) {
-        // FIX 4: Check if it's a write BEFORE moving 'cmd' into the message
         let is_write = matches!(cmd, KVCommand::Put(_, _));
         let request = ClientMessage::Append(self.next_request_id, cmd);
         

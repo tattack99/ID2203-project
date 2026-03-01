@@ -12,29 +12,29 @@ pub struct PutReq {
     pub value: String,
 }
 
-pub enum ManualCommand {
+pub enum ApiCommand {
     Put(String, String),
     Get(String, oneshot::Sender<String>),
 }
 
 pub async fn http_put(
-    State(tx): State<mpsc::Sender<ManualCommand>>,
+    State(tx): State<mpsc::Sender<ApiCommand>>,
     Json(payload): Json<PutReq>,
 ) -> &'static str {
-    let _ = tx.send(ManualCommand::Put(payload.key, payload.value)).await;
+    let _ = tx.send(ApiCommand::Put(payload.key, payload.value)).await;
     "Put Accepted"
 }
 
 pub async fn http_get(
-    State(tx): State<mpsc::Sender<ManualCommand>>,
+    State(tx): State<mpsc::Sender<ApiCommand>>,
     Path(key): Path<String>,
 ) -> String {
     let (resp_tx, resp_rx) = oneshot::channel();
-    let _ = tx.send(ManualCommand::Get(key, resp_tx)).await;
+    let _ = tx.send(ApiCommand::Get(key, resp_tx)).await;
     resp_rx.await.unwrap_or_else(|_| "0".to_string())
 }
 
-pub fn create_router(tx: mpsc::Sender<ManualCommand>) -> Router {
+pub fn create_router(tx: mpsc::Sender<ApiCommand>) -> Router {
     Router::new()
         .route("/put", post(http_put))
         .route("/get/:key", get(http_get))

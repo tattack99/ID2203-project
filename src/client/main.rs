@@ -25,7 +25,7 @@ mod shim;
 mod test_client;
 
 use crate::configs::ClientConfig;
-use crate::shim::ManualCommand;
+use crate::shim::ApiCommand;
 use crate::test_client::Client;
 use std::net::SocketAddr;
 use tokio::sync::mpsc;
