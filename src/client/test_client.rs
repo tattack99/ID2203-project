@@ -3,6 +3,8 @@ use chrono::Utc;
 use log::*;
 use omnipaxos_kv::common::{kv::*, messages::*};
 use std::time::Duration;
+use crate::shim::ManualCommand; 
+use std::collections::HashMap;
 use tokio::sync::oneshot;
 
 const NETWORK_BATCH_SIZE: usize = 100;
@@ -15,13 +17,7 @@ pub struct Client {
     active_server: NodeId,
     final_request_count: Option<usize>,
     next_request_id: usize,
-    pending_gets: std::collections::HashMap<usize, tokio::sync::oneshot::Sender<String>>,
-
-}
-
-pub enum ManualCommand {
-    Put(String, String),
-    Get(String, oneshot::Sender<String>), // Sender to pass the value back
+    pub pending_gets: HashMap<usize, oneshot::Sender<String>>,
 }
 
 impl Client {
@@ -44,7 +40,6 @@ impl Client {
     }
 
 pub async fn run(&mut self, mut http_rx: tokio::sync::mpsc::Receiver<ManualCommand>) {
-    // 1. Wait for server start signal
     match self.network.server_messages.recv().await {
         Some(ServerMessage::StartSignal(start_time)) => {
             Self::wait_until_sync_time(&mut self.config, start_time).await;
