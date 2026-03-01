@@ -14,7 +14,7 @@
 (def noop-remote
   (reify jepsen.control.core/Remote
     (connect [this node] this)
-    (disconnect_BANG_ [this] nil))) ; Matches the underscores Jepsen expects
+    (disconnect_BANG_ [this] nil)))
 
 (defn paxos-test
   [opts]
