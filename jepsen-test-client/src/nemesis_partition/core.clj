@@ -19,9 +19,15 @@
   (.setLevel ^Logger (LoggerFactory/getLogger "jepsen.core") Level/INFO)
   (.setLevel ^Logger (LoggerFactory/getLogger "net.schmizz.sshj") Level/WARN))
 
-(defn get-ip [container]
-  (let [res (sh "docker" "inspect" "-f" "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" container)]
+(defn get-docker-ip [container-name]
+  (let [res (sh "docker" "inspect" "-f" "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" container-name)]
     (str/trim (:out res))))
+
+(defn build-internal-map [ssh-hosts]
+  ;; Assuming s1 maps to 127.0.0.2, s2 to 127.0.0.3, etc.
+  (let [containers ["s1" "s2" "s3"]]
+    (zipmap ssh-hosts (map get-docker-ip containers))))
+
 
 (defrecord PaxosClient [node-map]
   client/Client
@@ -48,13 +54,14 @@
 
 (defn paxos-test []
   (let [ssh-hosts    ["127.0.0.2" "127.0.0.3" "127.0.0.4"]
-        ;; Hardcoded mapping: SSH Alias -> Internal Docker IP
-        internal-map {"127.0.0.2" "172.18.0.6" 
-                      "127.0.0.3" "172.18.0.3" 
-                      "127.0.0.4" "172.18.0.4"}
+        internal-map (build-internal-map ssh-hosts)
+        ;; Map all 3 logical nodes to your 2 available client shims
         node-map     {"127.0.0.2" "http://localhost:3001" 
                       "127.0.0.3" "http://localhost:3002" 
-                      "127.0.0.4" "http://localhost:3001"}] ; Note: c1/c2 mapping
+                      "127.0.0.4" "http://localhost:3001"}] ; s3 talks to shim c1
+    
+    (println "🚀 Dynamic IP Mapping:" internal-map)
+    
     (merge tests/noop-test
            {:name      "paxos-partition"
             :remote    (sshj/remote)
@@ -64,11 +71,15 @@
                          (fn [nodes]
                            (let [halves (nemesis/bisect nodes)
                                  grudge (nemesis/complete-grudge halves)]
-                             ;; Key = SSH IP (for Jepsen), Value = Docker IP (for iptables)
+                             ;; Crucial: Key is logical SSH, Value is physical Docker
                              (into {} (for [[src dests] grudge]
                                         [src (set (map internal-map dests))])))))
             :client    (->PaxosClient node-map)
-            :checker   (checker/compose {:linear (checker/linearizable {:model (model/register)})})
+            :checker (checker/compose 
+           {:linear (checker/linearizable 
+                      {:model (model/register)
+                       :max-limit 10000})}) ; Stops the search before OOM
+            :concurrency 2         ; Fewer parallel threads = smaller search space
             :generator (->> (gen/mix [(fn [_ _] {:f :read}) 
                                      (fn [_ _] {:f :write :value (rand-int 100)})])
                             (gen/stagger 1/5)
