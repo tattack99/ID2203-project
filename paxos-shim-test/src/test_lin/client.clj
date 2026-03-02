@@ -1,4 +1,4 @@
-(ns paxos-shim-test-lin.client
+(ns test-lin.client
   (:require [clj-http.client :as http]
             [jepsen.client :as client]))
 

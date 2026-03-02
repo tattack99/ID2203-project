@@ -1,4 +1,4 @@
-(ns paxos-shim-test-lin.core
+(ns test-lin.core
   (:require [jepsen.checker :as checker]
             [jepsen.generator :as gen]
             [jepsen.tests :as tests]
@@ -6,7 +6,7 @@
             [jepsen.core :as jepsen]
             [jepsen.os :as os]
             [jepsen.db :as db]
-            [paxos-shim-test-lin.client :as paxos-client])
+            [test-lin.client :as paxos-client])
   (:gen-class))
 
 (def noop-remote
