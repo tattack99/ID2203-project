@@ -1,4 +1,4 @@
-(ns paxos-shim-test.core
+(ns paxos-shim-test-http.core
   (:require [clj-http.client :as http]
             [cheshire.core :as json])
   (:gen-class))
