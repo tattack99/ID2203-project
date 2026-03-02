@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # build client & server nodes
-cargo build --bin client && \
+cargo run --bin client && \
+cargo run --bin server && \
 docker compose -f ./build_scripts/docker-compose.shim.yml down && \
 docker compose -f ./build_scripts/docker-compose.shim.yml build --no-cache && \
 docker compose -f ./build_scripts/docker-compose.shim.yml up -d

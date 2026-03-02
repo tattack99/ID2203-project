@@ -50,8 +50,7 @@
                                        (gen/sleep 5)
                                        {:type :info :f :stop}])
                                nil)) ; In 0.3.10, nil is the valid no-op
-                            (gen/clients))
-}
+                            (gen/clients))}
            opts)))
 
 ;; 3. Main Entry Point
