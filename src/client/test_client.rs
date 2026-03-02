@@ -2,9 +2,10 @@ use crate::{configs::ClientConfig, data_collection::ClientData, network::Network
 use chrono::Utc;
 use log::*;
 use omnipaxos_kv::common::{kv::*, messages::*};
-use rand::Rng;
 use std::time::Duration;
-use tokio::time::interval;
+use crate::shim::ApiCommand; 
+use std::collections::HashMap;
+use tokio::sync::oneshot;
 
 const NETWORK_BATCH_SIZE: usize = 100;
 
@@ -16,6 +17,7 @@ pub struct Client {
     active_server: NodeId,
     final_request_count: Option<usize>,
     next_request_id: usize,
+    pub pending_gets: HashMap<usize, oneshot::Sender<String>>,
 }
 
 impl Client {
@@ -33,77 +35,49 @@ impl Client {
             config,
             final_request_count: None,
             next_request_id: 0,
+            pending_gets: std::collections::HashMap::new(), 
         }
     }
 
-    pub async fn run(&mut self) {
-        // Wait for server to signal start
-        info!("{}: Waiting for start signal from server", self.id);
-        match self.network.server_messages.recv().await {
-            Some(ServerMessage::StartSignal(start_time)) => {
-                Self::wait_until_sync_time(&mut self.config, start_time).await;
-            }
-            _ => panic!("Error waiting for start signal"),
+pub async fn run(&mut self, mut http_rx: tokio::sync::mpsc::Receiver<ApiCommand>) {
+    match self.network.server_messages.recv().await {
+        Some(ServerMessage::StartSignal(start_time)) => {
+            Self::wait_until_sync_time(&mut self.config, start_time).await;
         }
+        _ => panic!("Error waiting for start signal"),
+    }
 
-        // Early end
-        let intervals = self.config.requests.clone();
-        if intervals.is_empty() {
-            self.save_results().expect("Failed to save results");
-            return;
-        }
+    info!("{}: READY - Waiting for curl...", self.id);
 
-        // Initialize intervals
-        let mut rng = rand::thread_rng();
-        let mut intervals = intervals.iter();
-        let first_interval = intervals.next().unwrap();
-        let mut read_ratio = first_interval.get_read_ratio();
-        let mut request_interval = interval(first_interval.get_request_delay());
-        let mut next_interval = interval(first_interval.get_interval_duration());
-        let _ = next_interval.tick().await;
-
-        // Main event loop
-        info!("{}: Starting requests", self.id);
-        loop {
-            tokio::select! {
-                biased;
-                Some(msg) = self.network.server_messages.recv() => {
-                    self.handle_server_message(msg);
-                    if self.run_finished() {
-                        break;
+    loop {
+        tokio::select! {
+            // Handles request from shim api, can be curl or jepsen
+            Some(cmd) = http_rx.recv() => {
+                match cmd {
+                    ApiCommand::Put(k, v) => self.send_request_manual(KVCommand::Put(k, v)).await,
+                    ApiCommand::Get(k, tx) => {
+                        let key = self.next_request_id;
+                        self.pending_gets.insert(key, tx); 
+                        self.send_request_manual(KVCommand::Get(k)).await;
                     }
                 }
-                _ = request_interval.tick(), if self.final_request_count.is_none() => {
-                    let is_write = rng.gen::<f64>() > read_ratio;
-                    self.send_request(is_write).await;
-                },
-                _ = next_interval.tick() => {
-                    match intervals.next() {
-                        Some(new_interval) => {
-                            read_ratio = new_interval.read_ratio;
-                            next_interval = interval(new_interval.get_interval_duration());
-                            next_interval.tick().await;
-                            request_interval = interval(new_interval.get_request_delay());
-                        },
-                        None => {
-                            self.final_request_count = Some(self.client_data.request_count());
-                            if self.run_finished() {
-                                break;
-                            }
-                        },
+            }
+            Some(msg) = self.network.server_messages.recv() => {
+                info!("{}: SERVER LOG -> {:?}", self.id, msg);
+
+                // CHECK: Is this a response to a GET we are tracking?
+                if let ServerMessage::Read(id, value) = &msg {
+                    // We use .remove(id) because we only respond once per request
+                    if let Some(tx) = self.pending_gets.remove(id) {
+                        let result = value.clone().unwrap_or_else(|| "Key not found".to_string());
+                        let _ = tx.send(result); // This wakes up the 'http_get' function!
                     }
-                },
+                }
+                self.handle_server_message(msg);
             }
         }
-
-        info!(
-            "{}: Client finished: collected {} responses",
-            self.id,
-            self.client_data.response_count(),
-        );
-        self.network.shutdown();
-        self.save_results().expect("Failed to save results");
     }
+}
 
     fn handle_server_message(&mut self, msg: ServerMessage) {
         debug!("Recieved {msg:?}");
@@ -160,4 +134,15 @@ impl Client {
             .to_csv(self.config.output_filepath.clone())?;
         Ok(())
     }
+
+    async fn send_request_manual(&mut self, cmd: KVCommand) {
+        let is_write = matches!(cmd, KVCommand::Put(_, _));
+        let request = ClientMessage::Append(self.next_request_id, cmd);
+        
+        debug!("Sending {request:?}");
+        self.network.send(self.active_server, request).await;
+        self.client_data.new_request(is_write);
+        self.next_request_id += 1;
+    }
+
 }

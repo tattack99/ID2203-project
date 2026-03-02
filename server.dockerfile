@@ -28,3 +28,28 @@ WORKDIR /app
 COPY --from=builder /app/target/release/server /usr/local/bin
 EXPOSE 8000
 ENTRYPOINT ["/usr/local/bin/server"]
+
+# Jepsen
+FROM debian:bookworm-slim AS runtime
+WORKDIR /app
+
+# Install SSH, sudo, and network tools
+RUN apt-get update && apt-get install -y \
+    openssh-server \
+    sudo \
+    iptables \
+    iproute2 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Configure SSH for root login (standard Jepsen practice)
+RUN mkdir /var/run/sshd
+RUN echo 'root:root' | chpasswd
+RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN sed -i 's/UsePAM yes/UsePAM no/' /etc/ssh/sshd_config
+
+COPY --from=builder /app/target/release/server /usr/local/bin
+
+EXPOSE 8000 22
+
+# Start SSH in the background, then launch your Rust server
+ENTRYPOINT service ssh start && /usr/local/bin/server
