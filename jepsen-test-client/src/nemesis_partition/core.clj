@@ -79,7 +79,7 @@
            {:linear (checker/linearizable 
                       {:model (model/register)
                        :max-limit 10000})}) ; Stops the search before OOM
-            :concurrency 2         ; Fewer parallel threads = smaller search space
+            :concurrency 3         ; Fewer parallel threads = smaller search space
             :generator (->> (gen/mix [(fn [_ _] {:f :read}) 
                                      (fn [_ _] {:f :write :value (rand-int 100)})])
                             (gen/stagger 1/5)
@@ -88,8 +88,6 @@
                                                    (gen/sleep 5) 
                                                    {:type :info :f :stop}]))
                             (gen/time-limit 30))})))
-
-
 
 (defn -main [& _]
   (setup-logging!)

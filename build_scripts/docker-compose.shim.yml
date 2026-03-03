@@ -21,6 +21,7 @@ services:
     container_name: s1
     environment:
       <<: *common-server-variables
+    command: /bin/sh -c "service ssh start && tail -f /dev/null"
     volumes:
       - ./server-1-config.toml:/app/server-config.toml
       - ./cluster-config.toml:/app/cluster-config.toml
@@ -33,6 +34,7 @@ services:
     container_name: s2
     environment:
       <<: *common-server-variables
+    command: /bin/sh -c "service ssh start && tail -f /dev/null"
     volumes:
       - ./server-2-config.toml:/app/server-config.toml
       - ./cluster-config.toml:/app/cluster-config.toml
@@ -45,6 +47,7 @@ services:
     container_name: s3
     environment:
       <<: *common-server-variables
+    command: /bin/sh -c "service ssh start && tail -f /dev/null"
     volumes:
       - ./server-3-config.toml:/app/server-config.toml
       - ./cluster-config.toml:/app/cluster-config.toml

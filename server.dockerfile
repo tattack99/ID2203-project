@@ -23,33 +23,38 @@ RUN cargo chef cook --release --recipe-path recipe.json
 COPY . .
 RUN cargo build --release --bin server
 
-FROM debian:bookworm-slim AS runtime
-WORKDIR /app
-COPY --from=builder /app/target/release/server /usr/local/bin
-EXPOSE 8000
-ENTRYPOINT ["/usr/local/bin/server"]
-
-# Jepsen
+# FINAL SINGLE RUNTIME STAGE
 FROM debian:bookworm-slim AS runtime
 WORKDIR /app
 
-# Install SSH, sudo, and network tools
+# 1. Install all dependencies in one layer
 RUN apt-get update && apt-get install -y \
     openssh-server \
     sudo \
     iptables \
     iproute2 \
+    procps \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Configure SSH for root login (standard Jepsen practice)
-RUN mkdir /var/run/sshd
-RUN echo 'root:root' | chpasswd
-RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-RUN sed -i 's/UsePAM yes/UsePAM no/' /etc/ssh/sshd_config
+# 2. Configure SSH (Standard Jepsen setup)
+RUN mkdir /var/run/sshd && \
+    echo 'root:root' | chpasswd && \
+    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+    sed -i 's/UsePAM yes/UsePAM no/' /etc/ssh/sshd_config
 
-COPY --from=builder /app/target/release/server /usr/local/bin
+# 3. Copy the binary from the builder stage
+COPY --from=builder /app/target/release/server /usr/local/bin/server
+
+# Ensure logs directory exists for the redirection in ENTRYPOINT
+RUN mkdir -p /app/logs
 
 EXPOSE 8000 22
 
-# Start SSH in the background, then launch your Rust server
-ENTRYPOINT service ssh start && /usr/local/bin/server
+# 4. The "OmniPaxos Lifecycle" Entrypoint
+# - service ssh start: Allows Jepsen to connect
+# - nohup ... &: Starts your Rust server immediately on boot
+# - tail -f: Keeps the container alive even if the Rust server is killed
+ENTRYPOINT service ssh start && \
+           nohup /usr/local/bin/server > /app/logs/stdout.log 2>&1 & \
+           tail -f /dev/null
