@@ -7,10 +7,15 @@ use omnipaxos::{
     OmniPaxos, OmniPaxosConfig,
 };
 use omnipaxos_kv::common::{kv::*, messages::*, utils::Timestamp};
-use omnipaxos_storage::memory_storage::MemoryStorage;
+// use omnipaxos_storage::memory_storage::MemoryStorage;
+
+//Added file storage access
+use crate::server::file_storage::FileStorage;
 use std::{fs::File, io::Write, time::Duration};
 
-type OmniPaxosInstance = OmniPaxos<Command, MemoryStorage<Command>>;
+// type OmniPaxosInstance = OmniPaxos<Command, MemoryStorage<Command>>;
+// Old import
+type OmniPaxosInstance = OmniPaxos<Command, FileStorage>;
 const NETWORK_BATCH_SIZE: usize = 100;
 const LEADER_WAIT: Duration = Duration::from_secs(1);
 const ELECTION_TIMEOUT: Duration = Duration::from_secs(1);
@@ -29,7 +34,13 @@ pub struct OmniPaxosServer {
 impl OmniPaxosServer {
     pub async fn new(config: OmniPaxosKVConfig) -> Self {
         // Initialize OmniPaxos instance
-        let storage: MemoryStorage<Command> = MemoryStorage::default();
+        // let storage: MemoryStorage<Command> = MemoryStorage::default();
+
+        //New Storage location + initialization
+        let storage_path = format!("node_{}_storage.bin", config.local.server_id);
+
+        let storage = FileStorage::new(storage_path.into());
+
         let omnipaxos_config: OmniPaxosConfig = config.clone().into();
         let omnipaxos_msg_buffer = Vec::with_capacity(omnipaxos_config.server_config.buffer_size);
         let omnipaxos = omnipaxos_config.build(storage).unwrap();

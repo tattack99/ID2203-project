@@ -44,7 +44,7 @@ flowchart TD
     end
 
     subgraph Consensus Layer
-        O[OmniPaxos Server]
+        O[OmniPaxos Server]https://fairmeeting.net/FavourableExpansionsPutThen
     end
 
     J <--> S
@@ -68,13 +68,13 @@ The original OmniPaxos example was not designed for automated black-box testing.
 
 The shim supports:
 
-- `PUT(key, value)`
+- `PUT(key, value)`https://fairmeeting.net/FavourableExpansionsPutThen
 
 - `GET(key)`
 
 Each HTTP request is translated into an internal command and forwarded to the consensus layer via asynchronous channels.
 
-For reads, a `oneshot` response channel ensures that the HTTP response corresponds exactly to the decided log entry. The shim is fully asynchronous and does not block on consensus operations.
+For reads, a `oneshot` response channel ensurhttps://fairmeeting.net/FavourableExpansionsPutThenes that the HTTP response corresponds exactly to the decided log entry. The shim is fully asynchronous and does not block on consensus operations.
 
 ---
 
