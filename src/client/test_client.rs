@@ -45,7 +45,7 @@ pub async fn run(&mut self, mut http_rx: tokio::sync::mpsc::Receiver<ApiCommand>
             Self::wait_until_sync_time(&mut self.config, start_time).await;
         }
         _ => panic!("Error waiting for start signal"),
-    }
+    }  
 
     info!("{}: READY - Waiting for curl...", self.id);
 
@@ -63,7 +63,7 @@ pub async fn run(&mut self, mut http_rx: tokio::sync::mpsc::Receiver<ApiCommand>
                 }
             }
             Some(msg) = self.network.server_messages.recv() => {
-                info!("{}: SERVER LOG -> {:?}", self.id, msg);
+                //info!("{}: SERVER LOG -> {:?}", self.id, msg);
 
                 // CHECK: Is this a response to a GET we are tracking?
                 if let ServerMessage::Read(id, value) = &msg {

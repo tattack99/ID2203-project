@@ -36,10 +36,14 @@
 (defn start-server! [test node]
   (if (running? node)
     (do (info node "Nemesis: Already running.") :already-running)
-    (let [id (get node->id node)]
-      (info node "Nemesis: Starting OmniPaxos ID" id)
+    (let [id (get node->id node)
+          port (+ 3000 id)] ;; Maps 1->3001, 2->3002, 3->3003
+      (info node "Nemesis: Starting OmniPaxos ID" id "on port" port)
       (try
-        (c/exec :sh :-c "cd /app && setsid /usr/local/bin/server > /app/logs/stdout.log 2>&1 &" {:continue? true})
+        ;; Clear the port and start the server
+        (c/exec :sh :-c (str "fuser -k " port "/tcp || true; "
+                             "cd /app && setsid /usr/local/bin/server > /app/logs/stdout.log 2>&1 &") 
+                {:continue? true})
         :started
         (catch Exception e
           (info node "Nemesis: Start failed:" (.getMessage e))
@@ -53,15 +57,15 @@
     (try
       (case (:f op)
         :read  (let [resp (http/get (str (:url this) "/get/jepsen-key") 
-                                   {:conn-timeout 1000 :socket-timeout 1000}) 
+                                   {:conn-timeout 200 :socket-timeout 200}) 
                      b (:body resp)]
                  (assoc op :type :ok :value (when-not (or (empty? b) (= b "Key not found")) 
                                               (Integer/parseInt b))))
         :write (do (http/post (str (:url this) "/put")
                               {:form-params {:key "jepsen-key" :value (str (:value op))}
                                :content-type :json 
-                               :conn-timeout 1000 
-                               :socket-timeout 1000})
+                               :conn-timeout 200 
+                               :socket-timeout 200})
                    (assoc op :type :ok)))
       (catch Exception e 
         (assoc op :type :info :error (.getMessage e)))))
@@ -89,11 +93,12 @@
                                       (fn [_ _] {:f :write :value (rand-int 100)})])
                 (gen/stagger 1/10)
                 (gen/nemesis
-                  (gen/cycle [(gen/sleep 5)       ;; Initial Election Window
-                              {:type :info, :f :stop}
-                              (gen/sleep 5)        ;; Downtime
-                              {:type :info, :f :start}
-                              (gen/sleep 5)]))    ;; Recovery/Sync Window
+                  (gen/cycle [(gen/sleep 5)       ;; Wait for cluster to be healthy
+            {:type :info, :f :stop}
+            (gen/sleep 2)        ;; Short downtime (node is dead)
+            {:type :info, :f :start}
+            (gen/sleep 30)]))     ;; Generous window for log sync & Accept phase
+                ;; Recovery/Sync Window
                 (gen/time-limit (:time-limit opts)))})))
 
 (defn -main [& args]

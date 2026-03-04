@@ -53,8 +53,7 @@ impl OmniPaxosServer {
         let mut client_msg_buf = Vec::with_capacity(NETWORK_BATCH_SIZE);
         let mut cluster_msg_buf = Vec::with_capacity(NETWORK_BATCH_SIZE);
         // We don't use Omnipaxos leader election at first and instead force a specific initial leader
-        self.establish_initial_leader(&mut cluster_msg_buf, &mut client_msg_buf)
-            .await;
+        self.establish_initial_leader(&mut cluster_msg_buf, &mut client_msg_buf).await;
         // Main event loop with leader election
         let mut election_interval = tokio::time::interval(ELECTION_TIMEOUT);
         let mut election_tick_counter = 0;
@@ -62,17 +61,16 @@ impl OmniPaxosServer {
             tokio::select! {
                 _ = election_interval.tick() => {
                     self.omnipaxos.tick();
-                    // if election_tick_counter >= 5 {
-                    //     election_tick_counter = 0;
-                        
-                    //     match self.omnipaxos.get_current_leader() {
-                    //         Some((leader, is_accept)) => info!("Leader: {leader}, Accept: {is_accept}"),
-                    //         None => info!("Waiting for leader election..."),
-                    //     }
-                    // }
-                    // else {
-                    //     election_tick_counter = election_tick_counter + 1;
-                    // }
+                    if election_tick_counter >= 10 {
+                        election_tick_counter = 0;
+                        match self.omnipaxos.get_current_leader() {
+                            Some((leader, is_accept)) => info!("Leader: {leader}, Accept: {is_accept}"),
+                            None => info!("Waiting for leader election..."),
+                        }
+                    }
+                    else {
+                        election_tick_counter = election_tick_counter + 1;
+                    }
                     self.send_outgoing_msgs();
                 },
                 _ = self.network.cluster_messages.recv_many(&mut cluster_msg_buf, NETWORK_BATCH_SIZE) => {
@@ -80,6 +78,22 @@ impl OmniPaxosServer {
                 },
                 _ = self.network.client_messages.recv_many(&mut client_msg_buf, NETWORK_BATCH_SIZE) => {
                     self.handle_client_messages(&mut client_msg_buf).await;
+                },
+                Some(new_conn) = self.network.recovery_receiver.recv() => {
+                    self.network.apply_connection(new_conn);
+                    info!("ID {}: Re-established connection with a recovered node.", self.id);
+                        // If we have already decided on a leader and the experiment started:
+                    if let Some((leader_id, _)) = self.omnipaxos.get_current_leader() {
+                        // Option A: If I am the leader, I send the start signal again
+                        info!("ID {}: leader: {}", self.id, leader_id);
+                        if leader_id == self.id { 
+                            let current_time = Utc::now().timestamp_millis();
+                            self.send_cluster_start_signals(current_time);
+                            self.send_client_start_signals(current_time);
+                            info!("ID {}: Re-sent start signals to recovered node.", self.id);
+                        }
+                    }
+                    self.send_outgoing_msgs(); 
                 },
             }
         }
@@ -94,6 +108,7 @@ impl OmniPaxosServer {
         client_msg_buffer: &mut Vec<(ClientId, ClientMessage)>,
     ) {
         let mut leader_takeover_interval = tokio::time::interval(LEADER_WAIT);
+        info!("{}: Establish initial leader", self.id);
         loop {
             tokio::select! {
                 _ = leader_takeover_interval.tick(), if self.config.cluster.initial_leader == self.id => {
@@ -112,7 +127,6 @@ impl OmniPaxosServer {
                     self.omnipaxos.try_become_leader();
                     self.send_outgoing_msgs();
                 },
-                // This branch is critical: if s2/s3 receive a message, they must break here too
                 _ = self.network.cluster_messages.recv_many(cluster_msg_buffer, NETWORK_BATCH_SIZE) => {
                     let recv_start = self.handle_cluster_messages(cluster_msg_buffer).await;
                     if recv_start {
@@ -122,6 +136,22 @@ impl OmniPaxosServer {
                 },
                 _ = self.network.client_messages.recv_many(client_msg_buffer, NETWORK_BATCH_SIZE) => {
                     self.handle_client_messages(client_msg_buffer).await;
+                },
+                Some(new_conn) = self.network.recovery_receiver.recv() => {
+                    self.network.apply_connection(new_conn);
+                    info!("ID {}: Re-established connection with a recovered node.", self.id);
+                        // If we have already decided on a leader and the experiment started:
+                    if let Some((leader_id, _)) = self.omnipaxos.get_current_leader() {
+                        // Option A: If I am the leader, I send the start signal again
+                        info!("ID {}: leader: {}", self.id, leader_id);
+                        if leader_id == self.id { 
+                            let current_time = Utc::now().timestamp_millis();
+                            self.send_cluster_start_signals(current_time);
+                            self.send_client_start_signals(current_time);
+                            info!("ID {}: Re-sent start signals to recovered node.", self.id);
+                        }
+                    }
+                    self.send_outgoing_msgs(); 
                 },
             }
         }

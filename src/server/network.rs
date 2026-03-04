@@ -30,6 +30,7 @@ pub struct Network {
     cluster_message_sender: Sender<(NodeId, ClusterMessage)>,
     pub cluster_messages: Receiver<(NodeId, ClusterMessage)>,
     pub client_messages: Receiver<(ClientId, ClientMessage)>,
+    pub recovery_receiver: Receiver<NewConnection>, 
 }
 
 fn get_addrs(config: OmniPaxosKVConfig) -> (SocketAddr, Vec<SocketAddr>) {
@@ -69,6 +70,8 @@ impl Network {
         cluster_connections.resize_with(peer_addresses.len(), Default::default);
         let (cluster_message_sender, cluster_messages) = tokio::sync::mpsc::channel(batch_size);
         let (client_message_sender, client_messages) = tokio::sync::mpsc::channel(batch_size);
+        let (recovery_sender, recovery_receiver) = mpsc::channel(batch_size);
+
         let mut network = Self {
             peers: peer_addresses.iter().map(|(id, _)| *id).collect(),
             peer_connections: cluster_connections,
@@ -79,11 +82,10 @@ impl Network {
             cluster_message_sender,
             cluster_messages,
             client_messages,
+            recovery_receiver,
         };
         let num_clients = config.local.num_clients;
-        network
-            .initialize_connections(id, num_clients, peer_addresses, listen_address)
-            .await;
+        network.initialize_connections(id, num_clients, peer_addresses, listen_address, recovery_sender).await;
         network
     }
 
@@ -93,28 +95,52 @@ impl Network {
         num_clients: usize,
         peers: Vec<(NodeId, SocketAddr)>,
         listen_address: SocketAddr,
+        recovery_sender: Sender<NewConnection>, // Add this parameter
     ) {
         let (connection_sink, mut connection_source) = mpsc::channel(30);
-        let listener_handle =
-            self.spawn_connection_listener(connection_sink.clone(), listen_address);
+        
+        // 1. Spawn these (they run in background already)
+        self.spawn_connection_listener(connection_sink.clone(), listen_address);
         self.spawn_peer_connectors(connection_sink.clone(), id, peers);
+
+        // 2. Process connections until we have enough to START the server
         while let Some(new_connection) = connection_source.recv().await {
-            match new_connection {
-                NewConnection::ToPeer(connection) => {
-                    let peer_idx = self.cluster_id_to_idx(connection.peer_id).unwrap();
-                    self.peer_connections[peer_idx] = Some(connection);
-                }
-                NewConnection::ToClient(connection) => {
-                    let _ = self
-                        .client_connections
-                        .insert(connection.client_id, connection);
+            self.apply_connection(new_connection); 
+
+            let all_clients = self.client_connections.len() >= num_clients;
+            let all_cluster = self.peer_connections.iter().all(|c| c.is_some());
+            
+            if all_clients && all_cluster {
+                info!("Cluster ready! Starting server logic...");
+                break; 
+            }
+        }
+
+        // --- STEP 2: RECOVERY HAND-OFF ---
+        // Take the remaining connection_source and forward everything to the recovery_sender
+        tokio::spawn(async move {
+            while let Some(conn) = connection_source.recv().await {
+                let _ = recovery_sender.send(conn).await;
+            }
+        });
+    }
+
+    pub fn apply_connection(&mut self, new_connection: NewConnection) {
+        match new_connection {
+            NewConnection::ToPeer(connection) => {
+                if let Some(idx) = self.peers.iter().position(|&id| id == connection.peer_id) {
+                    // If there was an old connection, dropping it here 
+                    // should stop its background loops.
+                    if let Some(old_conn) = self.peer_connections[idx].take() {
+                        info!("Replacing old connection for node {}", connection.peer_id);
+                        // Explicitly close or drop to ensure the old task stops
+                        old_conn.close(); 
+                    }
+                    self.peer_connections[idx] = Some(connection);
                 }
             }
-            let all_clients_connected = self.client_connections.len() >= num_clients;
-            let all_cluster_connected = self.peer_connections.iter().all(|c| c.is_some());
-            if all_clients_connected && all_cluster_connected {
-                listener_handle.abort();
-                break;
+            NewConnection::ToClient(connection) => {
+                self.client_connections.insert(connection.client_id, connection);
             }
         }
     }
@@ -293,7 +319,7 @@ impl Network {
     }
 }
 
-enum NewConnection {
+pub enum NewConnection {
     ToPeer(PeerConnection),
     ToClient(ClientConnection),
 }
