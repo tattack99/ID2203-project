@@ -18,6 +18,8 @@ use tokio::{sync::mpsc, task::JoinHandle};
 
 use crate::configs::OmniPaxosKVConfig;
 
+const RECONNECT_DELAY : Duration = Duration::from_secs(1);
+
 pub struct Network {
     peers: Vec<NodeId>,
     peer_connections: Vec<Option<PeerConnection>>,
@@ -205,7 +207,7 @@ impl Network {
     ) {
         let peers_to_connect_to = peers.into_iter().filter(|(peer_id, _)| *peer_id < my_id);
         for (peer, peer_address) in peers_to_connect_to {
-            let reconnect_delay = Duration::from_secs(1);
+            let reconnect_delay = RECONNECT_DELAY;
             let mut reconnect_interval = tokio::time::interval(reconnect_delay);
             let cluster_sender = self.cluster_message_sender.clone();
             let connection_sender = connection_sender.clone();

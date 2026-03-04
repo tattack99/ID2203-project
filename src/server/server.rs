@@ -57,10 +57,22 @@ impl OmniPaxosServer {
             .await;
         // Main event loop with leader election
         let mut election_interval = tokio::time::interval(ELECTION_TIMEOUT);
+        let mut election_tick_counter = 0;
         loop {
             tokio::select! {
                 _ = election_interval.tick() => {
                     self.omnipaxos.tick();
+                    // if election_tick_counter >= 5 {
+                    //     election_tick_counter = 0;
+                        
+                    //     match self.omnipaxos.get_current_leader() {
+                    //         Some((leader, is_accept)) => info!("Leader: {leader}, Accept: {is_accept}"),
+                    //         None => info!("Waiting for leader election..."),
+                    //     }
+                    // }
+                    // else {
+                    //     election_tick_counter = election_tick_counter + 1;
+                    // }
                     self.send_outgoing_msgs();
                 },
                 _ = self.network.cluster_messages.recv_many(&mut cluster_msg_buf, NETWORK_BATCH_SIZE) => {
@@ -85,9 +97,11 @@ impl OmniPaxosServer {
         loop {
             tokio::select! {
                 _ = leader_takeover_interval.tick(), if self.config.cluster.initial_leader == self.id => {
+                    info!("ID {}: Initial leader tick. Checking status...", self.id);
                     if let Some((curr_leader, is_accept_phase)) = self.omnipaxos.get_current_leader(){
+                        info!("ID {}: Found leader {} (accept: {})", self.id, curr_leader, is_accept_phase); 
                         if curr_leader == self.id && is_accept_phase {
-                            info!("{}: Leader fully initialized", self.id);
+                            info!("{}: Leader fully initialized. Breaking loop.", self.id);
                             let experiment_sync_start = (Utc::now() + Duration::from_secs(2)).timestamp_millis();
                             self.send_cluster_start_signals(experiment_sync_start);
                             self.send_client_start_signals(experiment_sync_start);
@@ -98,10 +112,12 @@ impl OmniPaxosServer {
                     self.omnipaxos.try_become_leader();
                     self.send_outgoing_msgs();
                 },
+                // This branch is critical: if s2/s3 receive a message, they must break here too
                 _ = self.network.cluster_messages.recv_many(cluster_msg_buffer, NETWORK_BATCH_SIZE) => {
                     let recv_start = self.handle_cluster_messages(cluster_msg_buffer).await;
                     if recv_start {
-                        break;
+                        info!("ID {}: Received start signal from leader. Exiting establish loop.", self.id); // NEW LOG
+                        break; 
                     }
                 },
                 _ = self.network.client_messages.recv_many(client_msg_buffer, NETWORK_BATCH_SIZE) => {
@@ -147,8 +163,7 @@ impl OmniPaxosServer {
     }
 
     fn send_outgoing_msgs(&mut self) {
-        self.omnipaxos
-            .take_outgoing_messages(&mut self.omnipaxos_msg_buffer);
+        self.omnipaxos.take_outgoing_messages(&mut self.omnipaxos_msg_buffer);
         for msg in self.omnipaxos_msg_buffer.drain(..) {
             let to = msg.get_receiver();
             let cluster_msg = ClusterMessage::OmniPaxosMessage(msg);
