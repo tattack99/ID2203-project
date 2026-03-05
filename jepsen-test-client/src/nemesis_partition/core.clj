@@ -2,97 +2,96 @@
   (:require [clojure.java.shell :refer [sh]]
             [clojure.string :as str]
             [clj-http.client :as http]
-            [jepsen.checker :as checker]
-            [jepsen.generator :as gen]
-            [jepsen.tests :as tests]
-            [jepsen.nemesis :as nemesis]
-            [jepsen.control.sshj :as sshj]
-            [jepsen.client :as client]
-            [jepsen.core :as jepsen]
+            [jepsen [cli :as cli]
+                    [checker :as checker]
+                    [control :as c]
+                    [db :as db]
+                    [generator :as gen]
+                    [nemesis :as nemesis]
+                    [tests :as tests]
+                    [client :as client]]
             [knossos.model :as model])
-  (:import [org.slf4j LoggerFactory]
-           [ch.qos.logback.classic Level Logger])
   (:gen-class))
 
-(defn- setup-logging! []
-  (.setLevel ^Logger (LoggerFactory/getLogger "jepsen.nemesis") Level/INFO)
-  (.setLevel ^Logger (LoggerFactory/getLogger "jepsen.core") Level/INFO)
-  (.setLevel ^Logger (LoggerFactory/getLogger "net.schmizz.sshj") Level/WARN))
+;; SSH IPs → HTTP endpoints for the Jepsen client
+(def nodes
+  {"127.0.0.2" "http://localhost:3001"
+   "127.0.0.3" "http://localhost:3002"
+   "127.0.0.4" "http://localhost:3003"})
 
-(defn get-docker-ip [container-name]
-  (let [res (sh "docker" "inspect" "-f" "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" container-name)]
-    (str/trim (:out res))))
+(def http-opts {:conn-timeout 1000 :socket-timeout 1000})
 
-(defn build-internal-map [ssh-hosts]
-  ;; Assuming s1 maps to 127.0.0.2, s2 to 127.0.0.3, etc.
-  (let [containers ["s1" "s2" "s3"]]
-    (zipmap ssh-hosts (map get-docker-ip containers))))
+;; --- Partition helpers ---
+;; The servers communicate via Docker-internal IPs (172.18.x.x), not the
+;; SSH loopback IPs (127.0.0.x). iptables rules must use the real Docker IPs.
 
+(defn docker-ip [container]
+  (str/trim (:out (sh "docker" "inspect" "-f"
+                      "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}"
+                      container))))
 
-(defrecord PaxosClient [node-map]
+(defn ssh->docker-ip []
+  ;; Build a map from SSH IP -> Docker internal IP
+  (zipmap (keys nodes)
+          (map docker-ip ["s1" "s2" "s3"])))
+
+(defn partition-grudge
+  "Returns a grudge map suitable for nemesis/partitioner.
+   Keys are SSH IPs (for Jepsen to SSH into), values are sets of Docker IPs
+   to block via iptables."
+  [ssh-nodes]
+  (let [ip-map (ssh->docker-ip)
+        halves (nemesis/bisect (vec ssh-nodes))
+        grudge (nemesis/complete-grudge halves)]
+    ;; Translate grudge targets from SSH IPs to Docker internal IPs
+    (into {} (for [[src blocked] grudge]
+               [src (set (map ip-map blocked))]))))
+
+;; --- Jepsen client: read/write via HTTP ---
+
+(defrecord PaxosClient [url]
   client/Client
-  (open! [this _ node] (assoc this :url (get node-map node)))
-  (setup! [_ _])
-  (invoke! [this _ op]
+  (open!    [this _ node] (assoc this :url (get nodes node)))
+  (setup!   [_ _])
+  (teardown![_ _])
+  (close!   [_ _])
+  (invoke!  [this _ op]
     (try
       (case (:f op)
-        :read  (let [resp (http/get (str (:url this) "/get/jepsen-key") 
-                                   {:conn-timeout 1000 :socket-timeout 1000}) ; <--- ADD THIS
-                     b (:body resp)]
-                 (assoc op :type :ok :value (when-not (or (empty? b) (= b "Key not found")) 
-                                              (Integer/parseInt b))))
-        :write (do (http/post (str (:url this) "/put")
-                              {:form-params {:key "jepsen-key" :value (str (:value op))}
-                               :content-type :json 
-                               :conn-timeout 1000 
-                               :socket-timeout 1000}) ; <--- ADD THIS
+        :read  (let [body (:body (http/get (str url "/get/jepsen-key") http-opts))]
+                 (assoc op :type :ok
+                           :value (when (not (or (empty? body) (= body "Key not found")))
+                                    (Integer/parseInt body))))
+        :write (do (http/post (str url "/put")
+                              (merge http-opts
+                                     {:form-params {:key "jepsen-key" :value (str (:value op))}
+                                      :content-type :json}))
                    (assoc op :type :ok)))
-      (catch Exception e (assoc op :type :info :error (.getMessage e))))) ; Records the failure and moves on
-  (teardown! [_ _])
-  (close! [_ _]))
+      (catch Exception e
+        (assoc op :type :info :error (.getMessage e))))))
 
+;; --- Test definition ---
 
-(defn paxos-test []
-  (let [ssh-hosts    ["127.0.0.2" "127.0.0.3" "127.0.0.4"]
-        internal-map (build-internal-map ssh-hosts)
-        ;; Map all 3 logical nodes to your 2 available client shims
-        node-map     {"127.0.0.2" "http://localhost:3001" 
-                      "127.0.0.3" "http://localhost:3002" 
-                      "127.0.0.4" "http://localhost:3001"}] ; s3 talks to shim c1
-    
-    (println "🚀 Dynamic IP Mapping:" internal-map)
-    
-    (merge tests/noop-test
-           {:name      "paxos-partition"
-            :remote    (sshj/remote)
-            :ssh       {:username "root" :password "root" :strict-host-key-checking false}
-            :nodes     ssh-hosts
-            :nemesis   (nemesis/partitioner 
-                         (fn [nodes]
-                           (let [halves (nemesis/bisect nodes)
-                                 grudge (nemesis/complete-grudge halves)]
-                             ;; Crucial: Key is logical SSH, Value is physical Docker
-                             (into {} (for [[src dests] grudge]
-                                        [src (set (map internal-map dests))])))))
-            :client    (->PaxosClient node-map)
-            :checker (checker/compose 
-           {:linear (checker/linearizable 
-                      {:model (model/register)
-                       :max-limit 10000})}) ; Stops the search before OOM
-            :concurrency 3         ; Fewer parallel threads = smaller search space
-            :generator (->> (gen/mix [(fn [_ _] {:f :read}) 
-                                     (fn [_ _] {:f :write :value (rand-int 100)})])
-                            (gen/stagger 1/5)
-                            (gen/nemesis (gen/cycle [(gen/sleep 5) 
-                                                   {:type :info :f :start} 
-                                                   (gen/sleep 5) 
-                                                   {:type :info :f :stop}]))
-                            (gen/time-limit 30))})))
+(defn omnipaxos-test [opts]
+  (merge tests/noop-test opts
+    {:name    "omnipaxos-partition"
+     :nodes   (keys nodes)
+     :db      db/noop
+     :client  (->PaxosClient nil)
+     :nemesis (nemesis/partitioner partition-grudge)
+     :checker (checker/compose
+                {:linear (checker/linearizable {:model (model/register)})})
+     :generator
+     (->> (gen/mix [(fn [_ _] {:f :read})
+                    (fn [_ _] {:f :write :value (rand-int 100)})])
+          (gen/stagger 1/5)
+          (gen/nemesis
+            (gen/cycle [(gen/sleep 10)             ; let cluster stabilize
+                        {:type :info :f :start}    ; apply network partition
+                        (gen/sleep 20)             ; keep partitioned (minority loses quorum)
+                        {:type :info :f :stop}     ; heal partition
+                        (gen/sleep 10)]))           ; wait for reconnect + leader stabilize
+          (gen/time-limit (:time-limit opts)))}))
 
-(defn -main [& _]
-  (setup-logging!)
-  (println "🛡️ Starting Partition Test...")
-  (try
-    (let [result (jepsen/run! (paxos-test))]
-      (println "\nOVERALL RESULT:" (if (-> result :results :linear :valid?) "✅ PASS" "❌ FAIL")))
-    (catch Exception e (println "💥 Error:" (.getMessage e)))))
+(defn -main [& args]
+  (cli/run! (cli/single-test-cmd {:test-fn omnipaxos-test}) args))
