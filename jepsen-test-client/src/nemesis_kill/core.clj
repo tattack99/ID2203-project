@@ -95,9 +95,9 @@
                 (gen/nemesis
                   (gen/cycle [(gen/sleep 5)       ;; Wait for cluster to be healthy
             {:type :info, :f :stop}
-            (gen/sleep 2)        ;; Short downtime (node is dead)
+            (gen/sleep 10)        ;; Short downtime (node is dead)
             {:type :info, :f :start}
-            (gen/sleep 30)]))     ;; Generous window for log sync & Accept phase
+            (gen/sleep 10)]))     ;; Generous window for log sync & Accept phase
                 ;; Recovery/Sync Window
                 (gen/time-limit (:time-limit opts)))})))
 

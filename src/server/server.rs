@@ -202,15 +202,34 @@ impl OmniPaxosServer {
     }
 
     async fn handle_client_messages(&mut self, messages: &mut Vec<(ClientId, ClientMessage)>) {
+        let leader_status = self.omnipaxos.get_current_leader();
+
         for (from, message) in messages.drain(..) {
             match message {
                 ClientMessage::Append(command_id, kv_command) => {
-                    self.append_to_log(from, command_id, kv_command)
+                    self.append_to_log(from, command_id, kv_command);
+                }
+                ClientMessage::Read(command_id, key) => {
+                    match leader_status {
+                        Some((leader_id, is_accept)) if leader_id == self.id && is_accept => {
+                            self.handle_decided_entries(); 
+                            
+                            let read_command = KVCommand::Get(key);
+                            let value = self.database.handle_command(read_command).flatten();
+                            
+                            self.network.send_to_client(from, ServerMessage::Read(command_id, value));
+                        }
+                        _ => {
+                            self.network.send_to_client(from, ServerMessage::NotLeader(command_id));
+                        }
+                    }
                 }
             }
         }
         self.send_outgoing_msgs();
     }
+
+
 
     async fn handle_cluster_messages(
         &mut self,
