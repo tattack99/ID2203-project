@@ -1,6 +1,6 @@
 use crate::{configs::OmniPaxosKVConfig, server::OmniPaxosServer};
 use env_logger;
-mod file_storage;
+pub mod file_storage;
 
 mod configs;
 mod database;
