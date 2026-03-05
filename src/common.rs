@@ -22,8 +22,6 @@ pub mod messages {
     #[derive(Clone, Debug, Serialize, Deserialize)]
     pub enum ClientMessage {
         Append(CommandId, KVCommand),
-        Read(CommandId, String),    // ADD THIS: Client asks for a key
-
     }
 
     #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -31,7 +29,6 @@ pub mod messages {
         Write(CommandId),
         Read(CommandId, Option<String>),
         StartSignal(Timestamp),
-        NotLeader(CommandId), 
     }
 
     impl ServerMessage {
@@ -39,7 +36,6 @@ pub mod messages {
             match self {
                 ServerMessage::Write(id) => *id,
                 ServerMessage::Read(id, _) => *id,
-                ServerMessage::NotLeader(id) => *id, 
                 ServerMessage::StartSignal(_) => unimplemented!(),
             }
         }

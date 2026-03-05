@@ -45,7 +45,8 @@ impl Into<OmniPaxosConfig> for OmniPaxosKVConfig {
         let server_config = OmnipaxosServerConfig {
             pid: self.local.server_id,
             // Add these two lines:
-            resend_message_tick_timeout: 3, 
+            election_tick_timeout: 3,
+            resend_message_tick_timeout: 2, 
             ..Default::default()
         };
 

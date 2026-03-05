@@ -10,6 +10,7 @@ use std::sync::{Arc, Mutex};
 use std::time::Duration;
 use std::{collections::HashMap, str::FromStr};
 use tokio::sync::mpsc::{Sender, UnboundedSender};
+use tokio::sync::oneshot;
 use tokio::{
     net::{TcpListener, TcpStream},
     sync::mpsc::Receiver,
@@ -105,11 +106,11 @@ impl Network {
         while let Some(new_connection) = connection_source.recv().await {
             self.apply_connection(new_connection); 
 
-            let all_clients = self.client_connections.len() >= num_clients;
-            let all_cluster = self.peer_connections.iter().all(|c| c.is_some());
+            // Check if we have at least ONE other peer connected
+            let any_peer = self.peer_connections.iter().any(|c| c.is_some());
             
-            if all_clients && all_cluster {
-                info!("Cluster ready! Starting server logic...");
+            if any_peer {
+                info!("At least one peer found! Starting server logic...");
                 break; 
             }
         }
@@ -184,12 +185,13 @@ impl Network {
             Some(Ok(RegistrationMessage::NodeRegister(node_id))) => {
                 info!("Identified connection from node {node_id}");
                 let underlying_stream = registration_connection.into_inner().into_inner();
-                NewConnection::ToPeer(PeerConnection::new(
+                let (peer_conn, _close_rx) = PeerConnection::new(
                     node_id,
                     underlying_stream,
                     batch_size,
                     cluster_message_sender,
-                ))
+                );
+                NewConnection::ToPeer(peer_conn)
             }
             Some(Ok(RegistrationMessage::ClientRegister)) => {
                 let next_client_id = {
@@ -227,38 +229,46 @@ impl Network {
         let peers_to_connect_to = peers.into_iter().filter(|(peer_id, _)| *peer_id < my_id);
         for (peer, peer_address) in peers_to_connect_to {
             let reconnect_delay = RECONNECT_DELAY;
-            let mut reconnect_interval = tokio::time::interval(reconnect_delay);
             let cluster_sender = self.cluster_message_sender.clone();
             let connection_sender = connection_sender.clone();
             let batch_size = self.batch_size;
             tokio::spawn(async move {
-                // Establish connection
-                let peer_connection = loop {
-                    reconnect_interval.tick().await;
-                    match TcpStream::connect(peer_address).await {
-                        Ok(connection) => {
-                            info!("New connection to node {peer}");
-                            connection.set_nodelay(true).unwrap();
-                            break connection;
+                loop {
+                    // Keep retrying until we connect
+                    let mut reconnect_interval = tokio::time::interval(reconnect_delay);
+                    let peer_connection = loop {
+                        reconnect_interval.tick().await;
+                        match TcpStream::connect(peer_address).await {
+                            Ok(connection) => {
+                                info!("New connection to node {peer}");
+                                connection.set_nodelay(true).unwrap();
+                                break connection;
+                            }
+                            Err(err) => {
+                                error!("Establishing connection to node {peer} failed: {err}")
+                            }
                         }
-                        Err(err) => {
-                            error!("Establishing connection to node {peer} failed: {err}")
-                        }
+                    };
+                    // Send handshake
+                    let mut registration_connection = frame_registration_connection(peer_connection);
+                    let handshake = RegistrationMessage::NodeRegister(my_id);
+                    if let Err(err) = registration_connection.send(handshake).await {
+                        error!("Error sending handshake to {peer}: {err}");
+                        continue;
                     }
-                };
-                // Send handshake
-                let mut registration_connection = frame_registration_connection(peer_connection);
-                let handshake = RegistrationMessage::NodeRegister(my_id);
-                if let Err(err) = registration_connection.send(handshake).await {
-                    error!("Error sending handshake to {peer}: {err}");
-                    return;
+                    let underlying_stream = registration_connection.into_inner().into_inner();
+                    // Create connection actor
+                    let (peer_actor, close_rx) =
+                        PeerConnection::new(peer, underlying_stream, batch_size, cluster_sender.clone());
+                    let new_connection = NewConnection::ToPeer(peer_actor);
+                    if connection_sender.send(new_connection).await.is_err() {
+                        break; // server shutting down
+                    }
+                    // Wait for this connection to drop before reconnecting
+                    let _ = close_rx.await;
+                    info!("Connection to node {peer} dropped, reconnecting...");
+                    tokio::time::sleep(reconnect_delay).await;
                 }
-                let underlying_stream = registration_connection.into_inner().into_inner();
-                // Create connection actor
-                let peer_actor =
-                    PeerConnection::new(peer, underlying_stream, batch_size, cluster_sender);
-                let new_connection = NewConnection::ToPeer(peer_actor);
-                connection_sender.send(new_connection).await.unwrap();
             });
         }
     }
@@ -322,6 +332,7 @@ struct PeerConnection {
     reader_task: JoinHandle<()>,
     writer_task: JoinHandle<()>,
     outgoing_messages: UnboundedSender<ClusterMessage>,
+    _close_signal: oneshot::Sender<()>,
 }
 
 impl PeerConnection {
@@ -330,7 +341,8 @@ impl PeerConnection {
         connection: TcpStream,
         batch_size: usize,
         incoming_messages: Sender<(NodeId, ClusterMessage)>,
-    ) -> Self {
+    ) -> (Self, oneshot::Receiver<()>) {
+        let (close_tx, close_rx) = oneshot::channel();
         let (reader, mut writer) = frame_cluster_connection(connection);
         // Reader Actor
         let reader_task = tokio::spawn(async move {
@@ -368,12 +380,14 @@ impl PeerConnection {
             }
             info!("Connection to node {peer_id} closed");
         });
-        PeerConnection {
+        let conn = PeerConnection {
             peer_id,
             reader_task,
             writer_task,
             outgoing_messages: message_tx,
-        }
+            _close_signal: close_tx,
+        };
+        (conn, close_rx)
     }
 
     pub fn send(

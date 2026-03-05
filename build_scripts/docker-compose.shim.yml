@@ -76,3 +76,15 @@ services:
     volumes:
       - ./client-2-config.toml:/app/client-config.toml
       - ./logs/:/app/logs/
+  c3:
+    image: omnipaxos-client
+    container_name: c3
+    environment:
+      RUST_LOG: "debug"
+      CONFIG_FILE: "/app/client-config.toml"
+      OMNIPAXOS_SERVER_ADDRESS: "s3:8000" # Overwrite server_address in client config TOML
+    ports:
+      - "3003:3000"  # Access C3 via http://localhost:3003
+    volumes:
+      - ./client-3-config.toml:/app/client-config.toml
+      - ./logs/:/app/logs/
