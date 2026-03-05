@@ -41,10 +41,14 @@ impl Into<OmniPaxosConfig> for OmniPaxosKVConfig {
             nodes: self.cluster.nodes,
             flexible_quorum: self.cluster.initial_flexible_quorum,
         };
+        
         let server_config = OmnipaxosServerConfig {
             pid: self.local.server_id,
+            // Add these two lines:
+            resend_message_tick_timeout: 3, 
             ..Default::default()
         };
+
         OmniPaxosConfig {
             cluster_config,
             server_config,

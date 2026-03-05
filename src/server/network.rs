@@ -70,7 +70,7 @@ impl Network {
         cluster_connections.resize_with(peer_addresses.len(), Default::default);
         let (cluster_message_sender, cluster_messages) = tokio::sync::mpsc::channel(batch_size);
         let (client_message_sender, client_messages) = tokio::sync::mpsc::channel(batch_size);
-        let (recovery_sender, recovery_receiver) = mpsc::channel(batch_size);
+        let (recovery_sender, recovery_receiver) = tokio::sync::mpsc::channel(batch_size);
 
         let mut network = Self {
             peers: peer_addresses.iter().map(|(id, _)| *id).collect(),
@@ -95,15 +95,13 @@ impl Network {
         num_clients: usize,
         peers: Vec<(NodeId, SocketAddr)>,
         listen_address: SocketAddr,
-        recovery_sender: Sender<NewConnection>, // Add this parameter
+        recovery_sender: Sender<NewConnection>,
     ) {
         let (connection_sink, mut connection_source) = mpsc::channel(30);
         
-        // 1. Spawn these (they run in background already)
         self.spawn_connection_listener(connection_sink.clone(), listen_address);
         self.spawn_peer_connectors(connection_sink.clone(), id, peers);
 
-        // 2. Process connections until we have enough to START the server
         while let Some(new_connection) = connection_source.recv().await {
             self.apply_connection(new_connection); 
 
@@ -116,8 +114,6 @@ impl Network {
             }
         }
 
-        // --- STEP 2: RECOVERY HAND-OFF ---
-        // Take the remaining connection_source and forward everything to the recovery_sender
         tokio::spawn(async move {
             while let Some(conn) = connection_source.recv().await {
                 let _ = recovery_sender.send(conn).await;
@@ -129,11 +125,8 @@ impl Network {
         match new_connection {
             NewConnection::ToPeer(connection) => {
                 if let Some(idx) = self.peers.iter().position(|&id| id == connection.peer_id) {
-                    // If there was an old connection, dropping it here 
-                    // should stop its background loops.
                     if let Some(old_conn) = self.peer_connections[idx].take() {
                         info!("Replacing old connection for node {}", connection.peer_id);
-                        // Explicitly close or drop to ensure the old task stops
                         old_conn.close(); 
                     }
                     self.peer_connections[idx] = Some(connection);
