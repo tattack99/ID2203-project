@@ -55,6 +55,6 @@ EXPOSE 8000 22
 # - service ssh start: Allows Jepsen to connect
 # - nohup ... &: Starts your Rust server immediately on boot
 # - tail -f: Keeps the container alive even if the Rust server is killed
-ENTRYPOINT service ssh start && \
-           nohup /usr/local/bin/server > /app/logs/stdout.log 2>&1 & \
-           tail -f /dev/null
+# ... previous stages ...
+# We use 'sh -c' to ensure the redirection and backgrounding work as intended.
+ENTRYPOINT ["sh", "-c", "service ssh start && cd /app && stdbuf -oL -eL /usr/local/bin/server 2>&1 | tee /app/logs/stdout.log & sleep 2 && tail -f /dev/null"]

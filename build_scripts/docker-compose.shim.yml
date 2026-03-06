@@ -21,7 +21,6 @@ services:
     container_name: s1
     environment:
       <<: *common-server-variables
-    command: /bin/sh -c "service ssh start && tail -f /dev/null"
     volumes:
       - ./server-1-config.toml:/app/server-config.toml
       - ./cluster-config.toml:/app/cluster-config.toml
@@ -34,7 +33,6 @@ services:
     container_name: s2
     environment:
       <<: *common-server-variables
-    command: /bin/sh -c "service ssh start && tail -f /dev/null"
     volumes:
       - ./server-2-config.toml:/app/server-config.toml
       - ./cluster-config.toml:/app/cluster-config.toml
@@ -47,7 +45,6 @@ services:
     container_name: s3
     environment:
       <<: *common-server-variables
-    command: /bin/sh -c "service ssh start && tail -f /dev/null"
     volumes:
       - ./server-3-config.toml:/app/server-config.toml
       - ./cluster-config.toml:/app/cluster-config.toml
@@ -78,4 +75,16 @@ services:
       - "3002:3000"  # Access C2 via http://localhost:3002
     volumes:
       - ./client-2-config.toml:/app/client-config.toml
+      - ./logs/:/app/logs/
+  c3:
+    image: omnipaxos-client
+    container_name: c3
+    environment:
+      RUST_LOG: "debug"
+      CONFIG_FILE: "/app/client-config.toml"
+      OMNIPAXOS_SERVER_ADDRESS: "s3:8000" # Overwrite server_address in client config TOML
+    ports:
+      - "3003:3000"  # Access C3 via http://localhost:3003
+    volumes:
+      - ./client-3-config.toml:/app/client-config.toml
       - ./logs/:/app/logs/

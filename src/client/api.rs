@@ -6,7 +6,6 @@ use tokio::{
     sync::{mpsc::Sender, oneshot},
 };
 
-/// Commands sent to the internal client task.
 pub enum ApiCommand {
     Put {
         key: String,
@@ -20,23 +19,7 @@ pub enum ApiCommand {
     Shutdown,
 }
 
-/// Spawns the TCP API server.
-///
-/// Protocol (line-based):
-/// PUT <key> <value>
-/// GET <key>
-/// PING
-/// SHUTDOWN
-///
-/// Responses:
-/// OK
-/// VALUE <value>
-/// NOT_FOUND
-/// ERROR <message>
-pub fn spawn_api(
-    tx: Sender<ApiCommand>,
-    addr: SocketAddr,
-) -> tokio::task::JoinHandle<()> {
+pub fn spawn_api(tx: Sender<ApiCommand>,addr: SocketAddr) -> tokio::task::JoinHandle<()> {
     tokio::spawn(async move {
         let listener = match TcpListener::bind(addr).await {
             Ok(l) => l,
@@ -62,13 +45,9 @@ pub fn spawn_api(
     })
 }
 
-async fn handle_connection(
-    socket: TcpStream,
-    tx: Sender<ApiCommand>,
-) {
+async fn handle_connection(socket: TcpStream,tx: Sender<ApiCommand>) {
     let (reader, mut writer) = socket.into_split();
     let mut reader = BufReader::new(reader);
-
     let mut line = String::new();
 
     loop {
@@ -88,10 +67,7 @@ async fn handle_connection(
     }
 }
 
-async fn process_command(
-    input: &str,
-    tx: &Sender<ApiCommand>,
-) -> String {
+async fn process_command(input: &str,tx: &Sender<ApiCommand>) -> String {
     if input.is_empty() {
         return "ERROR empty command\n".into();
     }
@@ -164,7 +140,6 @@ async fn process_command(
         "PING" => "OK\n".into(),
 
         "SHUTDOWN" => {
-            // Fire-and-forget
             let _ = tx.send(ApiCommand::Shutdown).await;
             "OK\n".into()
         }

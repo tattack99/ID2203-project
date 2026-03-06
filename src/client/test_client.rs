@@ -18,6 +18,7 @@ pub struct Client {
     final_request_count: Option<usize>,
     next_request_id: usize,
     pub pending_gets: HashMap<usize, oneshot::Sender<String>>,
+    pub pending_puts: HashMap<usize, oneshot::Sender<String>>,
 }
 
 impl Client {
@@ -35,7 +36,8 @@ impl Client {
             config,
             final_request_count: None,
             next_request_id: 0,
-            pending_gets: std::collections::HashMap::new(), 
+            pending_gets: std::collections::HashMap::new(),
+            pending_puts: std::collections::HashMap::new(),
         }
     }
 
@@ -45,7 +47,7 @@ pub async fn run(&mut self, mut http_rx: tokio::sync::mpsc::Receiver<ApiCommand>
             Self::wait_until_sync_time(&mut self.config, start_time).await;
         }
         _ => panic!("Error waiting for start signal"),
-    }
+    }  
 
     info!("{}: READY - Waiting for curl...", self.id);
 
@@ -54,23 +56,28 @@ pub async fn run(&mut self, mut http_rx: tokio::sync::mpsc::Receiver<ApiCommand>
             // Handles request from shim api, can be curl or jepsen
             Some(cmd) = http_rx.recv() => {
                 match cmd {
-                    ApiCommand::Put(k, v) => self.send_request_manual(KVCommand::Put(k, v)).await,
+                    ApiCommand::Put(k, v, tx) => {
+                        let key = self.next_request_id;
+                        self.pending_puts.insert(key, tx);
+                        self.send_request_manual(KVCommand::Put(k, v)).await;
+                    }
                     ApiCommand::Get(k, tx) => {
                         let key = self.next_request_id;
-                        self.pending_gets.insert(key, tx); 
+                        self.pending_gets.insert(key, tx);
                         self.send_request_manual(KVCommand::Get(k)).await;
                     }
                 }
             }
             Some(msg) = self.network.server_messages.recv() => {
-                info!("{}: SERVER LOG -> {:?}", self.id, msg);
-
-                // CHECK: Is this a response to a GET we are tracking?
+                if let ServerMessage::Write(id) = &msg {
+                    if let Some(tx) = self.pending_puts.remove(id) {
+                        let _ = tx.send("Ok".to_string());
+                    }
+                }
                 if let ServerMessage::Read(id, value) = &msg {
-                    // We use .remove(id) because we only respond once per request
                     if let Some(tx) = self.pending_gets.remove(id) {
                         let result = value.clone().unwrap_or_else(|| "Key not found".to_string());
-                        let _ = tx.send(result); // This wakes up the 'http_get' function!
+                        let _ = tx.send(result);
                     }
                 }
                 self.handle_server_message(msg);
