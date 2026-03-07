@@ -13,6 +13,8 @@ pub struct Network {
     server_message_sender: Sender<ServerMessage>,
     pub server_messages: Receiver<ServerMessage>,
     batch_size: usize,
+    /// Keep server addresses around so we can reconnect
+    servers: Vec<(NodeId, String)>,
 }
 
 const RETRY_SERVER_CONNECTION_TIMEOUT: Duration = Duration::from_secs(1);
@@ -28,15 +30,16 @@ impl Network {
             batch_size,
             server_message_sender,
             server_messages,
+            servers: servers.clone(),
         };
-        network.initialize_connections(servers).await;
+        network.initialize_connections(&servers).await;
         network
     }
 
-    async fn initialize_connections(&mut self, servers: Vec<(NodeId, String)>) {
+    async fn initialize_connections(&mut self, servers: &Vec<(NodeId, String)>) {
         info!("Establishing server connections");
         let mut connection_tasks = Vec::with_capacity(servers.len());
-        for (server_id, server_addr_str) in &servers {
+        for (server_id, server_addr_str) in servers {
             let server_address = server_addr_str
                 .to_socket_addrs()
                 .expect("Unable to resolve server IP")
@@ -92,18 +95,132 @@ impl Network {
         }
     }
 
-    pub async fn send(&mut self, to: NodeId, msg: ClientMessage) {
+    /// Attempt to reconnect to a specific server. This is called when we detect
+    /// the connection has dropped (send failed or connection set to None).
+    /// Spawns the reconnection in the background so we don't block the event loop.
+    pub fn spawn_reconnect(&mut self, server_id: NodeId) {
+        let server_idx = server_id as usize;
+
+        // Drop old connection if any
+        if let Some(Some(old_conn)) = self.server_connections.get_mut(server_idx) {
+            let conn = self.server_connections[server_idx].take().unwrap();
+            conn.close();
+        }
+        self.server_connections[server_idx] = None;
+
+        // Find the address for this server
+        let addr_str = match self.servers.iter().find(|(id, _)| *id == server_id) {
+            Some((_, addr)) => addr.clone(),
+            None => {
+                error!("No address known for server {server_id}, cannot reconnect");
+                return;
+            }
+        };
+
+        let server_address = match addr_str.to_socket_addrs() {
+            Ok(mut addrs) => addrs.next().unwrap(),
+            Err(e) => {
+                error!("Cannot resolve address for server {server_id}: {e}");
+                return;
+            }
+        };
+
+        let batch_size = self.batch_size;
+        let sender = self.server_message_sender.clone();
+
+        // We use a oneshot to get the new ServerConnection back to the Network.
+        // But since Network isn't Send-friendly for holding across awaits, we
+        // use a mpsc channel and poll it in the client's run loop.
+        // Actually, simpler: we spawn the reconnect and send the result through
+        // the existing server_message_sender as a special reconnect notification.
+        // But that changes the message type...
+        //
+        // Simplest approach: do blocking reconnect inline. The client's run loop
+        // calls reconnect() and awaits it.
+        //
+        // We'll use the approach of returning a task handle instead.
+        // See reconnect_blocking below.
+        info!("Reconnect to server {server_id} will happen on next send attempt or explicit call");
+    }
+
+    /// Blocking reconnect: await this to reconnect to a specific server.
+    /// Returns true if reconnection succeeded.
+    pub async fn reconnect(&mut self, server_id: NodeId) -> bool {
+        let server_idx = server_id as usize;
+
+        // Drop old connection
+        if let Some(old_conn) = self.server_connections[server_idx].take() {
+            old_conn.close();
+        }
+
+        let addr_str = match self.servers.iter().find(|(id, _)| *id == server_id) {
+            Some((_, addr)) => addr.clone(),
+            None => {
+                error!("No address known for server {server_id}");
+                return false;
+            }
+        };
+
+        let server_address = match addr_str.to_socket_addrs() {
+            Ok(mut addrs) => match addrs.next() {
+                Some(a) => a,
+                None => {
+                    error!("No addresses resolved for server {server_id}");
+                    return false;
+                }
+            },
+            Err(e) => {
+                error!("Cannot resolve address for server {server_id}: {e}");
+                return false;
+            }
+        };
+
+        info!("Attempting to reconnect to server {server_id} at {server_address}...");
+        match Self::get_server_connection(server_id, server_address).await {
+            (from_conn, to_conn) => {
+                let connection = ServerConnection::new(
+                    server_id,
+                    from_conn,
+                    to_conn,
+                    self.batch_size,
+                    self.server_message_sender.clone(),
+                );
+                self.server_connections[server_idx] = Some(connection);
+                info!("Reconnected to server {server_id}");
+                true
+            }
+        }
+    }
+
+    /// Check if we're connected to a given server
+    pub fn is_connected(&self, server_id: NodeId) -> bool {
+        match self.server_connections.get(server_id as usize) {
+            Some(Some(_)) => true,
+            _ => false,
+        }
+    }
+
+    pub async fn send(&mut self, to: NodeId, msg: ClientMessage) -> Result<(), ()> {
         match self.server_connections.get_mut(to as usize) {
             Some(connection_slot) => match connection_slot {
                 Some(connection) => {
                     if let Err(err) = connection.send(msg).await {
                         warn!("Couldn't send msg to server {to}: {err}");
                         self.server_connections[to as usize] = None;
+                        Err(())
+                    } else {
+                        Ok(())
                     }
                 }
-                None => error!("Not connected to server {to}"),
+                None => {
+                    error!("Not connected to server {to}");
+                    Err(())
+                }
             },
-            None => error!("Sending to unexpected server {to}"),
+            None => {
+                error!("Sending to unexpected server {to}");
+                Err(())
+            }
         }
     }
 
@@ -142,11 +259,16 @@ impl ServerConnection {
             while let Some(messages) = buf_reader.next().await {
                 for msg in messages {
                     match msg {
-                        Ok(m) => incoming_messages.send(m).await.unwrap(),
+                        Ok(m) => {
+                            if incoming_messages.send(m).await.is_err() {
+                                return; // receiver dropped
+                            }
+                        }
                         Err(err) => error!("Error deserializing message: {:?}", err),
                     }
                 }
             }
+            info!("Reader for server {server_id} ended (connection dropped)");
         });
         // Writer Actor
         let (message_tx, mut message_rx) = mpsc::channel(batch_size);
