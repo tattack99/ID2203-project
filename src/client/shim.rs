@@ -4,7 +4,12 @@ use axum::{
     Json, Router,
 };
 use serde::Deserialize;
+use std::time::Duration;
 use tokio::sync::{mpsc, oneshot};
+
+/// Timeout for how long an HTTP request waits for a response from the
+/// OmniPaxos cluster before returning an error to the caller.
+const REQUEST_TIMEOUT: Duration = Duration::from_secs(10);
 
 #[derive(Deserialize)]
 pub struct PutReq {
@@ -22,8 +27,14 @@ pub async fn http_put(
     Json(payload): Json<PutReq>,
 ) -> String {
     let (resp_tx, resp_rx) = oneshot::channel();
-    let _ = tx.send(ApiCommand::Put(payload.key, payload.value, resp_tx)).await;
-    resp_rx.await.unwrap_or_else(|_| "Error".to_string())
+    if tx.send(ApiCommand::Put(payload.key, payload.value, resp_tx)).await.is_err() {
+        return "Error: client unavailable".to_string();
+    }
+    match tokio::time::timeout(REQUEST_TIMEOUT, resp_rx).await {
+        Ok(Ok(val)) => val,
+        Ok(Err(_)) => "Error: request dropped".to_string(),
+        Err(_) => "Error: timeout".to_string(),
+    }
 }
 
 pub async fn http_get(
@@ -31,8 +42,14 @@ pub async fn http_get(
     Path(key): Path<String>,
 ) -> String {
     let (resp_tx, resp_rx) = oneshot::channel();
-    let _ = tx.send(ApiCommand::Get(key, resp_tx)).await;
-    resp_rx.await.unwrap_or_else(|_| "0".to_string())
+    if tx.send(ApiCommand::Get(key, resp_tx)).await.is_err() {
+        return "Error: client unavailable".to_string();
+    }
+    match tokio::time::timeout(REQUEST_TIMEOUT, resp_rx).await {
+        Ok(Ok(val)) => val,
+        Ok(Err(_)) => "Error: request dropped".to_string(),
+        Err(_) => "Error: timeout".to_string(),
+    }
 }
 
 pub fn create_router(tx: mpsc::Sender<ApiCommand>) -> Router {
