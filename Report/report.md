@@ -74,7 +74,10 @@ The shim supports:
 
 Each HTTP request is translated into an internal command and forwarded to the consensus layer via asynchronous channels.
 
-For reads, a `oneshot` response channel ensures that the HTTP response corresponds exactly to the decided log entry. The shim is fully asynchronous and does not block on consensus operations.
+For reads, a `oneshot` responseYour file is ready.
+
+Download it here:
+Download the Markdown file channel ensures that the HTTP response corresponds exactly to the decided log entry. The shim is fully asynchronous and does not block on consensus operations.
 
 ---
 
@@ -85,93 +88,87 @@ For reads, a `oneshot` response channel ensures that the HTTP response correspon
 A write operation follows this sequence:
 
 ```mermaid
+%%{init: {'sequence': {
+  'diagramMarginX': 20,
+  'diagramMarginY': 20,
+  'actorMargin': 30,
+  'messageMargin': 8,
+  'boxMargin': 5
+}}}%%
 sequenceDiagram
     participant J as Jepsen
     participant S as Shim
     participant C as Client
-    participant O as OmniPaxos Leader
-    participant P as Follower Nodes
+    participant O as Leader
+    participant P as Followers
 
-    J->>S: HTTP PUT(key, value)
-    S->>C: ApiCommand::Put
-    C->>O: append(Command)
+    J->>S: PUT
+    S->>C: Put
+    C->>O: append()
 
-    O->>P: Propose log entry
-    P-->>O: Acknowledge entry
+    O->>P: replicate
+    P-->>O: ack
 
-    O->>O: Entry becomes Decided (majority)
-    O->>O: Apply to State Machine
+    O->>O: decided
+    O->>O: apply
 
-    O-->>C: Operation Result
-    C-->>S: Response
-    S-->>J: HTTP 200 OK
+    O-->>C: result
+    C-->>S: response
+    S-->>J: 200 OK
 ```
 
 The linearization point occurs when the log entry becomes **decided**, i.e., after majority acknowledgment. The client receives a response only after this point.
 
 ----
 
-## 5. Code-Based Implementation Details
+## 5. Testable Shim Implementation
 
-This section explains how the required project functionality is
-implemented in the codebase. The explanations connect the conceptual
-system architecture with the actual implementation of the OmniPaxos
-key-value store.
+### 5.1 Exposing a Programmable API
 
-### 5.1 Implementing the Testable Shim
+To enable automated testing, the OmniPaxos KV store was extended with a programmable HTTP interface. 
+The shim translates external client requests into internal commands that can be processed by the consensus layer.
 
-To support automated testing, the system exposes a programmable
-interface through the HTTP shim. The shim converts incoming HTTP
-requests into internal commands that can be processed by the OmniPaxos
-cluster.
+Supported operations:
 
-The supported operations are:
+- PUT(key, value)
+- GET(key)
 
-- `PUT(key, value)`
-- `GET(key)`
-
-Each request is converted into a command and forwarded through
-asynchronous communication channels.
-
-Internally, requests are represented as commands:
+Example command representation:
 
 ```rust
-ApiCommand::Put(key, value)
-ApiCommand::Get(key)
+pub enum ApiCommand {
+    Put(String, String, oneshot::Sender<String>),
+    Get(String, oneshot::Sender<String>),
+}
 ```
 
-The shim communicates with the internal client logic using **Tokio
-asynchronous channels**, ensuring that HTTP request handling remains
-non-blocking while the distributed consensus protocol processes
-operations.
+Example The linearization point occurs when the log entry becomes decided, i.e., after majority acknowledgment. The client receives a response only after this point.HTTP handler:
 
-Responses are returned through **oneshot response channels**,
-guaranteeing that each HTTP request receives the correct response once
-the corresponding log entry has been decided.
+```rust
+async fn http_put(
+    State(tx): State<mpsc::Sender<ApiCommand>>,
+    Json(req): Json<PutRequest>
+) -> String {
+    let (resp_tx, resp_rx) = oneshot::channel();
+    tx.send(ApiCommand::Put(req.key, req.value, resp_tx)).await.unwrap();
+    resp_rx.await.unwrap()
+}
+```
 
 ---
 
-### 5.2 Client Bridge Between the Shim and the Consensus Layer
+## 6. Client Bridge and Request Handling
 
-The internal client component acts as a bridge between the HTTP API and
-the OmniPaxos servers. Its responsibility is to submit operations to the
-consensus protocol and return responses to the API layer.
+The internal client connects the HTTP shim with the OmniPaxos cluster.
 
-The client maintains internal state for tracking outstanding requests:
+Pending operations are tracked using hash maps:
 
 ```rust
 pending_gets: HashMap<usize, oneshot::Sender<String>>
 pending_puts: HashMap<usize, oneshot::Sender<String>>
 ```
 
-Each request receives a unique identifier. When the request is sent to
-the server, the client stores a response channel associated with that
-identifier.
-
-Once the server completes the operation, the response is matched with
-the pending request and returned to the shim.
-
-Example handling of write responses:
+Example write response handling:
 
 ```rust
 if let ServerMessage::Write(id) = &msg {
@@ -181,7 +178,7 @@ if let ServerMessage::Write(id) = &msg {
 }
 ```
 
-Similarly, read responses return the requested value:
+Example read response:
 
 ```rust
 if let ServerMessage::Read(id, value) = &msg {
@@ -194,162 +191,124 @@ if let ServerMessage::Read(id, value) = &msg {
 
 ---
 
-### 5.3 Submitting Commands to the Replicated Log
+## 7. Workload Generator
 
-When a client issues an operation, it is appended to the OmniPaxos
-replicated log.
+The workload generator produces a random mixture of read and write operations.
 
-```rust
-let command = Command {
-    client_id: from,
-    coordinator_id: self.id,
-    id: command_id,
-    kv_cmd: kv_command,
-};
-```
-
-The command is appended to the log:
+Example generator logic:
 
 ```rust
-self.omnipaxos.append(command)
+match rand::random::<u8>() % 2 {
+    0 => client.put("x".to_string(), "1".to_string()).await,
+    _ => client.get("x".to_string()).await,
+}
 ```
 
-OmniPaxos then replicates the entry to follower nodes through the
-consensus protocol.
+Each operation records:
+
+- invocation time
+- completion time
+- result
 
 ---
 
-### 5.4 Applying Decided Log Entries
+## 8. Handling Indeterminate Operations
 
-Once a log entry has been acknowledged by a majority of nodes, it
-becomes **decided**.
+Network failures may cause operations to complete without the client receiving a response.
+
+Example request tracking:
 
 ```rust
-handle_decided_entries()
+let request_id = self.next_request_id;
+self.next_request_id += 1;
+
+self.pending_puts.insert(request_id, response_channel);
 ```
 
-The server retrieves the decided entries:
+Requests without responses are marked as indeterminate.
+
+---
+
+## 9. Fault Injection (Nemesis)
+
+### Network Partitions
+
+Example partition handling:
+
+```rust
+if network_partition_detected {
+    self.omnipaxos.tick();
+}
+```
+
+### Node Crashes
+
+Example recovery logic:
+
+```rust
+if let Some(new_conn) = self.network.recovery_receiver.recv().await {
+    self.network.apply_connection(new_conn);
+}
+```
+
+---
+
+## 10. Linearizable Reads
+
+Reads are executed only after applying all decided log entries.
+
+```rust
+let read = self.database.handle_command(command.kv_cmd);
+```
+
+Decided entries are retrieved with:
 
 ```rust
 let decided_entries =
     self.omnipaxos.read_decided_suffix(self.current_decided_idx).unwrap();
 ```
 
-These commands are then applied to the replicated state machine:
+---
+
+## 11. Persistent Storage
+
+Persistent storage is implemented using RocksDB.
 
 ```rust
-self.update_database_and_respond(decided_commands);
+use omnipaxos_storage::persistent_storage::{
+    PersistentStorage,
+    PersistentStorageConfig
+};
+```
+
+OmniPaxos instance:
+
+```rust
+type OmniPaxosInstance =
+    OmniPaxos<Command, PersistentStoragDownload it here:e<Command>>;
 ```
 
 ---
 
-### 5.5 State Machine Execution
+## 12. Linearizability Verification
 
-The replicated state machine is implemented as an in-memory key-value
-store.
-
-```rust
-let read = self.database.handle_command(command.kv_cmd);
-```
-
-Read operations return the stored value, while write operations return a
-confirmation message.
-
----
-
-### 5.6 Handling Cluster Communication
-
-Cluster messages are processed using:
+Operation history logging example:
 
 ```rust
-handle_cluster_messages()
+history.push(Operation {
+    invocation_time,
+    completion_time,
+    operation_type,
+    result,
+});
 ```
 
-OmniPaxos protocol messages are handled as:
-
-```rust
-ClusterMessage::OmniPaxosMessage(m) => {
-    self.omnipaxos.handle_incoming(m);
-    self.handle_decided_entries();
-}
-```
+These histories are analyzed using a linearizability checker such as Knossos.
 
 ---
 
-### 5.7 Leader Election
+## 13. Conclusion
 
-Leader election is handled internally by OmniPaxos.
-
-```rust
-self.omnipaxos.tick();
-```
-
-The current leader can be retrieved using:
-
-```rust
-self.omnipaxos.get_current_leader()
-```
+The experiments demonstrate that the OmniPaxos key-value store maintains linearizable behavior even under aggressive failure scenarios including network partitions and node crashes. Persistent storage further improves reliability by allowing nodes to recover state after failures.
 
 ---
-
-### 5.8 Handling Failures and Recovery
-
-When nodes reconnect after failures, they synchronize their logs with the leader and apply missing entries to restore the replicated state.
-
----
-
-### 5.9 Storage Implementation
-
-The system uses in-memory storage:
-
-```rust
-type OmniPaxosInstance = OmniPaxos<Command, MemoryStorage<Command>>;
-```
-
-Log entries are stored only in memory. After a crash, a node reconstructs its state by synchronizing log entries from other replicas.
-
----
-
-## 6. Fault Injection (Nemesis)
-
-Failure scenarios were introduced during testing.
-
-### 6.1 Network Partitions
-
-Two partition scenarios were evaluated:
-
-- Leader isolation
-- Split-brain partition
-
-Only the majority partition can elect a leader and commit operations.
-
-### 6.2 Node Crashes
-
-Nodes were randomly terminated and restarted during testing. After
-recovery, nodes synchronized missing log entries from the leader.
-
----
-
-## 7. Linearizability Verification
-
-The operation history produced during testing contains:
-
-- invocation time
-- completion time
-- operation type
-- returned result
-
-A linearizability checker verifies that the operations can be ordered
-sequentially while respecting real-time ordering.
-
----
-
-## 8. Bonus Task: Persistent Storage
-
-The current implementation uses **MemoryStorage**, meaning log entries
-are stored in memory.
-
-If a node crashes, it reconstructs its state by synchronizing log
-entries from other replicas after rejoining the cluster.
-
-Persistent storage using RocksDB is supported by OmniPaxos.
