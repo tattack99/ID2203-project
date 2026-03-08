@@ -72,12 +72,9 @@ The shim supports:
 
 - `GET(key)`
 
-Each HTTP request is translated into an internal command and forwarded to the consensus layer via asynchronous channels.
+Each HTTP request is translated into an internal command and forwarded to the consensus layer via asynchronous channels.  
 
-For reads, a `oneshot` responseYour file is ready.
-
-Download it here:
-Download the Markdown file channel ensures that the HTTP response corresponds exactly to the decided log entry. The shim is fully asynchronous and does not block on consensus operations.
+For reads, a oneshot response channel ensures that the HTTP response corresponds exactly to the decided log entry.
 
 ---
 
@@ -87,35 +84,7 @@ Download the Markdown file channel ensures that the HTTP response corresponds ex
 
 A write operation follows this sequence:
 
-```mermaid
-%%{init: {'sequence': {
-  'diagramMarginX': 20,
-  'diagramMarginY': 20,
-  'actorMargin': 30,
-  'messageMargin': 8,
-  'boxMargin': 5
-}}}%%
-sequenceDiagram
-    participant J as Jepsen
-    participant S as Shim
-    participant C as Client
-    participant O as Leader
-    participant P as Followers
-
-    J->>S: PUT
-    S->>C: Put
-    C->>O: append()
-
-    O->>P: replicate
-    P-->>O: ack
-
-    O->>O: decided
-    O->>O: apply
-
-    O-->>C: result
-    C-->>S: response
-    S-->>J: 200 OK
-```
+![](/home/saumya/.var/app/com.github.marktext.marktext/config/marktext/images/2026-03-08-18-19-28-image.png)
 
 The linearization point occurs when the log entry becomes **decided**, i.e., after majority acknowledgment. The client receives a response only after this point.
 
