@@ -68,11 +68,10 @@ The shim exposes two endpoints:
 
 Each HTTP request is converted into an `ApiCommand` and sent over an async channel (`mpsc`) to the internal client. A `oneshot` response channel is attached so the HTTP handler can await the result. This ensures that the HTTP response corresponds exactly to the decided log entry; the caller never receives a response before the operation is committed.
 
-```
-HTTP Handler ──mpsc──► Internal Client ──TCP──► OmniPaxos Server
-                                     ◄─────────────────────────
-                          (oneshot) ◄── response arrives after decided
-HTTP Response ◄──────────────────────────────────────────────────
+```mermaid
+flowchart LR
+    H[HTTP Handler] -->|mpsc| C[Internal Client] -->|TCP| O[OmniPaxos Server]
+    O -->|response after decided| C -->|oneshot| H
 ```
 
 ### 3.3 Timeout and Indeterminate States
