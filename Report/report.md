@@ -8,9 +8,7 @@ This project evaluates the following hypothesis:
 
 > The OmniPaxos key-value store implementation preserves linearizability under aggressive network partitioning and node failures.
 
-To test this hypothesis, we extended the OmniPaxos KV example with a programmable HTTP shim and subjected it to randomized fault injection in a Jepsen-style environment. The system was tested under concurrent workloads, network partitions, and node crashes. Operation histories were analyzed to detect potential linearizability violations.
-
----
+To test this hypothesis, we extended the OmniPaxos KV example with a programmable HTTP shim and subjected it to randomized fault injection using a Jepsen test suite. The system was tested under concurrent workloads, network partitions, and node crashes. Operation histories were then analyzed by the Knossos linearizability checker. We additionally implemented persistent storage to verify that the system recovers correctly after crashes without losing committed data.
 
 ## 2. System Architecture
 
@@ -18,15 +16,10 @@ To test this hypothesis, we extended the OmniPaxos KV example with a programmabl
 
 The modified system consists of four logical layers:
 
-1. **Testing Layer** – Jepsen client
-
-2. **API Layer** – HTTP shim
-
-3. **Application Layer** – Internal client logic
-
-4. **Consensus Layer** – OmniPaxos server
-
-flowchart TD  
+1. **Testing Layer** – Jepsen orchestrates the test: it drives the client, controls the nemesis, and collects the operation history.
+2. **API Layer** – An HTTP shim (Axum) exposes `PUT` and `GET` endpoints on each node, translating HTTP requests into internal commands.
+3. **Application Layer** – The internal client manages the connection to a single OmniPaxos server, queues pending requests, and handles reconnection.
+4. **Consensus Layer** – OmniPaxos servers replicate all operations through a distributed log before applying them to the key-value store.
 
 ```mermaid
 flowchart TD
@@ -56,7 +49,9 @@ flowchart TD
 
 All externally visible operations are routed through the consensus layer before completion. This ensures a single globally ordered log of operations.
 
----
+### 2.2 Deployment
+
+The cluster runs as six Docker containers: three server nodes (`s1`, `s2`, `s3`) and three client/shim nodes (`c1`, `c2`, `c3`). Each client is pinned to its corresponding server, with `c1` connecting to `s1`, and so on. The HTTP shims listen on port 3000 inside their containers, exposed on the host as `localhost:3001`, `3002`, and `3003`. Jepsen connects to the containers over SSH (via loopback IPs `127.0.0.2`–`127.0.0.4`) and issues HTTP requests to the shim endpoints.
 
 ## 3. HTTP Shim and Client Integration
 
@@ -66,17 +61,27 @@ The original OmniPaxos example was not designed for automated black-box testing.
 
 ### 3.2 API Design
 
-The shim supports:
+The shim exposes two endpoints:
 
-- `PUT(key, value)`
+- `POST /put`: accepts a JSON body `{ "key": "...", "value": "..." }` and performs a write.
+- `GET /get/:key`: returns the current value for the given key.
 
-- `GET(key)`
+Each HTTP request is converted into an `ApiCommand` and sent over an async channel (`mpsc`) to the internal client. A `oneshot` response channel is attached so the HTTP handler can await the result. This ensures that the HTTP response corresponds exactly to the decided log entry; the caller never receives a response before the operation is committed.
 
-Each HTTP request is translated into an internal command and forwarded to the consensus layer via asynchronous channels.
+```
+HTTP Handler ──mpsc──► Internal Client ──TCP──► OmniPaxos Server
+                                     ◄─────────────────────────
+                          (oneshot) ◄── response arrives after decided
+HTTP Response ◄──────────────────────────────────────────────────
+```
 
-For reads, a `oneshot` response channel ensures that the HTTP response corresponds exactly to the decided log entry. The shim is fully asynchronous and does not block on consensus operations.
+### 3.3 Timeout and Indeterminate States
 
----
+The shim applies a 10-second timeout to all requests. If a request times out (for example because the server was killed or partitioned mid-operation), the HTTP handler returns an error string. Jepsen records these operations with type `:info` (indeterminate), meaning the operation may or may not have succeeded. Knossos handles `:info` operations conservatively, considering all possible orderings when checking linearizability.
+
+### 3.4 Reconnection
+
+When the client detects a dropped connection (via a 2-second polling interval), it fails all pending requests immediately and enters a reconnection loop with 2-second retries. This prevents Jepsen from hanging indefinitely and allows the test to continue issuing operations while the cluster recovers.
 
 ## 4. Operation Flow and Linearizability
 
@@ -92,9 +97,9 @@ sequenceDiagram
     participant O as OmniPaxos Leader
     participant P as Follower Nodes
 
-    J->>S: HTTP PUT(key, value)
+    J->>S: HTTP POST /put
     S->>C: ApiCommand::Put
-    C->>O: append(Command)
+    C->>O: append(KVCommand::Put)
 
     O->>P: Propose log entry
     P-->>O: Acknowledge entry
@@ -102,13 +107,149 @@ sequenceDiagram
     O->>O: Entry becomes Decided (majority)
     O->>O: Apply to State Machine
 
-    O-->>C: Operation Result
-    C-->>S: Response
+    O-->>C: ServerMessage::Write(id)
+    C-->>S: oneshot response
     S-->>J: HTTP 200 OK
 ```
 
-The linearization point occurs when the log entry becomes **decided**, i.e., after majority acknowledgment. The client receives a response only after this point.
+The linearization point occurs when the log entry becomes **decided**, meaning a majority of nodes have acknowledged it. The client receives a response only after this point.
 
-----
+### 4.2 Read Path and Linearizable Reads
 
- 
+A naive implementation might serve reads directly from the leader's local state. This is tempting because it avoids a consensus round, but it is **not linearizable**. If a leader is partitioned from the rest of the cluster, it may not know that a new leader has been elected. It would then serve stale values to clients, violating linearizability, which requires every read to reflect all writes that completed before it.
+
+Our solution is to route reads through consensus just like writes. `KVCommand::Get` is appended to the OmniPaxos log, and the response is only sent after the entry is decided:
+
+```mermaid
+sequenceDiagram
+    participant J as Jepsen
+    participant S as Shim
+    participant C as Client
+    participant O as OmniPaxos Leader
+    participant P as Follower Nodes
+
+    J->>S: HTTP GET /get/:key
+    S->>C: ApiCommand::Get
+    C->>O: append(KVCommand::Get)
+
+    O->>P: Propose log entry
+    P-->>O: Acknowledge entry
+
+    O->>O: Entry becomes Decided (majority)
+    O->>O: Apply read to State Machine
+
+    O-->>C: ServerMessage::Read(id, value)
+    C-->>S: oneshot response
+    S-->>J: HTTP 200 value
+```
+
+This approach has a clear linearization guarantee: a `Get` issued at time `t` is ordered in the log relative to all concurrent `Put` operations. Any write that returned before `t` must have been decided at a lower log index, and therefore its effect is visible to the read. A minority leader cannot serve reads at all; it cannot achieve quorum and will not decide any entries.
+
+The trade-off is that reads are slower (a full consensus round), but correctness is guaranteed.
+
+## 5. Fault Injection
+
+We implemented three Jepsen test scenarios, each targeting a different failure mode. All tests use a 3-node cluster and run Knossos linearizability verification on the collected history.
+
+### 5.1 Nemesis Kill (`nemesis_kill`)
+
+This test kills a random server node with `SIGKILL` and restarts it after 30 seconds. At all times, 2 out of 3 nodes remain alive, preserving quorum.
+
+**Generator pattern:**
+```
+sleep 5s → kill random node → sleep 30s (re-election) → restart → sleep 20s → repeat
+```
+
+A key design decision is what happens to requests in flight when a node is killed. If Jepsen was connected to the killed node's shim, the TCP connection drops and all pending requests are failed immediately with an error. Jepsen records these as `:info`. If the killed node was the leader, OmniPaxos triggers a re-election; surviving nodes detect the missing heartbeat and elect a new leader within a few election timeouts (configured at 500 ms).
+
+### 5.2 Nemesis Partition (`nemesis_partition`)
+
+This test injects network partitions using `iptables DROP` rules on Docker's internal network. It bisects the 3-node cluster into two halves, typically isolating one node from the other two.
+
+**Generator pattern:**
+```
+sleep 10s → bisect cluster → sleep 20s (minority loses quorum) → heal → sleep 10s → repeat
+```
+
+The partition is applied at the Docker internal IP layer (not the SSH loopback addresses), which means it affects OmniPaxos inter-node communication but not Jepsen's SSH connections. The minority partition (1 node) loses quorum and cannot commit new entries. If the leader is in the minority, it cannot make progress and any writes directed to it will timeout. When the partition heals, OmniPaxos performs ballot reconciliation to bring the isolated node back into the consistent state.
+
+### 5.3 Nemesis Recovery (`nemesis_recovery`)
+
+This test kills a single random node and restarts it after 30 seconds, using a longer stabilization window than `nemesis_kill`. At all times, 2 out of 3 nodes remain alive, so quorum is preserved throughout. The test is specifically designed to exercise persistent storage: the restarted node must reconstruct its state from disk before rejoining the cluster. The recovery mechanism is described in detail in Section 6.
+
+## 6. Persistent Storage and Recovery
+
+### 6.1 Motivation
+
+Without persistence, a crashed node restarts with empty state and must receive the full log from surviving peers before it can rejoin. Persistent storage avoids this by letting a node reconstruct most of its state locally, and provides durability guarantees so that committed data survives crashes.
+
+### 6.2 Two-Layer Persistence
+
+We implement persistence at two layers:
+
+**OmniPaxos log (RocksDB).** OmniPaxos's `PersistentStorage` backend stores the consensus log, ballot information, and decided index in a RocksDB database at `/app/logs/omnipaxos-node-{id}`. This is the log used by OmniPaxos to replay entries and restore consensus state after a crash.
+
+**Database snapshot (JSON).** The key-value store state is periodically snapshotted to `/app/logs/server-{id}-snapshot.json`. Each snapshot records the full database contents and the `decided_idx` at the time of the snapshot. Writes use an atomic `rename` pattern (write to `.tmp`, then rename) with `fsync` to prevent partial writes from corrupting the snapshot file. With `SNAPSHOT_INTERVAL = 1`, a snapshot is written after every decided entry.
+
+### 6.3 Recovery Sequence
+
+When a server restarts:
+
+1. It loads the latest database snapshot from disk, restoring the KV state and the `decided_idx` at which the snapshot was taken.
+2. It opens the RocksDB storage, which restores OmniPaxos's log and ballot state.
+3. OmniPaxos replays log entries starting from the snapshot's `decided_idx`. The server skips entries up to that index (already applied to the database) and applies only entries above it.
+4. The server reconnects to peers and participates in leader election normally.
+
+This avoids both re-applying entries that are already in the snapshot and missing entries that were decided after the last snapshot.
+
+### 6.4 Leader Recovery
+
+If the killed node was the leader, a new leader is elected while it is down. When it restarts, it discovers a higher ballot via peer messages and steps down. It then catches up on any entries it missed while offline. Because OmniPaxos uses ballot numbers to prevent old leaders from committing, there is no risk of split-brain.
+
+## 7. Experimental Results
+
+All three test suites were run against the 3-node Docker cluster. Each test collects an operation history (a timestamped log of invocations and responses) and passes it to Knossos for linearizability checking.
+
+### 7.1 Results Summary
+
+| Test | Nemesis | Duration | Knossos Result |
+|------|---------|----------|---------------|
+| `nemesis_kill` | Random node SIGKILL | 60s | `:valid? true` |
+| `nemesis_partition` | Bisect cluster (iptables) | 60s | `:valid? true` |
+| `nemesis_recovery` | Kill one node + restart with persistence | 120s | `:valid? true` |
+
+All histories were verified as linearizable. No lost writes or stale reads were detected.
+
+### 7.2 Observations
+
+**During partitions**, operations directed at the minority partition timed out and were recorded as `:info`. Once the partition healed, the system resumed within a few election cycles. No client observed a stale read; the minority node could not serve reads without quorum.
+
+**During kills**, the Jepsen clients connected to the killed node's shim received connection errors immediately. Writes that were in-flight at kill time were recorded as `:info`. Knossos accepts these as consistent with either outcome (committed or not), and no inconsistency was detected in the history.
+
+**After recovery**, the restarted node rejoined the cluster and caught up on missed entries from the surviving nodes' logs. Knossos verified that the full history, including operations that occurred while the node was down, remained linearizable.
+
+## 8. Discussion
+
+### 8.1 Linearizable Reads Trade-off
+
+Routing reads through consensus is the safest approach, but it doubles the latency of read operations compared to leader-local reads. In read-heavy workloads this can be a meaningful overhead, and it is a trade-off we consciously accept in exchange for linearizability.
+
+### 8.2 Indeterminate Operations
+
+A recurring challenge in distributed testing is handling operations that may or may not have succeeded. Our shim returns errors on timeout or disconnection, which Jepsen records as `:info`. If these were recorded as `:ok`, Knossos could find false violations (a write appears in the history but the system never acknowledged it). If they were `:fail`, we might miss real violations (a write was committed but not acknowledged). The `:info` type correctly expresses the ambiguity, and Knossos handles it by exploring all possible orderings.
+
+### 8.3 Single-Key Workload
+
+All three tests operate on a single shared key (`jepsen-key`). This is intentional: using a single register maximizes contention and makes linearizability violations easiest to detect. Knossos uses the **register** model, which expects at most one value at any time and can detect stale reads and lost writes efficiently on a single key.
+
+---
+
+## 9. Conclusion
+
+We extended the OmniPaxos key-value store with an HTTP shim suitable for automated black-box testing, implemented a Jepsen test suite covering node crashes, network partitions, and crash recovery, and verified linearizability of the operation histories with Knossos.
+
+The key design decision was to route all read operations through the consensus log, rather than serving them locally from the leader. This guarantees that reads are always consistent with the most recently committed writes, even under leader changes and partitions. The cost is an extra consensus round per read, which we accept in exchange for linearizability.
+
+The persistent storage implementation ensures that a crashed node can recover and rejoin the cluster without data loss. The two-layer approach, using RocksDB for the OmniPaxos log and atomic JSON snapshots for the KV state, correctly handles the interplay between the consensus layer and the application state machine.
+
+All experiments confirmed the initial hypothesis: the OmniPaxos implementation preserves linearizability under aggressive fault injection.
