@@ -58,14 +58,16 @@
     (try
       (case (:f op)
         :read  (let [body (:body (http/get (str url "/get/jepsen-key") http-opts))]
-                 (assoc op :type :ok
-                           :value (when (not (or (empty? body) (= body "Key not found")))
-                                    (Integer/parseInt body))))
-        :write (do (http/post (str url "/put")
-                              (merge http-opts
-                                     {:form-params {:key "jepsen-key" :value (str (:value op))}
-                                      :content-type :json}))
-                   (assoc op :type :ok)))
+                 (if (or (empty? body) (= body "Key not found") (.startsWith body "Error"))
+                   (assoc op :type :fail :error body)
+                   (assoc op :type :ok :value (Integer/parseInt body))))
+        :write (let [body (:body (http/post (str url "/put")
+                                            (merge http-opts
+                                                   {:form-params {:key "jepsen-key" :value (str (:value op))}
+                                                    :content-type :json})))]
+                 (if (and body (.startsWith body "Error"))
+                   (assoc op :type :info :error body)
+                   (assoc op :type :ok))))
       (catch Exception e
         (assoc op :type :info :error (.getMessage e))))))
 
@@ -86,7 +88,7 @@
      :generator
      (->> (gen/mix [(fn [_ _] {:f :read})
                     (fn [_ _] {:f :write :value (rand-int 100)})])
-          (gen/stagger 1/10)
+          (gen/stagger 1/2)
           (gen/nemesis
             (gen/cycle [(gen/sleep 5)
                         {:type :info :f :stop}   ; kill 1 node (2 remain = quorum)

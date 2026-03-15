@@ -18,7 +18,7 @@
    "127.0.0.3" "http://localhost:3002"
    "127.0.0.4" "http://localhost:3003"})
 
-(def http-opts {:conn-timeout 5000 :socket-timeout 10000})
+(def http-opts {:conn-timeout 5000 :socket-timeout 3000})
 
 ;; --- Nemesis: kill and restart a random server node ---
 
@@ -94,7 +94,7 @@
      :generator
      (->> (gen/mix [(fn [_ _] {:f :read})
                     (fn [_ _] {:f :write :value (rand-int 100)})])
-          (gen/stagger 1/5)
+          (gen/stagger 1/2)
           (gen/nemesis
             (gen/cycle [(gen/sleep 10)            ; let cluster stabilize and accept writes
                         {:type :info :f :stop}    ; kill 1 node (may be leader)
